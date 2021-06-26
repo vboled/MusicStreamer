@@ -1,10 +1,12 @@
 package vboled.netcrecker.musicstreamer.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
@@ -19,15 +21,29 @@ import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan("vboled.netcrecker.musicstreamer")
+@PropertySource("classpath:application.properties")
 @EnableWebMvc
 public class SpringConfig implements WebMvcConfigurer  {
     private final ApplicationContext applicationContext;
+
+
+    @Value("${jdbcUrl}")
+    private String DB_URL;
+
+    @Value("${jdbcUser}")
+    private String DB_USER;
+
+    @Value("${jdbcPassword}")
+    private String DB_PASSWORD;
+
+    @Value("${jdbcDriver}")
+    private String DB_DRIVER;
 
     @Autowired
     public SpringConfig(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
-
+    
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
@@ -56,10 +72,10 @@ public class SpringConfig implements WebMvcConfigurer  {
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setPassword("***");
-        dataSource.setUsername("postgres");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/musicstreamerdb");
+        dataSource.setDriverClassName(DB_DRIVER);
+        dataSource.setPassword(DB_PASSWORD);
+        dataSource.setUsername(DB_USER);
+        dataSource.setUrl(DB_URL);
         return dataSource;
     }
 
