@@ -1,11 +1,11 @@
 CREATE TABLE IF NOT EXISTS users
 (
-    id              SERIAL PRIMARY KEY ,
+    id              SERIAL PRIMARY KEY,
     user_name       VARCHAR(30) NOT NULL,
     password        VARCHAR(30) NOT NULL,
     last_name       VARCHAR(30) NOT NULL,
     name            VARCHAR(30) NOT NULL,
-    regionid        INTEGER,
+    regionid        INTEGER NOT NULL,
     email           VARCHAR(30) NOT NULL,
     phone_number    VARCHAR(30) NOT NULL,
     create_date     DATE,
