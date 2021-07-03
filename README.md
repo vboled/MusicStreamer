@@ -25,3 +25,7 @@
 * PUT http://localhost:8080/users/{id} ("Обновляет пользователя по {id}")
 * DELETE http://localhost:8080/users/{id} ("Удаляет пользователя по {id}")
 
+# Image endpoints
+* GET http://localhost:8080/images ("Возвращает ID всех изображений")
+* POST http://localhost:8080/images + файл изображения в теле запроса ("Загружает
+  новое изображение")

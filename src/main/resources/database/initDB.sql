@@ -13,3 +13,8 @@ CREATE TABLE IF NOT EXISTS users
     play_listid     INTEGER,
     type            VARCHAR(6)
 );
+
+CREATE TABLE IF NOT EXISTS images
+(
+    id varchar(255) PRIMARY KEY
+);
