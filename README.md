@@ -2,6 +2,12 @@
 
 Ссылка на таблицы: https://drive.google.com/file/d/1yaOuQyZNO3OXZ9eoe-1C-XwQJk4gM6_U/view?usp=sharing
 
+# Запуск приложения
+Запустить скрипт start.sh
+Версии:
+* Maven: Apache Maven 3.8.1
+* Java version: 11.0.11
+
 # User endpoints
 
 Пример тела запроса: 

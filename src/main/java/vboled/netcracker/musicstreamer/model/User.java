@@ -10,12 +10,6 @@ import java.util.Date;
 @Table(name = "users")
 public class User {
 
-    enum userType{
-        USER,
-        ADMIN,
-        OWNER
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "serial", name = "id")
@@ -51,8 +45,9 @@ public class User {
     @Column(name = "play_listid")
     private int playListID;
 
-    @Column(name = "type")
-    private String type;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "role")
+    private Role role;
 
     public String getPassword() {
         return password;
@@ -126,12 +121,12 @@ public class User {
         this.playListID = playListID;
     }
 
-    public String getType() {
-        return type;
+    public Role getRole() {
+        return role;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public int getId() {

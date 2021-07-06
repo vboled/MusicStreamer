@@ -10,6 +10,8 @@ public interface UserService {
 
     List<User> readAll();
 
+    User read(String userName);
+
     User read(int id);
 
     boolean update(User user, int id);
