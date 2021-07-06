@@ -8,9 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vboled.netcracker.musicstreamer.model.Image;
-import vboled.netcracker.musicstreamer.model.User;
-import vboled.netcracker.musicstreamer.service.ImageService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,35 +24,29 @@ public class ImageController {
     @Value("${image.storage.path}")
     private String uploadPath;
 
-    private final ImageService imageService;
-
-    @Autowired
-    public ImageController(ImageService imageService) {
-        this.imageService = imageService;
-    }
-
-    @GetMapping("")
-    public ResponseEntity<List<Image>> read() {
-        final List<Image> images = imageService.readAll();
-
-        return images != null &&  !images.isEmpty()
-                ? new ResponseEntity<>(images, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
     @GetMapping("/{uuid}")
-    public ResponseEntity<?> getImageById(@PathVariable(name = "uuid") String uuid) {
-        File imgPath = new File(uploadPath);
-            try {
-                byte[] image = Files.readAllBytes(Path.of(imgPath.getAbsolutePath() + "/" + uuid + ".jpeg"));
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.IMAGE_JPEG);
-                headers.setContentLength(image.length);
-                return new ResponseEntity<>(image, headers, HttpStatus.OK);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public ResponseEntity<?> read(@PathVariable(name = "uuid") String uuid) {
+        try {
+            byte[] image = Files.readAllBytes(Path.of(uploadPath + "/" + uuid));
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(getContentType(uuid));
+            headers.setContentLength(image.length);
+            return new ResponseEntity<>(image, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    private MediaType getContentType(String uuid) {
+        String ext = uuid.substring(uuid.lastIndexOf('.'));
+        if (ext.equals(".jpeg"))
+            return MediaType.IMAGE_JPEG;
+        else if (ext.equals(".png"))
+            return MediaType.IMAGE_PNG;
+        else if (ext.equals(".gif"))
+            return MediaType.IMAGE_GIF;
+        throw new IllegalArgumentException("Wrong file ext.");
     }
 
     @PostMapping("")
@@ -65,21 +56,34 @@ public class ImageController {
             if (!uploadDir.exists()) {
                 uploadDir.mkdir();
             }
-            UUID uuid = UUID.randomUUID();
             String content = file.getContentType();
             String ext = "." + content.substring(content.indexOf('/') + 1);
-            String newFileName = uuid.toString() + ext;
+            String newFileName = UUID.randomUUID().toString() + ext;
             try {
                 file.transferTo(new File(uploadDir.getAbsolutePath() + "/" + newFileName));
             } catch (IOException e) {
                 e.printStackTrace();
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            Image res = new Image();
-            res.setId(newFileName);
-            imageService.create(res);
-            return new ResponseEntity<>(uploadDir.getAbsolutePath(), HttpStatus.CREATED);
+            return new ResponseEntity<>(newFileName, HttpStatus.CREATED);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Wrong file", HttpStatus.BAD_REQUEST);
     }
 
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<?> delete(@PathVariable(name = "uuid") String uuid) {
+        File file = new File(uploadPath + "/" + uuid);
+        if (file.delete())
+            return  new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
+
+    @PutMapping("/{uuid}")
+    public ResponseEntity<?> update(@PathVariable(name = "uuid") String uuid,
+                                    @RequestParam("file")MultipartFile file) {
+        ResponseEntity delResult = delete(uuid);
+        if (delResult.getStatusCode().equals(HttpStatus.OK))
+            return create(file);
+        return delResult;
+    }
 }
