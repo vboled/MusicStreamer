@@ -27,7 +27,8 @@
   
 * GET http://localhost:8080/users/ ("Возвращает List из всех пользователей")
 * POST http://localhost:8080/users/ ("Создает нового пользователя")
-* GET http://localhost:8080/users/{id} ("Возвращает пользователя по {id}")
+* GET http://localhost:8080/users/id/{id} ("Возвращает пользователя по {id}")
+* GET http://localhost:8080/users/username/{username} ("Возвращает пользователя по {username}")
 * PUT http://localhost:8080/users/{id} ("Обновляет пользователя по {id}")
 * DELETE http://localhost:8080/users/{id} ("Удаляет пользователя по {id}")
 
