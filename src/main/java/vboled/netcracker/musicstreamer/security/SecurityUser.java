@@ -8,6 +8,7 @@ import vboled.netcracker.musicstreamer.model.User;
 import java.util.Collection;
 import java.util.List;
 
+// Реализация интерфейса User для аутентификации
 public class SecurityUser implements UserDetails {
 
     private final String username;

@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping("/")
-    @PreAuthorize("hasAuthority('admin:perm')")
+    @PreAuthorize("hasAuthority('admin:perm')") // Аннотация указывает Spring Security кто может посылать этот запрос
     public ResponseEntity<?> create(@RequestBody User user) {
         userService.create(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
