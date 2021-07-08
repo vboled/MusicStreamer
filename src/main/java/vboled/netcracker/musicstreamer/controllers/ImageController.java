@@ -28,6 +28,9 @@ public class ImageController {
     @Value("${image.storage.dir}")
     private String imageDir;
 
+    @Value("${max.byte.image.size}")
+    private int maxImageSize;
+
     @GetMapping("/{uuid}")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> read(@PathVariable(name = "uuid") String uuid) {
@@ -37,6 +40,8 @@ public class ImageController {
     @PostMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> create(@RequestParam("file") MultipartFile file) {
+        if (file.getSize() > maxImageSize)
+            return new ResponseEntity<>("File size exceeds 5 MB", HttpStatus.BAD_REQUEST);
         return fileControllerService.uploadFile(file, imageExt, uploadPath + "/" + imageDir);
     }
 
@@ -50,6 +55,8 @@ public class ImageController {
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> update(@PathVariable(name = "uuid") String uuid,
                                     @RequestParam("file") MultipartFile file) {
+        if (file.getSize() > maxImageSize)
+            return new ResponseEntity<>("File size exceeds 5 MB", HttpStatus.BAD_REQUEST);
         if (delete(uuid).getStatusCode().equals(HttpStatus.OK))
             return create(file);
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
