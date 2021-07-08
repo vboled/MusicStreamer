@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vboled.netcracker.musicstreamer.service.FileControllerService;
+import vboled.netcracker.musicstreamer.service.FileControllerServiceImpl;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,7 +17,7 @@ import java.util.Set;
 @RequestMapping("/images")
 public class ImageController {
 
-    private final FileControllerService fileControllerService = new FileControllerService();
+    private final FileControllerService fileControllerService = new FileControllerServiceImpl();
 
     private final Set<String> imageExt = new HashSet<String>(Arrays.asList(".gif", ".png", ".jpeg", ".jpg"));
 

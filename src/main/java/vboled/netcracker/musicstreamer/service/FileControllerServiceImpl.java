@@ -1,12 +1,7 @@
 package vboled.netcracker.musicstreamer.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -16,19 +11,25 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.UUID;
 
-@Service
-public class FileControllerService {
 
-    private MediaType getContentType(String uuid) {
+
+@Service
+public class FileControllerServiceImpl implements FileControllerService {
+
+    private String getContentType(String uuid) {
         String ext = uuid.substring(uuid.lastIndexOf('.'));
         if (ext.equals(".jpeg") || ext.equals(".jpg"))
-            return MediaType.IMAGE_JPEG;
+            return "image/jpeg";
         else if (ext.equals(".png"))
-            return MediaType.IMAGE_PNG;
+            return "image/png";
         else if (ext.equals(".gif"))
-            return MediaType.IMAGE_GIF;
-        else if (ext.equals(".mp3") || ext.equals(".wav") || ext.equals(".flac") || ext.equals(".ogg"))
-            return MediaType.APPLICATION_OCTET_STREAM;
+            return "image/gif";
+        else if (ext.equals(".mp3"))
+            return "audio/mpeg";
+        else if (ext.equals(".wav"))
+            return "audio/wav";
+        else if (ext.equals(".ogg"))
+            return "audio/ogg";
         throw new IllegalArgumentException("Wrong file ext.");
     }
 
@@ -36,7 +37,7 @@ public class FileControllerService {
         try {
             byte[] image = Files.readAllBytes(Path.of(path + "/" + uuid));
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(getContentType(uuid));
+            headers.add("Content-Type", getContentType(uuid));
             headers.setContentLength(image.length);
             return new ResponseEntity<>(image, headers, HttpStatus.OK);
         } catch (IOException e) {
