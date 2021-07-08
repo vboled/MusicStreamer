@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    @PreAuthorize("hasAuthority('admin:perm')")
+    @PreAuthorize("hasAuthority('admin:perm')" + " or authentication.principal.getId() == #id ")
     public ResponseEntity<User> read(@PathVariable(name = "id") int id) {
         final User user = userService.read(id);
 
@@ -65,6 +65,26 @@ public class UserController {
 
         return updated
                 ? new ResponseEntity<>(HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
+
+    @PutMapping("/name/{id}")
+    @PreAuthorize("hasAuthority('admin:perm')"  + " or authentication.principal.getId() == #id ")
+    public ResponseEntity<?> updateName(@PathVariable(name = "id") int id, @RequestBody String newName) {
+        final boolean updated = userService.updateName(newName, id);
+
+        return updated
+                ? new ResponseEntity<>(newName, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
+
+    @PutMapping("/lastname/{id}")
+    @PreAuthorize("hasAuthority('admin:perm')"  + " or authentication.principal.getId() == #id ")
+    public ResponseEntity<?> updateLastName(@PathVariable(name = "id") int id, @RequestBody String newName) {
+        final boolean updated = userService.updateLastName(newName, id);
+
+        return updated
+                ? new ResponseEntity<>(newName, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 

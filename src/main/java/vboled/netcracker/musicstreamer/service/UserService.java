@@ -17,4 +17,8 @@ public interface UserService {
     boolean update(User user, int id);
 
     boolean delete(int id);
+
+    boolean updateName(String newName, int id);
+
+    boolean updateLastName(String newName, int id);
 }

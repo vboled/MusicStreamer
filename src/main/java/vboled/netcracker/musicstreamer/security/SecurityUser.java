@@ -1,23 +1,32 @@
 package vboled.netcracker.musicstreamer.security;
 
+import org.hibernate.collection.internal.PersistentList;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import vboled.netcracker.musicstreamer.model.User;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class SecurityUser implements UserDetails {
 
     private final String username;
+
+    private final int id;
     private final String password;
     private final List<SimpleGrantedAuthority> authorities;
 
-    public SecurityUser(String username, String password, List<SimpleGrantedAuthority> authorities) {
+    public SecurityUser(String username, int id, String password, List<SimpleGrantedAuthority> authorities) {
         this.username = username;
+        this.id = id;
         this.password = password;
         this.authorities = authorities;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
@@ -56,10 +65,8 @@ public class SecurityUser implements UserDetails {
     }
 
     public static UserDetails fromUser(User user) {
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(), user.getPassword(),
-                true, true, true, true,
-                user.getRole().getAuthorities()
+        return new SecurityUser(user.getUserName(), user.getId(), user.getPassword(),
+                new ArrayList<>(user.getRole().getAuthorities())
         );
     }
 }

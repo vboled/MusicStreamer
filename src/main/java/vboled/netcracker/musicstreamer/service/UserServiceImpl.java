@@ -55,4 +55,26 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
+
+    @Override
+    public boolean updateName(String newName, int id) {
+        if (userRepository.existsById(id)) {
+            User user = userRepository.getById(id);
+            user.setName(newName);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateLastName(String newName, int id) {
+        if (userRepository.existsById(id)) {
+            User user = userRepository.getById(id);
+            user.setName(newName);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
 }
