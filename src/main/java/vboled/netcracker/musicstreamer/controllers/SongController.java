@@ -14,52 +14,43 @@ import java.util.HashSet;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/images")
-public class ImageController {
+@RequestMapping("/songs")
+public class SongController {
 
     private final FileControllerService fileControllerService = new FileControllerServiceImpl();
 
-    private final Set<String> imageExt = new HashSet<String>(Arrays.asList(".gif", ".png", ".jpeg", ".jpg"));
+    private final Set<String> imageExt = new HashSet<String>(Arrays.asList(".mp3",".ogg", ".wav"));
 
-    // Путь к директории с файлами
+    @Value("${audio.storage.dir}")
+    private String audioDir;
+
     @Value("${file.storage.path}")
     private String uploadPath;
-
-    // Название субдиректории
-    @Value("${image.storage.dir}")
-    private String imageDir;
-
-    @Value("${max.byte.image.size}")
-    private int maxImageSize;
 
     @GetMapping("/{uuid}")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> read(@PathVariable(name = "uuid") String uuid) {
-        return fileControllerService.read(uuid, uploadPath + "/" + imageDir);
+        return fileControllerService.read(uuid, uploadPath + "/" + audioDir);
     }
 
     @PostMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> create(@RequestParam("file") MultipartFile file) {
-        if (file.getSize() > maxImageSize)
-            return new ResponseEntity<>("File size exceeds 5 MB", HttpStatus.BAD_REQUEST);
-        return fileControllerService.uploadFile(file, imageExt, uploadPath + "/" + imageDir);
+        return fileControllerService.uploadFile(file, imageExt, uploadPath + "/" + audioDir);
     }
 
     @DeleteMapping("/{uuid}")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> delete(@PathVariable(name = "uuid") String uuid) {
-        return fileControllerService.delete(uuid, uploadPath + "/" + imageDir);
+        return fileControllerService.delete(uuid, uploadPath + "/" + audioDir);
     }
 
     @PutMapping("/{uuid}")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> update(@PathVariable(name = "uuid") String uuid,
                                     @RequestParam("file") MultipartFile file) {
-        if (file.getSize() > maxImageSize)
-            return new ResponseEntity<>("File size exceeds 5 MB", HttpStatus.BAD_REQUEST);
         if (delete(uuid).getStatusCode().equals(HttpStatus.OK))
             return create(file);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 }
