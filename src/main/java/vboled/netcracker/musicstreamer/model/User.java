@@ -29,11 +29,30 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+    @JsonIgnore
     @Column(name = "regionid")
     private int regionID;
 
     @Column(name = "email")
     private String email;
+
+    @Override
+    public String toString() {
+        return "User{" + "\n" +
+                "\t id=" + id + "\n" +
+                "\t userName='" + userName + '\'' + "\n" +
+                "\t password='" + password + '\'' + "\n" +
+                "\t name='" + name + '\'' + "\n" +
+                "\t lastName='" + lastName + '\'' + "\n" +
+                "\t regionID=" + regionID + "\n" +
+                "\t email='" + email + '\'' + "\n" +
+                "\t phoneNumber='" + phoneNumber + '\'' + "\n" +
+                "\t createDate=" + createDate + "\n" +
+                "\t lastLoginDate=" + lastLoginDate + "\n" +
+                "\t playListID=" + playListID + "\n" +
+                "\t role=" + role + "\n" +
+                '}';
+    }
 
     @Column(name = "phone_number")
     private String phoneNumber;
