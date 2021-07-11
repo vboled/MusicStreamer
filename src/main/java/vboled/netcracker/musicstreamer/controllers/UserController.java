@@ -5,10 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import vboled.netcracker.musicstreamer.model.Role;
 import vboled.netcracker.musicstreamer.model.User;
 import vboled.netcracker.musicstreamer.service.UserService;
 
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/users")
@@ -25,7 +27,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> create(@RequestBody User user) {
         userService.create(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @GetMapping("/")
@@ -85,6 +87,25 @@ public class UserController {
 
         return updated
                 ? new ResponseEntity<>(newName, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
+
+    @PutMapping("/admin/role/{id}")
+    @PreAuthorize("hasAuthority('admin:perm')")
+    public ResponseEntity<?> setRole(@PathVariable(name = "id") int id, @RequestParam String roleName) {
+        Role role;
+        if (roleName.toLowerCase(Locale.ROOT).equals("admin"))
+            role = Role.ADMIN;
+        else if (roleName.toLowerCase(Locale.ROOT).equals("owner"))
+            role = Role.OWNER;
+        else if (roleName.toLowerCase(Locale.ROOT).equals("user"))
+            role = Role.USER;
+        else
+            return new ResponseEntity<>("No such role", HttpStatus.BAD_REQUEST);
+        final boolean updated = userService.updateRole(id, role);
+
+        return updated
+                ? new ResponseEntity<>(role.name(), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 

@@ -1,7 +1,9 @@
 package vboled.netcracker.musicstreamer.service;
 
+import vboled.netcracker.musicstreamer.model.Role;
 import vboled.netcracker.musicstreamer.model.User;
 
+import java.util.Date;
 import java.util.List;
 
 public interface UserService {
@@ -21,4 +23,6 @@ public interface UserService {
     boolean updateName(String newName, int id);
 
     boolean updateLastName(String newName, int id);
+
+    boolean updateRole(int id, Role role);
 }

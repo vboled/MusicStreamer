@@ -2,9 +2,14 @@ package vboled.netcracker.musicstreamer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vboled.netcracker.musicstreamer.model.Role;
 import vboled.netcracker.musicstreamer.model.User;
 import vboled.netcracker.musicstreamer.repository.UserRepository;
 
+import javax.xml.crypto.Data;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -72,6 +77,17 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsById(id)) {
             User user = userRepository.getById(id);
             user.setName(newName);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateRole(int id, Role role) {
+        if (userRepository.existsById(id)) {
+            User user = userRepository.getById(id);
+            user.setRole(role);
             userRepository.save(user);
             return true;
         }
