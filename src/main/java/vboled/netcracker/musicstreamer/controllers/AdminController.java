@@ -5,15 +5,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import vboled.netcracker.musicstreamer.model.Role;
-import vboled.netcracker.musicstreamer.model.User;
+import vboled.netcracker.musicstreamer.model.user.Role;
+import vboled.netcracker.musicstreamer.model.user.User;
+import vboled.netcracker.musicstreamer.model.user.UserAdminView;
 import vboled.netcracker.musicstreamer.service.UserService;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/user")
 public class AdminController {
 
     private final UserService userService;
@@ -23,71 +26,54 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @PostMapping("/user/")
-    @PreAuthorize("hasAuthority('admin:perm')")
+    @PostMapping("/create/")
     public ResponseEntity<?> create(@RequestBody User user) {
-        userService.create(user);
-        return new ResponseEntity<>(user.toString(), HttpStatus.CREATED);
+        try {
+            userService.create(user);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    @GetMapping("/")
+    @GetMapping("/all/")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<List<User>> read() {
         final List<User> users = userService.readAll();
 
-        return users != null &&  !users.isEmpty()
+        return users != null && !users.isEmpty()
                 ? new ResponseEntity<>(users, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/username/{username}")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<String> readByUserName(@PathVariable(name = "username") String userName) {
-        final User user = userService.read(userName);
-
-        return user != null
-                ? new ResponseEntity<>(user.toString(), HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> readByUserName(@PathVariable(name = "username") String userName) {
+        try {
+            return new ResponseEntity<>(new UserAdminView(userService.read(userName)), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/id/{id}")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<String> read(@PathVariable(name = "id") int id) {
-        final User user = userService.read(id);
-
-        return user != null
-                ? new ResponseEntity<>(user.toString(), HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> read(@PathVariable(name = "id") int id) {
+        try {
+             return new ResponseEntity<>(new UserAdminView(userService.read(id)), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> update(@PathVariable(name = "id") int id, @RequestBody User user) {
         final boolean updated = userService.update(user, id);
 
         return updated
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-    }
-
-    @PutMapping("/name/{id}")
-    @PreAuthorize("hasAuthority('admin:perm')"  + " or authentication.principal.getId() == #id ")
-    public ResponseEntity<?> updateName(@PathVariable(name = "id") int id, @RequestBody String newName) {
-        final boolean updated = userService.updateName(newName, id);
-
-        return updated
-                ? new ResponseEntity<>(newName, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-    }
-
-    @PutMapping("/lastname/{id}")
-    @PreAuthorize("hasAuthority('admin:perm')"  + " or authentication.principal.getId() == #id ")
-    public ResponseEntity<?> updateLastName(@PathVariable(name = "id") int id, @RequestBody String newName) {
-        final boolean updated = userService.updateLastName(newName, id);
-
-        return updated
-                ? new ResponseEntity<>(newName, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+                ? new ResponseEntity<>(new UserAdminView(user), HttpStatus.OK)
+                : new ResponseEntity<>("User not found", HttpStatus.NOT_MODIFIED);
     }
 
     @PutMapping("/admin/role/{id}")
@@ -102,6 +88,7 @@ public class AdminController {
             role = Role.USER;
         else
             return new ResponseEntity<>("No such role", HttpStatus.BAD_REQUEST);
+
         final boolean updated = userService.updateRole(id, role);
 
         return updated

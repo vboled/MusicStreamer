@@ -1,4 +1,4 @@
-package vboled.netcracker.musicstreamer.model;
+package vboled.netcracker.musicstreamer.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,40 +36,8 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Override
-    public String toString() {
-        return "User{" + "\n" +
-                "\t id=" + id + "\n" +
-                "\t userName='" + userName + '\'' + "\n" +
-                "\t password='" + password + '\'' + "\n" +
-                "\t name='" + name + '\'' + "\n" +
-                "\t lastName='" + lastName + '\'' + "\n" +
-                "\t regionID=" + regionID + "\n" +
-                "\t email='" + email + '\'' + "\n" +
-                "\t phoneNumber='" + phoneNumber + '\'' + "\n" +
-                "\t createDate=" + createDate + "\n" +
-                "\t lastLoginDate=" + lastLoginDate + "\n" +
-                "\t playListID=" + playListID + "\n" +
-                "\t role=" + role + "\n" +
-                '}';
-    }
-
     @Column(name = "phone_number")
     private String phoneNumber;
-
-    @PrePersist
-    public void prePersist() {
-        createDate = LocalDateTime.now();
-        role = Role.USER;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-    }
 
     @Column(name = "create_date")
     private LocalDateTime createDate;
@@ -83,6 +51,12 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "role")
     private Role role;
+
+    @PrePersist
+    public void prePersist() {
+        createDate = LocalDateTime.now();
+        role = Role.USER;
+    }
 
     public String getPassword() {
         return password;
@@ -170,5 +144,13 @@ public class User {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(LocalDateTime createDate) {
+        this.createDate = createDate;
     }
 }

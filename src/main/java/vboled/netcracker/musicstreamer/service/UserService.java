@@ -1,10 +1,10 @@
 package vboled.netcracker.musicstreamer.service;
 
-import vboled.netcracker.musicstreamer.model.Role;
-import vboled.netcracker.musicstreamer.model.User;
+import vboled.netcracker.musicstreamer.model.user.Role;
+import vboled.netcracker.musicstreamer.model.user.User;
 
-import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public interface UserService {
 
@@ -14,7 +14,7 @@ public interface UserService {
 
     User read(String userName);
 
-    User read(int id);
+    User read(int id) throws NoSuchElementException;
 
     boolean update(User user, int id);
 

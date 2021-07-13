@@ -1,10 +1,9 @@
 package vboled.netcracker.musicstreamer.security;
 
-import org.hibernate.collection.internal.PersistentList;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import vboled.netcracker.musicstreamer.model.User;
+import vboled.netcracker.musicstreamer.model.user.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
