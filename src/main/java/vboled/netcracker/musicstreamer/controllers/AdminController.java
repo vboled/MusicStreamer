@@ -11,12 +11,13 @@ import vboled.netcracker.musicstreamer.model.user.UserAdminView;
 import vboled.netcracker.musicstreamer.service.UserService;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/admin")
 public class AdminController {
 
     private final UserService userService;
@@ -26,29 +27,32 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @PostMapping("/create/")
-    public ResponseEntity<?> create(@RequestBody User user) {
-        try {
-            userService.create(user);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }
+//    @PostMapping("/create/")
+//    public ResponseEntity<?> create(@RequestBody User user) {
+//        try {
+//            userService.create(user);
+//        } catch (IllegalArgumentException e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//        return new ResponseEntity<>(user, HttpStatus.CREATED);
+//    }
 
     @GetMapping("/all/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<List<User>> read() {
+    public ResponseEntity<?> read() {
         final List<User> users = userService.readAll();
-
-        return users != null && !users.isEmpty()
-                ? new ResponseEntity<>(users, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (users == null || users.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        List<UserAdminView> res = new ArrayList<>(users.size());
+        for (User user:users) {
+            res.add(new UserAdminView(user));
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping("/username/{username}")
+    @GetMapping("/username/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> readByUserName(@PathVariable(name = "username") String userName) {
+    public ResponseEntity<?> readByUserName(@RequestParam String userName) {
         try {
             return new ResponseEntity<>(new UserAdminView(userService.read(userName)), HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -56,9 +60,9 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/id/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> read(@PathVariable(name = "id") int id) {
+    public ResponseEntity<?> read(@RequestParam int id) {
         try {
              return new ResponseEntity<>(new UserAdminView(userService.read(id)), HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -66,19 +70,19 @@ public class AdminController {
         }
     }
 
-    @PutMapping("/update/{id}")
-    @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> update(@PathVariable(name = "id") int id, @RequestBody User user) {
-        final boolean updated = userService.update(user, id);
+//    @PutMapping("/update/{id}")
+//    @PreAuthorize("hasAuthority('admin:perm')")
+//    public ResponseEntity<?> update(@PathVariable(name = "id") int id, @RequestBody User user) {
+//        final boolean updated = userService.update(user, id);
+//
+//        return updated
+//                ? new ResponseEntity<>(new UserAdminView(user), HttpStatus.OK)
+//                : new ResponseEntity<>("User not found", HttpStatus.NOT_MODIFIED);
+//    }
 
-        return updated
-                ? new ResponseEntity<>(new UserAdminView(user), HttpStatus.OK)
-                : new ResponseEntity<>("User not found", HttpStatus.NOT_MODIFIED);
-    }
-
-    @PutMapping("/admin/role/{id}")
+    @PutMapping("/role/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> setRole(@PathVariable(name = "id") int id, @RequestParam String roleName) {
+    public ResponseEntity<?> setRole(@RequestParam int id, @RequestParam String roleName) {
         Role role;
         if (roleName.toLowerCase(Locale.ROOT).equals("admin"))
             role = Role.ADMIN;
@@ -96,9 +100,9 @@ public class AdminController {
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> delete(@PathVariable(name = "id") int id) {
+    public ResponseEntity<?> delete(@RequestParam int id) {
         final boolean deleted = userService.delete(id);
 
         return deleted

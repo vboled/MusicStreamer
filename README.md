@@ -8,31 +8,27 @@
 * Maven: Apache Maven 3.8.1
 * Java version: 11.0.11
 
-# User endpoints
+# User endpoints (PERMISSIONS: USER_CHANGE)
+ 
+* GET http://localhost:8080/user/info/ (Возвращает пользователю информацию о себе)
+* PUT http://localhost:8080/user/update/email/?newEmail=_NEWEMAIL_&password=_PASSWORD_ (Обновляет почту. Принимает
+  2 параметра: новую почту и пароль)
+* PUT http://localhost:8080/user/update/phone/?newPhoneNumber=_NEWPHONE_&password=_PASSWORD_ (Обновляет номер
+  телефона. Принимает 2 параметра: новый номер телефона и пароль)
+* PUT http://localhost:8080/user/update/name/?newName=_NEWNAME_ (Обновляет имя пользователя.
+  В качестве параметра принимает новое имя)
+* PUT http://localhost:8080/user/update/lastname/?newName=_NEWNAME_ (Обновляет фамилию пользователя.
+  В качестве параметра принимает новую фамилию)
+* PUT http://localhost:8080/user/update/password/?newPassword1=_NEWPASS1_&newPassword2=_NEWPASS2_
+  &password=_OLDPASS_ (Изменяет пароль пользователя. Принимает новый пароль, его подтверждение и старый пароль)
 
-Пример тела запроса: 
-  {
-    "userName" : "nUser1",
-    "password" : "nPass1",
-    "name" : "nName1",
-    "lastName" : "nLName1",
-    "regionID" : "1",
-    "email" : "nEmail1@com.ru",
-    "phoneNumber" : "111-11-11",
-    "createDate" : "2021-01-30",
-    "lastLoginDate" : "2021-06-29",
-    "playListID" : "2",
-    "type" : "admin"
-  }
-  
-* GET http://localhost:8080/users/ ("Возвращает List из всех пользователей")
-* POST http://localhost:8080/users/ ("Создает нового пользователя")
-* GET http://localhost:8080/users/id/{id} ("Возвращает пользователя по {id}")
-* GET http://localhost:8080/users/username/{username} ("Возвращает пользователя по {username}")
-* PUT http://localhost:8080/users/{id} ("Обновляет пользователя по {id}")
-* DELETE http://localhost:8080/users/{id} ("Удаляет пользователя по {id}")
+# Admin endpoints (PERMISSIONS: ADMIN_PERMISSION)
 
-# Image endpoints
-* GET http://localhost:8080/images ("Возвращает ID всех изображений")
-* POST http://localhost:8080/images + файл изображения в теле запроса ("Загружает
-  новое изображение")
+* GET http://localhost:8080/admin/all/ (Возвращает информацию о всех пользователях)
+* GET http://localhost:8080/admin/?id=_ID_ (Возвращает информацию о пользователе по ID. В качестве аргумента
+  принимает ID)
+* GET http://localhost:8080/admin/username/?userName=_USERNAME_ (Возвращает информацию о пользователе по userName.
+  В качетсве парамета принимает USERNAME)
+* PUT http://localhost:8080/admin/role/?id=_ID_&roleName=_ROLE_ (Обновляет роль пользователя(admin, user, owner).
+  Принимает 2 параметра ID, roleName)
+* DELETE http://localhost:8080/admin/delete/?id=_ID_ (Удаляет пользователя по ID)

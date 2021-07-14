@@ -24,5 +24,17 @@ public interface UserService {
 
     boolean updateLastName(String newName, int id);
 
+    boolean updatePassword(String newPassword, int id);
+
     boolean updateRole(int id, Role role);
+
+    void checkEmail(String email);
+
+    void checkPhone(String phone);
+
+    void checkUserName(String userName);
+
+    boolean updateEmail(String email, int id);
+
+    boolean updatePhone(String phone, int id);
 }

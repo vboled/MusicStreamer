@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
             "([A-Za-z\\d]([A-Za-z\\d-])*[A-Za-z\\d])" +
             "((.ru)|(.com)|(.net)|(.org))";
 
-    private final String PHONE_PATTERN = "\\+(\\d{1,3})(\\d{10})";
+    private final String PHONE_PATTERN = "(\\d{1,3})(\\d{10})";
 
     private final UserRepository userRepository;
 
@@ -31,18 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void create(User user) {
-        if (!user.getUserName().matches(USER_PATTERN))
-            throw new IllegalArgumentException("Wrong username format!!!");
-        if (userRepository.existsByUserName(user.getUserName()))
-            throw new IllegalArgumentException("Username is already taken!!!");
-        if (!user.getEmail().toLowerCase(Locale.ROOT).matches(EMAIL_PATTERN))
-            throw new IllegalArgumentException("Wrong Email format!!!");
-        if (userRepository.existsByEmail(user.getEmail()))
-            throw new IllegalArgumentException("Email is already taken!!!");
-        if (!user.getPhoneNumber().matches(PHONE_PATTERN))
-            throw new IllegalArgumentException("Wrong phone format!!!");
-        if (userRepository.existsByPhoneNumber(user.getPhoneNumber()))
-            throw new IllegalArgumentException("Phone Number is already taken!!!");
+        checkEmail(user.getEmail());
+        checkPhone(user.getPhoneNumber());
+        checkUserName(user.getUserName());
         userRepository.save(user);
     }
 
@@ -107,6 +98,63 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsById(id)) {
             User user = userRepository.getById(id);
             user.setRole(role);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void checkEmail(String email) {
+        if (!email.toLowerCase(Locale.ROOT).matches(EMAIL_PATTERN))
+            throw new IllegalArgumentException("Wrong Email format!!!");
+        if (userRepository.existsByEmail(email))
+            throw new IllegalArgumentException("Email is already taken!!!");
+    }
+
+    @Override
+    public void checkPhone(String phone) {
+        if (!phone.matches(PHONE_PATTERN))
+            throw new IllegalArgumentException("Wrong phone format!!!");
+        if (userRepository.existsByPhoneNumber(phone))
+            throw new IllegalArgumentException("Phone Number is already taken!!!");
+    }
+
+    @Override
+    public void checkUserName(String userName) {
+        if (!userName.matches(USER_PATTERN))
+            throw new IllegalArgumentException("Wrong username format!!!");
+        if (userRepository.existsByUserName(userName))
+            throw new IllegalArgumentException("Username is already taken!!!");
+    }
+
+    @Override
+    public boolean updateEmail(String email, int id) {
+        if (userRepository.existsById(id)) {
+            User user = userRepository.getById(id);
+            user.setEmail(email);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updatePhone(String phone, int id) {
+        if (userRepository.existsById(id)) {
+            User user = userRepository.getById(id);
+            user.setPhoneNumber(phone);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updatePassword(String password, int id) {
+        if (userRepository.existsById(id)) {
+            User user = userRepository.getById(id);
+            user.setPassword(password);
             userRepository.save(user);
             return true;
         }
