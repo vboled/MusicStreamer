@@ -27,15 +27,16 @@ public class AdminController {
         this.userService = userService;
     }
 
-//    @PostMapping("/create/")
-//    public ResponseEntity<?> create(@RequestBody User user) {
-//        try {
-//            userService.create(user);
-//        } catch (IllegalArgumentException e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//        return new ResponseEntity<>(user, HttpStatus.CREATED);
-//    }
+    @PostMapping("/create/")
+    @PreAuthorize("hasAuthority('admin:perm')")
+    public ResponseEntity<?> create(@RequestBody User user) {
+        try {
+            userService.create(user);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
 
     @GetMapping("/all/")
     @PreAuthorize("hasAuthority('admin:perm')")
@@ -70,15 +71,19 @@ public class AdminController {
         }
     }
 
-//    @PutMapping("/update/{id}")
-//    @PreAuthorize("hasAuthority('admin:perm')")
-//    public ResponseEntity<?> update(@PathVariable(name = "id") int id, @RequestBody User user) {
-//        final boolean updated = userService.update(user, id);
-//
-//        return updated
-//                ? new ResponseEntity<>(new UserAdminView(user), HttpStatus.OK)
-//                : new ResponseEntity<>("User not found", HttpStatus.NOT_MODIFIED);
-//    }
+    @PutMapping("/update/")
+    @PreAuthorize("hasAuthority('admin:perm')")
+    public ResponseEntity<?> update(@RequestParam int id, @RequestBody User user) {
+        boolean updated;
+        try {
+            updated = userService.update(user, id);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return updated
+                ? new ResponseEntity<>(new UserAdminView(user), HttpStatus.OK)
+                : new ResponseEntity<>("User not found", HttpStatus.NOT_MODIFIED);
+    }
 
     @PutMapping("/role/")
     @PreAuthorize("hasAuthority('admin:perm')")

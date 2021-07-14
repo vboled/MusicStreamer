@@ -55,7 +55,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean update(User user, int id) {
         if (userRepository.existsById(id)) {
+            checkEmail(user.getEmail());
+            checkPhone(user.getPhoneNumber());
+            checkUserName(user.getUserName());
             user.setId(id);
+            user.setCreateDate(userRepository.getById(id).getCreateDate());
             userRepository.save(user);
             return true;
         }
