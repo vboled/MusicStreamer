@@ -13,14 +13,14 @@ import java.util.NoSuchElementException;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final String USER_PATTERN = "[a-zA-z]+(\\w{0,30})";
+    private final String USER_PATTERN = "^[a-zA-z]+(\\w{0,30})$";
 
     private final String EMAIL_PATTERN =
-            "([A-Za-z\\d])([\\w-.]{0,20})([A-Za-z\\d])@([A-Za-z\\d]([A-Za-z\\d-])*[A-Za-z\\d].)*" +
+            "^([A-Za-z\\d])([\\w-.]{0,20})([A-Za-z\\d])@([A-Za-z\\d]([A-Za-z\\d-])*[A-Za-z\\d].)*" +
             "([A-Za-z\\d]([A-Za-z\\d-])*[A-Za-z\\d])" +
-            "((.ru)|(.com)|(.net)|(.org))";
+            "(.[A-Za-z]+)$";
 
-    private final String PHONE_PATTERN = "(\\d{1,3})(\\d{10})";
+    private final String PHONE_PATTERN = "^(\\d{1,3})(\\d{10})$";
 
     private final UserRepository userRepository;
 
