@@ -50,4 +50,6 @@ public interface UserService {
     User getByEmail(String email);
 
     User getByPhoneNumber(String phoneNumber);
+
+    User updateCommonFields(User update, int id);
 }

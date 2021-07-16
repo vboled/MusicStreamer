@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import vboled.netcracker.musicstreamer.model.user.User;
@@ -88,26 +89,16 @@ public class UserController {
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
-    @PutMapping("/update/name/")
+    @PutMapping("/update/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> updateName(@AuthenticationPrincipal SecurityUser user,
-                                        @RequestParam String newName) {
-        final boolean updated = userService.updateName(newName, user.getId());
-
-        return updated
-                ? new ResponseEntity<>(newName, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-    }
-
-    @PutMapping("/update/lastname/")
-    @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> updateLastName(@AuthenticationPrincipal SecurityUser user,
-                                            @RequestParam String newName) {
-        final boolean updated = userService.updateLastName(newName, user.getId());
-
-        return updated
-                ? new ResponseEntity<>(newName, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-    }
+    public ResponseEntity<?> updateCommonField(@AuthenticationPrincipal SecurityUser user,
+                                        @RequestBody User updateUser) {
+        try{
+            User res = userService.updateCommonFields(updateUser, user.getId());
+            return new ResponseEntity<>(new UserView(res), HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+}
 
 }

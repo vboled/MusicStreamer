@@ -1,6 +1,7 @@
 package vboled.netcracker.musicstreamer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.user.Role;
 import vboled.netcracker.musicstreamer.model.user.User;
@@ -193,5 +194,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getByPhoneNumber(String phoneNumber) {
         return userRepository.findByPhoneNumber(phoneNumber).get();
+    }
+
+    @Override
+    public User updateCommonFields(User update, int id) {
+        if (!userRepository.existsById(id))
+            throw new UsernameNotFoundException("No user with such id");
+        User userToUpdate = userRepository.getById(id);
+        if (update.getName() != null)
+            userToUpdate.setName(update.getName());
+        if (update.getLastName() != null)
+            userToUpdate.setLastName(update.getLastName());
+        userRepository.save(userToUpdate);
+        return userToUpdate;
     }
 }
