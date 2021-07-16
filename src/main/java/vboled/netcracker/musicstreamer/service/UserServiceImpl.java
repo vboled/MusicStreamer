@@ -164,4 +164,34 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
+
+    @Override
+    public boolean isValidUserName(String userName) {
+        return userName.matches(USER_PATTERN);
+    }
+
+    @Override
+    public boolean isValidEmail(String email) {
+        return email.matches(EMAIL_PATTERN);
+    }
+
+    @Override
+    public boolean isValidPhoneNumber(String phone) {
+        return phone.matches(PHONE_PATTERN);
+    }
+
+    @Override
+    public User getByUserName(String userName) {
+        return userRepository.findByUserName(userName).get();
+    }
+
+    @Override
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email).get();
+    }
+
+    @Override
+    public User getByPhoneNumber(String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber).get();
+    }
 }

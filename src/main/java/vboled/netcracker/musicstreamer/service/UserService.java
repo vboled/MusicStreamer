@@ -5,6 +5,7 @@ import vboled.netcracker.musicstreamer.model.user.User;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public interface UserService {
 
@@ -37,4 +38,16 @@ public interface UserService {
     boolean updateEmail(String email, int id);
 
     boolean updatePhone(String phone, int id);
+
+    boolean isValidUserName(String userName);
+
+    boolean isValidEmail(String email);
+
+    boolean isValidPhoneNumber(String phone);
+
+    User getByUserName(String userName);
+
+    User getByEmail(String email);
+
+    User getByPhoneNumber(String phoneNumber);
 }

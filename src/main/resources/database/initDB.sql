@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users
     name            VARCHAR(100) NOT NULL,
     regionid        INTEGER NOT NULL,
     email           VARCHAR(255) NOT NULL UNIQUE,
-    phone_number    VARCHAR(30) NOT NULL,
+    phone_number    VARCHAR(30) NOT NULL UNIQUE,
     create_date     TIMESTAMP,
     last_login_date DATE,
     play_listid     INTEGER,
