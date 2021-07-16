@@ -14,7 +14,14 @@ CREATE TABLE IF NOT EXISTS users
     role            VARCHAR(20)
 );
 
-CREATE TABLE IF NOT EXISTS images
+CREATE TABLE IF NOT EXISTS genres
 (
-    id varchar(255) PRIMARY KEY
+    id              SERIAL PRIMARY KEY,
+    name            VARCHAR(50) NOT NULL UNIQUE
 );
+
+-- CREATE TABLE IF NOT EXISTS songs
+-- (
+--     uuid            VARCHAR(100) PRIMARY KEY,
+--     owner_id        INTEGER REFERENCES users (id)
+-- );

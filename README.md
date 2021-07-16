@@ -36,3 +36,8 @@
 * GET http://localhost:8080/images ("Возвращает ID всех изображений")
 * POST http://localhost:8080/images + файл изображения в теле запроса ("Загружает
   новое изображение")
+  
+# Genre endpoints
+* GET http://localhost:8080/genre/?id=_ID_ (Возвращает жанр по _ID_)
+* POST http://localhost:8080/genre/ (Создает новый жанр. Принимает в теле запроса новый жанр)
+* PUT http://localhost:8080/genre/?name=_NAME_&id=_ID_ (Изменяет название жанра. Принимает новое имя и ID)
