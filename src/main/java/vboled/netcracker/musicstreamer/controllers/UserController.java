@@ -1,7 +1,6 @@
 package vboled.netcracker.musicstreamer.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,12 +9,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import vboled.netcracker.musicstreamer.model.user.User;
-import vboled.netcracker.musicstreamer.model.user.UserAdminView;
 import vboled.netcracker.musicstreamer.model.user.UserView;
 import vboled.netcracker.musicstreamer.security.SecurityUser;
 import vboled.netcracker.musicstreamer.service.UserService;
 
-import java.security.Principal;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -24,10 +21,12 @@ import java.util.NoSuchElementException;
 public class UserController {
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/info/")
@@ -47,7 +46,7 @@ public class UserController {
         String password = json.get("password"), newEmail = json.get("newEmail");
         if (password == null || newEmail == null)
             return new ResponseEntity<>("Wrong parameters", HttpStatus.BAD_REQUEST);
-        if(!user.getPassword().equals(password))
+        if(!passwordEncoder.matches(password, user.getPassword()))
             return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
         try {
             userService.checkEmail(newEmail);
@@ -68,7 +67,7 @@ public class UserController {
         String password = json.get("password"), newPhoneNumber = json.get("newPhoneNumber");
         if (password == null || newPhoneNumber == null)
             return new ResponseEntity<>("Wrong parameters", HttpStatus.BAD_REQUEST);
-        if (!user.getPassword().equals(password))
+        if(!passwordEncoder.matches(password, user.getPassword()))
             return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
         try {
             userService.checkPhone(newPhoneNumber);
@@ -89,11 +88,11 @@ public class UserController {
                 newPassword2 = json.get("newPassword2");
         if (password == null || newPassword2 == null || newPassword1 == null)
             return new ResponseEntity<>("Wrong parameters", HttpStatus.BAD_REQUEST);
-        if (!user.getPassword().equals(password))
+        if(!passwordEncoder.matches(password, user.getPassword()))
             return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
         if (!newPassword1.equals(newPassword2))
             return new ResponseEntity<>("Input password's doesn't match", HttpStatus.BAD_REQUEST);
-        final boolean updated = userService.updatePassword(newPassword1, user.getId());
+        final boolean updated = userService.updatePassword(passwordEncoder.encode(newPassword1), user.getId());
         return updated
                 ? new ResponseEntity<>("Password was changed!!!", HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
