@@ -24,5 +24,5 @@
 | GET     | http://localhost:8080/admin/all/    | NONE |Возвращает информацию о всех пользователях|
 | GET     | http://localhost:8080/admin/username/    | userName=$USERNAME$ |Возвращает информацию о пользователе по userName|
 | GET     | http://localhost:8080/admin/id/    | id=$ID$ |Возвращает информацию о пользователе по ID|
-| PUT     | http://localhost:8080/admin/update/?id=$ID$    | user=$NEWUSER$ |Обновляет все ненулевые поля пользователя|
+| PUT     | http://localhost:8080/user/update/    | user=$NEWUSER$ |Обновляет все ненулевые поля пользователя. В теле необходимо передать id пользователя|
 | DELETE |http://localhost:8080/admin/delete/?id=$Id$|NONE|Удаляет пользователя по ID|
