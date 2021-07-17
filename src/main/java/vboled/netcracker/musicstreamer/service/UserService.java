@@ -21,13 +21,7 @@ public interface UserService {
 
     boolean delete(int id);
 
-    boolean updateName(String newName, int id);
-
-    boolean updateLastName(String newName, int id);
-
     boolean updatePassword(String newPassword, int id);
-
-    boolean updateRole(int id, Role role);
 
     void checkEmail(String email);
 
@@ -51,5 +45,11 @@ public interface UserService {
 
     User getByPhoneNumber(String phoneNumber);
 
-    User updateCommonFields(User update, int id);
+    User userFullUpdate(User update);
+
+    User userNotFullUpdate(User update, int id);
+
+    boolean matches(String hashed, String common);
+
+    String encode(String toHash);
 }

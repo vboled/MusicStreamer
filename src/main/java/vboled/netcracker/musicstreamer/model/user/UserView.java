@@ -6,7 +6,6 @@ import lombok.Data;
 public class UserView {
 
     public UserView(User user) {
-        this.id = user.getId();
         this.userName = user.getUserName();
         this.name = user.getName();
         this.lastName = user.getLastName();
@@ -14,8 +13,6 @@ public class UserView {
         this.phoneNumber = user.getPhoneNumber();
         this.regionName = "Implement_this";
     }
-
-    private int id;
 
     private String userName;
 

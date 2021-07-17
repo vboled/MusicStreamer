@@ -42,18 +42,14 @@ public class AdminController {
         final List<User> users = userService.readAll();
         if (users == null || users.isEmpty())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        List<UserAdminView> res = new ArrayList<>(users.size());
-        for (User user:users) {
-            res.add(new UserAdminView(user));
-        }
-        return new ResponseEntity<>(res, HttpStatus.OK);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/username/")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> readByUserName(@RequestBody String userName) {
         try {
-            return new ResponseEntity<>(new UserAdminView(userService.read(userName)), HttpStatus.OK);
+            return new ResponseEntity<>(userService.read(userName), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
@@ -63,7 +59,7 @@ public class AdminController {
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> read(@RequestBody int id) {
         try {
-             return new ResponseEntity<>(new UserAdminView(userService.read(id)), HttpStatus.OK);
+             return new ResponseEntity<>(userService.read(id), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
@@ -79,7 +75,7 @@ public class AdminController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return updated
-                ? new ResponseEntity<>(new UserAdminView(user), HttpStatus.OK)
+                ? new ResponseEntity<>(user, HttpStatus.OK)
                 : new ResponseEntity<>("User not found", HttpStatus.NOT_MODIFIED);
     }
 

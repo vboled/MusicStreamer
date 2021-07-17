@@ -2,8 +2,9 @@ package vboled.netcracker.musicstreamer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import vboled.netcracker.musicstreamer.model.user.Role;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.repository.UserRepository;
 
@@ -24,6 +25,8 @@ public class UserServiceImpl implements UserService {
     private final String PHONE_PATTERN = "^(\\d{1,3})(\\d{10})$";
 
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
@@ -77,63 +80,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateName(String newName, int id) {
-        if (userRepository.existsById(id)) {
-            User user = userRepository.getById(id);
-            user.setName(newName);
-            userRepository.save(user);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean updateLastName(String newName, int id) {
-        if (userRepository.existsById(id)) {
-            User user = userRepository.getById(id);
-            user.setName(newName);
-            userRepository.save(user);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean updateRole(int id, Role role) {
-        if (userRepository.existsById(id)) {
-            User user = userRepository.getById(id);
-            user.setRole(role);
-            userRepository.save(user);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void checkEmail(String email) {
-        if (!email.toLowerCase(Locale.ROOT).matches(EMAIL_PATTERN))
-            throw new IllegalArgumentException("Wrong Email format!!!");
-        if (userRepository.existsByEmail(email))
-            throw new IllegalArgumentException("Email is already taken!!!");
-    }
-
-    @Override
-    public void checkPhone(String phone) {
-        if (!phone.matches(PHONE_PATTERN))
-            throw new IllegalArgumentException("Wrong phone format!!!");
-        if (userRepository.existsByPhoneNumber(phone))
-            throw new IllegalArgumentException("Phone Number is already taken!!!");
-    }
-
-    @Override
-    public void checkUserName(String userName) {
-        if (!userName.matches(USER_PATTERN))
-            throw new IllegalArgumentException("Wrong username format!!!");
-        if (userRepository.existsByUserName(userName))
-            throw new IllegalArgumentException("Username is already taken!!!");
-    }
-
-    @Override
     public boolean updateEmail(String email, int id) {
         if (userRepository.existsById(id)) {
             User user = userRepository.getById(id);
@@ -167,6 +113,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void checkEmail(String email) {
+        if (email == null)
+            throw new IllegalArgumentException("Email is null");
+        if (!email.toLowerCase(Locale.ROOT).matches(EMAIL_PATTERN))
+            throw new IllegalArgumentException("Wrong Email format!!!");
+        if (userRepository.existsByEmail(email))
+            throw new IllegalArgumentException("Email is already taken!!!");
+    }
+
+    @Override
+    public void checkPhone(String phone) {
+        if (!phone.matches(PHONE_PATTERN))
+            throw new IllegalArgumentException("Wrong phone format!!!");
+        if (userRepository.existsByPhoneNumber(phone))
+            throw new IllegalArgumentException("Phone Number is already taken!!!");
+    }
+
+    @Override
+    public void checkUserName(String userName) {
+        if (!userName.matches(USER_PATTERN))
+            throw new IllegalArgumentException("Wrong username format!!!");
+        if (userRepository.existsByUserName(userName))
+            throw new IllegalArgumentException("Username is already taken!!!");
+    }
+
+    @Override
     public boolean isValidUserName(String userName) {
         return userName.matches(USER_PATTERN);
     }
@@ -197,15 +169,68 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateCommonFields(User update, int id) {
+    public User userNotFullUpdate(User update, int id) {
+        User updated = updateCommonFields(update, id);
+        userRepository.save(updated);
+        return updated;
+    }
+
+    private User updateCommonFields(User update, int id) throws UsernameNotFoundException, IllegalArgumentException {
         if (!userRepository.existsById(id))
             throw new UsernameNotFoundException("No user with such id");
         User userToUpdate = userRepository.getById(id);
+        if (update.getUserName() != null) {
+            if (userRepository.existsByUserName(update.getUserName()))
+                throw new IllegalArgumentException("UserName is taken");
+            userToUpdate.setUserName(update.getUserName());
+        }
         if (update.getName() != null)
             userToUpdate.setName(update.getName());
         if (update.getLastName() != null)
             userToUpdate.setLastName(update.getLastName());
+        return userToUpdate;
+    }
+
+    @Override
+    public User userFullUpdate(User update) {
+        User userToUpdate = updateCommonFields(update, update.getId());
+        if (update.getPassword() != null) {
+            userToUpdate.setPassword(passwordEncoder.encode(update.getPassword()));
+        }
+        if (update.getRegionID() != -1) {
+            userToUpdate.setRegionID(update.getRegionID());
+        }
+        if (update.getEmail() != null) {
+            checkEmail(update.getEmail());
+            userToUpdate.setEmail(update.getEmail());
+        }
+        if (update.getPhoneNumber() != null) {
+            checkPhone(update.getPhoneNumber());
+            userToUpdate.setPhoneNumber(update.getPhoneNumber());
+        }
+        if (update.getCreateDate() != null) {
+            userToUpdate.setCreateDate(update.getCreateDate());
+        }
+        if (update.getLastLoginDate() != null) {
+            userToUpdate.setLastLoginDate(update.getLastLoginDate());
+        }
+        if (update.getPlayListID() != -1) {
+            userToUpdate.setPlayListID(update.getPlayListID());
+        }
+        if (update.getRole() != null) {
+            userToUpdate.setRole(update.getRole());
+        }
         userRepository.save(userToUpdate);
         return userToUpdate;
+    }
+
+    @Override
+    public boolean matches(String hashed, String common) {
+        return passwordEncoder.matches(hashed, common);
+    }
+
+    @Override
+    public String encode(String toHash) {
+        return passwordEncoder.encode(toHash);
     }
 }

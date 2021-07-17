@@ -32,7 +32,7 @@ public class User {
     private String lastName;
 
     @Column(name = "regionid")
-    private int regionID;
+    private int regionID = -1;
 
     @Column(name = "email")
     private String email;
@@ -47,7 +47,7 @@ public class User {
     private Date lastLoginDate;
 
     @Column(name = "play_listid")
-    private int playListID;
+    private int playListID = -1;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "role")
