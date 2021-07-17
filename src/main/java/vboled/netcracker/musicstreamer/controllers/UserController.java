@@ -16,6 +16,7 @@ import vboled.netcracker.musicstreamer.security.SecurityUser;
 import vboled.netcracker.musicstreamer.service.UserService;
 
 import java.security.Principal;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -42,8 +43,11 @@ public class UserController {
     @PutMapping("/update/email/")
     @PreAuthorize("hasAuthority('user:perm')")
     public ResponseEntity<?> updateEmail(@AuthenticationPrincipal SecurityUser user,
-                 @RequestParam String newEmail, @RequestParam String password) {
-        if (!user.getPassword().equals(password))
+                                         @RequestBody Map<String, String> json) {
+        String password = json.get("password"), newEmail = json.get("newEmail");
+        if (password == null || newEmail == null)
+            return new ResponseEntity<>("Wrong parameters", HttpStatus.BAD_REQUEST);
+        if(!user.getPassword().equals(password))
             return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
         try {
             userService.checkEmail(newEmail);
@@ -60,7 +64,10 @@ public class UserController {
     @PutMapping("/update/phone/")
     @PreAuthorize("hasAuthority('user:perm')")
     public ResponseEntity<?> updatePhoneNumber(@AuthenticationPrincipal SecurityUser user,
-                                         @RequestParam String newPhoneNumber, @RequestParam String password) {
+                                               @RequestBody Map<String, String> json) {
+        String password = json.get("password"), newPhoneNumber = json.get("newPhoneNumber");
+        if (password == null || newPhoneNumber == null)
+            return new ResponseEntity<>("Wrong parameters", HttpStatus.BAD_REQUEST);
         if (!user.getPassword().equals(password))
             return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
         try {
@@ -69,7 +76,6 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         final boolean updated = userService.updatePhone(newPhoneNumber, user.getId());
-
         return updated
                 ? new ResponseEntity<>(newPhoneNumber, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
@@ -78,7 +84,11 @@ public class UserController {
     @PutMapping("/update/password/")
     @PreAuthorize("hasAuthority('user:perm')")
     public ResponseEntity<?> updatePassword(@AuthenticationPrincipal SecurityUser user,
-           @RequestParam String newPassword1, @RequestParam String newPassword2, @RequestParam String password) {
+                                            @RequestBody Map<String, String> json) {
+        String password = json.get("password"), newPassword1 = json.get("newPassword1"),
+                newPassword2 = json.get("newPassword2");
+        if (password == null || newPassword2 == null || newPassword1 == null)
+            return new ResponseEntity<>("Wrong parameters", HttpStatus.BAD_REQUEST);
         if (!user.getPassword().equals(password))
             return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
         if (!newPassword1.equals(newPassword2))
@@ -99,6 +109,6 @@ public class UserController {
         } catch (UsernameNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-}
+    }
 
 }

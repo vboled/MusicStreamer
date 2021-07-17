@@ -29,7 +29,6 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    @JsonIgnore
     @Column(name = "regionid")
     private int regionID;
 

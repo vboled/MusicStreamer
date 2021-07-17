@@ -10,7 +10,7 @@ import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.model.user.UserAdminView;
 import vboled.netcracker.musicstreamer.service.UserService;
 
-import java.security.Principal;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -53,7 +53,7 @@ public class AdminController {
 
     @GetMapping("/username/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> readByUserName(@RequestParam String userName) {
+    public ResponseEntity<?> readByUserName(@RequestBody String userName) {
         try {
             return new ResponseEntity<>(new UserAdminView(userService.read(userName)), HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -63,7 +63,7 @@ public class AdminController {
 
     @GetMapping("/id/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> read(@RequestParam int id) {
+    public ResponseEntity<?> read(@RequestBody int id) {
         try {
              return new ResponseEntity<>(new UserAdminView(userService.read(id)), HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -83,26 +83,6 @@ public class AdminController {
         return updated
                 ? new ResponseEntity<>(new UserAdminView(user), HttpStatus.OK)
                 : new ResponseEntity<>("User not found", HttpStatus.NOT_MODIFIED);
-    }
-
-    @PutMapping("/role/")
-    @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> setRole(@RequestParam int id, @RequestParam String roleName) {
-        Role role;
-        if (roleName.toLowerCase(Locale.ROOT).equals("admin"))
-            role = Role.ADMIN;
-        else if (roleName.toLowerCase(Locale.ROOT).equals("owner"))
-            role = Role.OWNER;
-        else if (roleName.toLowerCase(Locale.ROOT).equals("user"))
-            role = Role.USER;
-        else
-            return new ResponseEntity<>("No such role", HttpStatus.BAD_REQUEST);
-
-        final boolean updated = userService.updateRole(id, role);
-
-        return updated
-                ? new ResponseEntity<>(role.name(), HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
     @DeleteMapping("/delete/")
