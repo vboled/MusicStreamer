@@ -1,20 +1,15 @@
 package vboled.netcracker.musicstreamer.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.server.GracefulShutdownCallback;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import vboled.netcracker.musicstreamer.model.user.Permission;
 import vboled.netcracker.musicstreamer.model.user.User;
-import vboled.netcracker.musicstreamer.model.user.UserAdminView;
 import vboled.netcracker.musicstreamer.model.user.UserView;
-import vboled.netcracker.musicstreamer.security.SecurityUser;
 import vboled.netcracker.musicstreamer.service.UserService;
 
 import java.util.Map;
@@ -33,7 +28,7 @@ public class UserController {
 
     @GetMapping("/info/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> read(@AuthenticationPrincipal SecurityUser user) {
+    public ResponseEntity<?> read(@AuthenticationPrincipal User user) {
         try {
             return new ResponseEntity<>(new UserView(userService.read(user.getId())), HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -43,7 +38,7 @@ public class UserController {
 
     @PutMapping("/update/email/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> updateEmail(@AuthenticationPrincipal SecurityUser user,
+    public ResponseEntity<?> updateEmail(@AuthenticationPrincipal User user,
                                          @RequestBody Map<String, String> json) {
         String password = json.get("password"), newEmail = json.get("newEmail");
         if (password == null || newEmail == null)
@@ -64,7 +59,7 @@ public class UserController {
 
     @PutMapping("/update/phone/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> updatePhoneNumber(@AuthenticationPrincipal SecurityUser user,
+    public ResponseEntity<?> updatePhoneNumber(@AuthenticationPrincipal User user,
                                                @RequestBody Map<String, String> json) {
         String password = json.get("password"), newPhoneNumber = json.get("newPhoneNumber");
         if (password == null || newPhoneNumber == null)
@@ -84,7 +79,7 @@ public class UserController {
 
     @PutMapping("/update/password/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal SecurityUser user,
+    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal User user,
                                             @RequestBody Map<String, String> json) {
         String password = json.get("password"), newPassword1 = json.get("newPassword1"),
                 newPassword2 = json.get("newPassword2");
@@ -102,11 +97,11 @@ public class UserController {
 
     @PutMapping("/update/")
     @PreAuthorize("hasAnyAuthority('admin:perm','user:perm')")
-    public ResponseEntity<?> updateUser(@AuthenticationPrincipal SecurityUser user,
+    public ResponseEntity<?> updateUser(@AuthenticationPrincipal User user,
                                         @RequestBody User updateUser) {
         try{
             User res = null;
-            if (user.getPermissions().contains(Permission.ADMIN_PERMISSION)) {
+            if (user.getRole().getPermissions().contains(Permission.ADMIN_PERMISSION)) {
                 res = userService.userFullUpdate(updateUser);
                 return new ResponseEntity<>(res, HttpStatus.OK);
             }

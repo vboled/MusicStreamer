@@ -6,7 +6,7 @@ import lombok.Data;
 public class UserView {
 
     public UserView(User user) {
-        this.userName = user.getUserName();
+        this.userName = user.getUsername();
         this.name = user.getName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();

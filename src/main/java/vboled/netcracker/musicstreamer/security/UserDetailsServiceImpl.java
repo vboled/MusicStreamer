@@ -28,6 +28,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         } else if (userService.isValidEmail(userName)) {
             user = userService.getByEmail(userName);
         }
-        return SecurityUser.fromUser(user);
+        return user;
     }
 }
