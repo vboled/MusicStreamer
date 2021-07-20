@@ -1,4 +1,4 @@
-package vboled.netcracker.musicstreamer.model;
+package vboled.netcracker.musicstreamer.model.user;
 
 public enum Permission {
     USER_CHANGE("user:perm"),

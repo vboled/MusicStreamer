@@ -1,4 +1,4 @@
-package vboled.netcracker.musicstreamer.model;
+package vboled.netcracker.musicstreamer.model.user;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

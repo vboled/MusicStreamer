@@ -4,9 +4,6 @@
 
 Доска Trello: https://trello.com/invite/b/XKEp5G2q/1a801f58e4d194056e0d89a65c76dd70/music-streaming
 
-Чат группы: https://join.skype.com/HqLdw4y8ILlL
-
-
 
 ## Что должно быть готово к финалу проекта:
 
