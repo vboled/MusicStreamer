@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Entity
@@ -11,8 +12,7 @@ import java.time.LocalDateTime;
 public class Song {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "serial", name = "uuid")
+    @Column(name = "uuid")
     private String uuid;
 
     @Column(name = "owner_id")
@@ -45,12 +45,12 @@ public class Song {
     @Column(name = "volume")
     private int volume;
 
-    @Column(name = "reliase_date")
-    private LocalDateTime realiseDate;
+    @Column(name = "realise_date")
+    private Date realiseDate;
 
     @Column(name = "create_date")
-    private LocalDateTime createDate;
+    private Date createDate;
 
     @Column(name = "edit_date")
-    private LocalDateTime editDate;
+    private Date editDate;
 }

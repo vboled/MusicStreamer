@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vboled.netcracker.musicstreamer.service.FileControllerService;
 import vboled.netcracker.musicstreamer.service.FileControllerServiceImpl;
 
 import java.util.Arrays;
@@ -16,8 +15,6 @@ import java.util.Set;
 @RestController
 @RequestMapping("/images")
 public class ImageController {
-
-    private final FileControllerService fileControllerService = new FileControllerServiceImpl();
 
     private final Set<String> imageExt = new HashSet<String>(Arrays.asList(".gif", ".png", ".jpeg", ".jpg"));
 
@@ -35,7 +32,7 @@ public class ImageController {
     @GetMapping("/{uuid}")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> read(@PathVariable(name = "uuid") String uuid) {
-        return fileControllerService.read(uuid, uploadPath + "/" + imageDir);
+        return FileControllerServiceImpl.read(uuid, uploadPath + "/" + imageDir);
     }
 
     @PostMapping("/")
@@ -43,13 +40,13 @@ public class ImageController {
     public ResponseEntity<?> create(@RequestParam("file") MultipartFile file) {
         if (file.getSize() > maxImageSize)
             return new ResponseEntity<>("File size exceeds 5 MB", HttpStatus.BAD_REQUEST);
-        return fileControllerService.uploadFile(file, imageExt, uploadPath + "/" + imageDir);
+        return FileControllerServiceImpl.uploadFile(file, imageExt, uploadPath + "/" + imageDir);
     }
 
     @DeleteMapping("/{uuid}")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> delete(@PathVariable(name = "uuid") String uuid) {
-        return fileControllerService.delete(uuid, uploadPath + "/" + imageDir);
+        return FileControllerServiceImpl.delete(uuid, uploadPath + "/" + imageDir);
     }
 
     @PutMapping("/{uuid}")

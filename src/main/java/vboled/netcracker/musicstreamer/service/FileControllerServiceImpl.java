@@ -12,9 +12,9 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
-public class FileControllerServiceImpl implements FileControllerService {
+public class FileControllerServiceImpl {
 
-    private String getContentType(String uuid) {
+    private static String getContentType(String uuid) {
         String ext = uuid.substring(uuid.lastIndexOf('.'));
         if (ext.equals(".jpeg") || ext.equals(".jpg"))
             return "image/jpeg";
@@ -31,7 +31,7 @@ public class FileControllerServiceImpl implements FileControllerService {
         throw new IllegalArgumentException("Wrong file ext.");
     }
 
-    public ResponseEntity<?> read(String uuid, String path) {
+    public static ResponseEntity<?> read(String uuid, String path) {
         try {
             byte[] image = Files.readAllBytes(Path.of(path + "/" + uuid));
             HttpHeaders headers = new HttpHeaders();
@@ -44,7 +44,7 @@ public class FileControllerServiceImpl implements FileControllerService {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    public ResponseEntity<?> uploadFile(MultipartFile file, Set<String> extensions, String path) {
+    public static ResponseEntity<?> uploadFile(MultipartFile file, Set<String> extensions, String path) {
         if (file == null)
             return new ResponseEntity<>("File is null", HttpStatus.BAD_REQUEST);
 
@@ -68,7 +68,7 @@ public class FileControllerServiceImpl implements FileControllerService {
         return new ResponseEntity<>(newFileName, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<?> delete(String uuid, String path) {
+    public static ResponseEntity<?> delete(String uuid, String path) {
         File file = new File(path + "/" + uuid);
         if (file.delete())
             return  new ResponseEntity<>(HttpStatus.OK);
