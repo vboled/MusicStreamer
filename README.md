@@ -8,36 +8,21 @@
 * Maven: Apache Maven 3.8.1
 * Java version: 11.0.11
 
-# User endpoints
+# User endpoints (PERMISSIONS: USER_CHANGE)
 
-Пример тела запроса: 
-  {
-    "userName" : "nUser1",
-    "password" : "nPass1",
-    "name" : "nName1",
-    "lastName" : "nLName1",
-    "regionID" : "1",
-    "email" : "nEmail1@com.ru",
-    "phoneNumber" : "111-11-11",
-    "createDate" : "2021-01-30",
-    "lastLoginDate" : "2021-06-29",
-    "playListID" : "2",
-    "type" : "admin"
-  }
-  
-* GET http://localhost:8080/users/ ("Возвращает List из всех пользователей")
-* POST http://localhost:8080/users/ ("Создает нового пользователя")
-* GET http://localhost:8080/users/id/{id} ("Возвращает пользователя по {id}")
-* GET http://localhost:8080/users/username/{username} ("Возвращает пользователя по {username}")
-* PUT http://localhost:8080/users/{id} ("Обновляет пользователя по {id}")
-* DELETE http://localhost:8080/users/{id} ("Удаляет пользователя по {id}")
+| Тип       | URL                | Параметры |Описание|
+| :-------------: |:------------------:| :-----:|:----|
+|GET | http://localhost:8080/user/info/|NONE | Возвращает пользователю информацию о себе|
+|PUT | http://localhost:8080/user/update/email/|password=$PASSWORD$, newEmail=$NEWEMAIL$ | Обновляет почту|
+|PUT | http://localhost:8080/user/update/phone/|password=$PASSWORD$, newPhoneNumber=$NEWPHONENUMBER$ |Обновляет номер телефона|
+|PUT | http://localhost:8080/user/update/password/|password=$PASSWORD$,  newPassword1=$NEWPASS1$, newPassword2=$NEWPASS2$| Обновляет пароль|
+|PUT | http://localhost:8080/user/update/ |name=$NEWNAME$ ... | Обновляет пользовательские данные(имя, фамилия и т.д). В качестве параметров принимает набор полей, которые необходимо обновить|
 
-# Image endpoints
-* GET http://localhost:8080/images ("Возвращает ID всех изображений")
-* POST http://localhost:8080/images + файл изображения в теле запроса ("Загружает
-  новое изображение")
-  
-# Genre endpoints
-* GET http://localhost:8080/genre/?id=_ID_ (Возвращает жанр по _ID_)
-* POST http://localhost:8080/genre/ (Создает новый жанр. Принимает в теле запроса новый жанр)
-* PUT http://localhost:8080/genre/?name=_NAME_&id=_ID_ (Изменяет название жанра. Принимает новое имя и ID)
+# Admin endpoints (PERMISSIONS: ADMIN_PERMISSION)
+| Тип       | URL                | Параметры |Описание|
+| :-------------: |:------------------:| :-----:|:----|
+| GET     | http://localhost:8080/admin/all/    | NONE |Возвращает информацию о всех пользователях|
+| GET     | http://localhost:8080/admin/username/    | userName=$USERNAME$ |Возвращает информацию о пользователе по userName|
+| GET     | http://localhost:8080/admin/id/    | id=$ID$ |Возвращает информацию о пользователе по ID|
+| PUT     | http://localhost:8080/user/update/    | user=$NEWUSER$ |Обновляет все ненулевые поля пользователя. В теле необходимо передать id пользователя|
+| DELETE |http://localhost:8080/admin/delete/?id=$Id$|NONE|Удаляет пользователя по ID|
