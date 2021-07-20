@@ -2,6 +2,8 @@ package vboled.netcracker.musicstreamer.service;
 
 import vboled.netcracker.musicstreamer.model.Genre;
 
+import java.util.List;
+
 public interface GenreService {
 
     boolean existByName(String name);
@@ -13,4 +15,6 @@ public interface GenreService {
     boolean create(Genre genre);
 
     boolean existById(int id);
+
+    List<Genre> readAll();
 }

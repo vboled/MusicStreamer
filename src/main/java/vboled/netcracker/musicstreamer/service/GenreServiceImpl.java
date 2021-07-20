@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Genre;
 import vboled.netcracker.musicstreamer.repository.GenreRepository;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -46,4 +47,11 @@ public class GenreServiceImpl implements GenreService {
     public boolean existById(int id) {
         return genreRepository.existsById(id);
     }
+
+    @Override
+    public List<Genre> readAll() {
+        return genreRepository.findAll();
+    }
+
+
 }

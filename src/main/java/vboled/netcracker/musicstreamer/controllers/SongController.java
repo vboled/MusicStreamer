@@ -1,16 +1,21 @@
 package vboled.netcracker.musicstreamer.controllers;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.google.gson.stream.MalformedJsonException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.service.FileControllerService;
 import vboled.netcracker.musicstreamer.service.FileControllerServiceImpl;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -35,8 +40,19 @@ public class SongController {
 
     @PostMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> create(@RequestParam("file") MultipartFile file) {
-        return fileControllerService.uploadFile(file, imageExt, uploadPath + "/" + audioDir);
+    public ResponseEntity<?> create(@RequestParam("file") MultipartFile file,
+                                    @RequestParam("json") String jsonValue) {
+        Song song = null;
+        try {
+            song = new Gson().fromJson(jsonValue, Song.class);
+        } catch (JsonParseException e) {
+            System.out.println("Caught");
+        }
+        System.out.println(song);
+        ResponseEntity<?> res = fileControllerService.uploadFile(file, imageExt, uploadPath + "/" + audioDir);
+        if (!res.getStatusCode().equals(HttpStatus.OK))
+            return res;
+        return res;
     }
 
     @DeleteMapping("/{uuid}")
@@ -49,8 +65,8 @@ public class SongController {
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> update(@PathVariable(name = "uuid") String uuid,
                                     @RequestParam("file") MultipartFile file) {
-        if (delete(uuid).getStatusCode().equals(HttpStatus.OK))
-            return create(file);
+//        if (delete(uuid).getStatusCode().equals(HttpStatus.OK))
+//            return create(file);
         return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 }

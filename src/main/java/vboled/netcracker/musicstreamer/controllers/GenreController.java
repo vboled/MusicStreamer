@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vboled.netcracker.musicstreamer.model.Genre;
+import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.service.GenreService;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -38,6 +40,15 @@ public class GenreController {
 
         genreService.create(genre);
         return new ResponseEntity<>(genre, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/all/")
+    @PreAuthorize("hasAuthority('admin:perm')")
+    ResponseEntity<?> getAllGenre() {
+        final List<Genre> genres = genreService.readAll();
+        if (genres == null || genres.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(genres, HttpStatus.OK);
     }
 
     @GetMapping("/")

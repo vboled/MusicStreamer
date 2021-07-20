@@ -6,3 +6,9 @@ insert into users values
 
 INSERT INTO genres VALUES
 (default, 'Rock'), (default, 'Rap'), (default, 'Classical');
+
+INSERT INTO albums VALUES
+(default, 'MyFirstAlbum'), (default, 'MySecondAlbum');
+
+INSERT INTO artists VALUES
+(default, 'MyFirstArtist'), (default, 'MySecondArtist');

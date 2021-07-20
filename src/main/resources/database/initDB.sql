@@ -20,8 +20,32 @@ CREATE TABLE IF NOT EXISTS genres
     name            VARCHAR(50) NOT NULL UNIQUE
 );
 
--- CREATE TABLE IF NOT EXISTS songs
--- (
---     uuid            VARCHAR(100) PRIMARY KEY,
---     owner_id        INTEGER REFERENCES users (id)
--- );
+CREATE TABLE IF NOT EXISTS albums
+(
+    id              SERIAL PRIMARY KEY,
+    name            VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS artists
+(
+    id              SERIAL PRIMARY KEY,
+    name            VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS songs
+(
+    uuid                VARCHAR(100) PRIMARY KEY,
+    owner_id            INTEGER REFERENCES users (id) NOT NULL,
+    album_id            INTEGER REFERENCES albums (id) NOT NULL,
+    main_artist_id      INTEGER REFERENCES artists (id) NOT NULL,
+    secondary_artist_id INTEGER REFERENCES artists (id),
+    genre_id            INTEGER REFERENCES genres (id),
+    is_available        BOOLEAN NOT NULL,
+    duration            INTEGER NOT NULL,
+    words               TEXT,
+    author              VARCHAR(50),
+    volume              INTEGER,
+    realise_date        TIMESTAMP NOT NULL,
+    create_date         TIMESTAMP NOT NULL,
+    edit_date           TIMESTAMP NOT NULL
+);
