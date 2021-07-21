@@ -39,12 +39,11 @@ public class FileControllerServiceImpl {
             headers.setContentLength(image.length);
             return new ResponseEntity<>(image, headers, HttpStatus.OK);
         } catch (IOException e) {
-            e.printStackTrace();
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("File not found!!!", HttpStatus.BAD_REQUEST);
     }
 
-    public static ResponseEntity<?> uploadFile(MultipartFile file, Set<String> extensions, String path) {
+    public static ResponseEntity<?> uploadFile(MultipartFile file, Set<String> extensions, String path, String uuid) {
         if (file == null)
             return new ResponseEntity<>("File is null", HttpStatus.BAD_REQUEST);
 
@@ -58,7 +57,7 @@ public class FileControllerServiceImpl {
         if (!uploadDir.exists()) {
             uploadDir.mkdir();
         }
-        newFileName = UUID.randomUUID().toString() + ext;
+        newFileName = uuid + ext;
 
         try {
             file.transferTo(new File(uploadDir.getAbsolutePath() + "/" + newFileName));

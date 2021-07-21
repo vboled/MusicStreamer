@@ -3,6 +3,7 @@ package vboled.netcracker.musicstreamer.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Song;
+import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.repository.SongRepository;
 
 import java.util.List;
@@ -38,5 +39,16 @@ public class SongServiceImpl implements SongService {
     @Override
     public List<Song> readAll() {
         return songRepository.findAll();
+    }
+
+    @Override
+    public boolean updateUuid(String oldUuid, String newUuid) {
+        if (songRepository.existsByUuid(oldUuid)) {
+            Song song = songRepository.findByUuid(oldUuid);
+            song.setUuid(newUuid);
+            songRepository.save(song);
+            return true;
+        }
+        return false;
     }
 }

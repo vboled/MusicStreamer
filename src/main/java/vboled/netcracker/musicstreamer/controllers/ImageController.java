@@ -11,6 +11,7 @@ import vboled.netcracker.musicstreamer.service.FileControllerServiceImpl;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/images")
@@ -40,7 +41,8 @@ public class ImageController {
     public ResponseEntity<?> create(@RequestParam("file") MultipartFile file) {
         if (file.getSize() > maxImageSize)
             return new ResponseEntity<>("File size exceeds 5 MB", HttpStatus.BAD_REQUEST);
-        return FileControllerServiceImpl.uploadFile(file, imageExt, uploadPath + "/" + imageDir);
+        return FileControllerServiceImpl.uploadFile(file, imageExt, uploadPath + "/" + imageDir,
+                UUID.randomUUID().toString());
     }
 
     @DeleteMapping("/{uuid}")

@@ -12,10 +12,7 @@ import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.service.FileControllerServiceImpl;
 import vboled.netcracker.musicstreamer.service.SongService;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/songs")
@@ -45,22 +42,29 @@ public class SongController {
         return new ResponseEntity<>(songs, HttpStatus.OK);
     }
 
-    @GetMapping("/{uuid}")
+    @GetMapping("/file/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> read(@PathVariable(name = "uuid") String uuid) {
+    public ResponseEntity<?> readSong(@RequestParam String uuid) {
+        return FileControllerServiceImpl.read(uuid, uploadPath + "/" + audioDir);
+    }
+
+    @GetMapping("/")
+    @PreAuthorize("hasAuthority('admin:perm')")
+    public ResponseEntity<?> readFileSong(@RequestParam String uuid) {
         return FileControllerServiceImpl.read(uuid, uploadPath + "/" + audioDir);
     }
 
     @PostMapping("/upload/")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file) {
-        return FileControllerServiceImpl.uploadFile(file, imageExt, uploadPath + "/" + audioDir);
+        return FileControllerServiceImpl.uploadFile(file, imageExt, uploadPath + "/" + audioDir,
+                UUID.randomUUID().toString());
     }
 
     @PostMapping("/create/")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> create(@RequestBody Song song) {
-        if (read(song.getUuid()).getStatusCode().equals(HttpStatus.BAD_REQUEST))
+        if (readFileSong(song.getUuid()).getStatusCode().equals(HttpStatus.BAD_REQUEST))
             return new ResponseEntity<>("Wrong file name!", HttpStatus.BAD_REQUEST);
         try {
             songService.create(song);
@@ -70,9 +74,9 @@ public class SongController {
         return new ResponseEntity<>(song, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{uuid}")
+    @DeleteMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> delete(@PathVariable(name = "uuid") String uuid) {
+    public ResponseEntity<?> delete(@RequestParam String uuid) {
         ResponseEntity<?> res = FileControllerServiceImpl.delete(uuid, uploadPath + "/" + audioDir);
         if (!res.getStatusCode().equals(HttpStatus.OK))
             return res;
@@ -81,12 +85,13 @@ public class SongController {
         return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
-    @PutMapping("/{uuid}")
+    @PutMapping("/file/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> update(@PathVariable(name = "uuid") String uuid,
-                                    @RequestParam("file") MultipartFile file) {
-//        if (delete(uuid).getStatusCode().equals(HttpStatus.OK))
-//            return create(file);
-        return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    public ResponseEntity<?> updateFile(@RequestParam("uuid") String uuid,
+                                        @RequestParam("file") MultipartFile file) {
+        ResponseEntity<?> res = FileControllerServiceImpl.delete(uuid, uploadPath + "/" + audioDir);
+        if (!res.getStatusCode().equals(HttpStatus.OK))
+            return res;
+        return FileControllerServiceImpl.uploadFile(file, imageExt, uploadPath + "/" + audioDir, uuid);
     }
 }
