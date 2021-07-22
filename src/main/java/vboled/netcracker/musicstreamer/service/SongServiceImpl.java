@@ -1,6 +1,7 @@
 package vboled.netcracker.musicstreamer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.model.user.User;
@@ -42,13 +43,13 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public boolean updateUuid(String oldUuid, String newUuid) {
-        if (songRepository.existsByUuid(oldUuid)) {
-            Song song = songRepository.findByUuid(oldUuid);
-            song.setUuid(newUuid);
-            songRepository.save(song);
-            return true;
-        }
-        return false;
+    public Song updateSong(Song update) {
+        Song toUpdate = read(update.getUuid());
+        return toUpdate;
+    }
+
+    @Override
+    public Song read(String uuid) {
+        return songRepository.findByUuid(uuid).get();
     }
 }

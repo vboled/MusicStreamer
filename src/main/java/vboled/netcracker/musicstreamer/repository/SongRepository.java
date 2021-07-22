@@ -7,12 +7,13 @@ import org.springframework.data.repository.query.Param;
 import vboled.netcracker.musicstreamer.model.Song;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 public interface SongRepository extends JpaRepository<Song, Integer> {
 
     boolean existsByUuid(String uuid);
 
-    Song findByUuid(String uuid);
+    Optional<Song> findByUuid(String uuid);
 
     @Transactional
     void deleteByUuid(String uuid);

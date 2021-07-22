@@ -2,13 +2,19 @@ package vboled.netcracker.musicstreamer.controllers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vboled.netcracker.musicstreamer.model.Song;
+import vboled.netcracker.musicstreamer.model.user.Permission;
+import vboled.netcracker.musicstreamer.model.user.User;
+import vboled.netcracker.musicstreamer.model.user.UserView;
 import vboled.netcracker.musicstreamer.service.FileControllerServiceImpl;
 import vboled.netcracker.musicstreamer.service.SongService;
 
@@ -19,7 +25,6 @@ import java.util.*;
 public class SongController {
 
     private final SongService songService;
-
 
     private final Set<String> imageExt = new HashSet<String>(Arrays.asList(".mp3",".ogg", ".wav"));
 
@@ -51,7 +56,11 @@ public class SongController {
     @GetMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> readFileSong(@RequestParam String uuid) {
-        return FileControllerServiceImpl.read(uuid, uploadPath + "/" + audioDir);
+        try {
+            return new ResponseEntity<>(songService.read(uuid), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Song not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/upload/")
@@ -93,5 +102,26 @@ public class SongController {
         if (!res.getStatusCode().equals(HttpStatus.OK))
             return res;
         return FileControllerServiceImpl.uploadFile(file, imageExt, uploadPath + "/" + audioDir, uuid);
+    }
+
+    @PutMapping("/song/")
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
+    public ResponseEntity<?> update(@AuthenticationPrincipal User user,
+                                    @RequestBody Song song) {
+        try{
+            Song res = null;
+            Set<Permission> perm = user.getRole().getPermissions();
+            if (perm.contains(Permission.ADMIN_PERMISSION) ||
+               (perm.contains(Permission.OWNER_PERMISSION) &&
+                user.getId() == songService.read(song.getUuid()).getOwnerID())) {
+                res = songService.updateSong(song);
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            }
+            return new ResponseEntity<>("You don't have permission!!!", HttpStatus.NOT_MODIFIED);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Song not found", HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

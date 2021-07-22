@@ -10,7 +10,9 @@ public interface SongService {
 
     boolean delete(String uuid);
 
-    boolean updateUuid(String oldUuid, String newUuid);
-
     List<Song> readAll();
+
+    Song read(String uuid);
+
+    Song updateSong(Song update);
 }
