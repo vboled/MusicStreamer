@@ -72,6 +72,10 @@ public class SongServiceImpl implements SongService {
             // Add validation
             songToUpdate.setSecondaryArtistId(update.getSecondaryArtistId());
         }
+        if (update.getTitle() != null) {
+            // Add validation
+            songToUpdate.setTitle(update.getTitle());
+        }
         return songToUpdate;
     }
 
@@ -107,5 +111,10 @@ public class SongServiceImpl implements SongService {
     @Override
     public Song read(String uuid) throws NoSuchElementException {
         return songRepository.findByUuid(uuid).get();
+    }
+
+    @Override
+    public List<Song> search(String search) {
+        return songRepository.findAllByTitleIsLike(search);
     }
 }

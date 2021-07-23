@@ -17,4 +17,6 @@ public interface SongService {
     Song partialUpdateSong(Song update);
 
     Song fullUpdateSong(Song update);
+
+    List<Song> search(String search);
 }

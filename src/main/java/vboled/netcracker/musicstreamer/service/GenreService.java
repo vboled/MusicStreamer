@@ -17,4 +17,6 @@ public interface GenreService {
     boolean existById(Long id);
 
     List<Genre> readAll();
+
+    List<Genre> search(String search);
 }

@@ -30,6 +30,9 @@ public class Song {
     @Column(name = "is_available")
     private boolean isAvailable;
 
+    @Column(name = "title")
+    private String title;
+
     // need to be generated automatically
     @Column(name = "duration")
     private Long duration;

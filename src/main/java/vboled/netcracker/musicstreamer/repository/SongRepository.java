@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import vboled.netcracker.musicstreamer.model.Song;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 public interface SongRepository extends JpaRepository<Song, Long> {
@@ -17,4 +18,6 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 
     @Transactional
     void deleteByUuid(String uuid);
+
+    List<Song> findAllByTitleIsLike(String search);
 }
