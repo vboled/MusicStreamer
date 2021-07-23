@@ -9,7 +9,7 @@ import vboled.netcracker.musicstreamer.model.Song;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-public interface SongRepository extends JpaRepository<Song, Integer> {
+public interface SongRepository extends JpaRepository<Song, Long> {
 
     boolean existsByUuid(String uuid);
 

@@ -22,12 +22,12 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public Genre getById(int id) throws NoSuchElementException {
+    public Genre getById(Long id) throws NoSuchElementException {
         return genreRepository.findById(id).get();
     }
 
     @Override
-    public boolean updateName(int id, String name) {
+    public boolean updateName(Long id, String name) {
         if (genreRepository.existsById(id)) {
             Genre genre = genreRepository.getById(id);
             genre.setName(name);
@@ -44,7 +44,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public boolean existById(int id) {
+    public boolean existById(Long id) {
         return genreRepository.existsById(id);
     }
 

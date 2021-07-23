@@ -53,7 +53,7 @@ public class AdminController {
 
     @GetMapping("/id/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> read(@RequestBody int id) {
+    public ResponseEntity<?> read(@RequestBody Long id) {
         try {
              return new ResponseEntity<>(userService.read(id), HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -63,7 +63,7 @@ public class AdminController {
 
     @PutMapping("/update/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> update(@RequestParam int id, @RequestBody User user) {
+    public ResponseEntity<?> update(@RequestParam Long id, @RequestBody User user) {
         boolean updated;
         try {
             updated = userService.update(user, id);
@@ -77,7 +77,7 @@ public class AdminController {
 
     @DeleteMapping("/delete/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> delete(@RequestParam int id) {
+    public ResponseEntity<?> delete(@RequestParam Long id) {
         final boolean deleted = userService.delete(id);
 
         return deleted

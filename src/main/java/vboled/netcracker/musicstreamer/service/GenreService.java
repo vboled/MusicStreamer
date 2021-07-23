@@ -8,13 +8,13 @@ public interface GenreService {
 
     boolean existByName(String name);
 
-    Genre getById(int id);
+    Genre getById(Long id);
 
-    boolean updateName(int id, String name);
+    boolean updateName(Long id, String name);
 
     boolean create(Genre genre);
 
-    boolean existById(int id);
+    boolean existById(Long id);
 
     List<Genre> readAll();
 }

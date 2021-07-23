@@ -21,7 +21,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "serial", name = "id")
-    private int id;
+    private Long id;
 
     @Column(name = "user_name")
     private String userName;
@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private String lastName;
 
     @Column(name = "regionid")
-    private int regionID = -1;
+    private Long regionID;
 
     @Column(name = "email")
     private String email;
@@ -51,7 +51,7 @@ public class User implements UserDetails {
     private Date lastLoginDate;
 
     @Column(name = "play_listid")
-    private int playListID = -1;
+    private Long playListID;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "role")

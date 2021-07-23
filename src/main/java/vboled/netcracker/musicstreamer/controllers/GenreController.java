@@ -26,7 +26,7 @@ public class GenreController {
     }
 
     @Value("${max.genre.name.length}")
-    private int MAX_GENRE_NAME_LENGTH;
+    private Long MAX_GENRE_NAME_LENGTH;
 
     @PostMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
@@ -53,7 +53,7 @@ public class GenreController {
 
     @GetMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    ResponseEntity<?> getGenre(@RequestParam int id) {
+    ResponseEntity<?> getGenre(@RequestParam Long id) {
         try {
             return new ResponseEntity<>(genreService.getById(id), HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -63,7 +63,7 @@ public class GenreController {
 
     @PutMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    ResponseEntity<?> updateGenre(@RequestParam int id, @RequestParam String name) {
+    ResponseEntity<?> updateGenre(@RequestParam Long id, @RequestParam String name) {
         if (genreService.existByName(name))
             return new ResponseEntity<>("Genre already exist!!!", HttpStatus.NOT_MODIFIED);
         if (genreService.updateName(id, name))

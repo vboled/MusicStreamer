@@ -49,13 +49,13 @@ public class SongController {
 
     @GetMapping("/file/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> readSong(@RequestParam String uuid) {
+    public ResponseEntity<?> readFileSong(@RequestParam String uuid) {
         return FileControllerServiceImpl.read(uuid, uploadPath + "/" + audioDir);
     }
 
     @GetMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> readFileSong(@RequestParam String uuid) {
+    public ResponseEntity<?> readSong(@RequestParam String uuid) {
         try {
             return new ResponseEntity<>(songService.read(uuid), HttpStatus.OK);
         } catch (NoSuchElementException e) {

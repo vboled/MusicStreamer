@@ -16,25 +16,25 @@ public class Song {
     private String uuid;
 
     @Column(name = "owner_id")
-    private int ownerID;
+    private Long ownerID;
 
     @Column(name = "album_id")
-    private int albumID;
+    private Long albumID;
 
     @Column(name = "main_artist_id")
-    private int mainArtistId;
+    private Long mainArtistId;
 
     @Column(name = "secondary_artist_id")
-    private int secondaryArtistId;
+    private Long secondaryArtistId;
 
     @Column(name = "genre_id")
-    private int genreId;
+    private Long genreId;
 
     @Column(name = "is_available")
     private boolean isAvailable;
 
     @Column(name = "duration")
-    private int duration;
+    private Long duration;
 
     @Column(name = "words")
     private String words;
@@ -43,14 +43,19 @@ public class Song {
     private String author;
 
     @Column(name = "volume")
-    private int volume;
+    private Long volume;
 
     @Column(name = "realise_date")
     private Date realiseDate;
 
     @Column(name = "create_date")
-    private Date createDate;
+    private LocalDateTime createDate;
 
     @Column(name = "edit_date")
     private Date editDate;
+
+    @PrePersist
+    public void prePersist() {
+        createDate = LocalDateTime.now();
+    }
 }
