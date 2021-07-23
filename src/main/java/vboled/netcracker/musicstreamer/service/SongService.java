@@ -14,5 +14,7 @@ public interface SongService {
 
     Song read(String uuid);
 
-    Song updateSong(Song update);
+    Song partialUpdateSong(Song update);
+
+    Song fullUpdateSong(Song update);
 }

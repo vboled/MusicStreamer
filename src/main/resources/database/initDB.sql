@@ -39,7 +39,6 @@ CREATE TABLE IF NOT EXISTS songs
     album_id            INTEGER REFERENCES albums (id) NOT NULL,
     main_artist_id      INTEGER REFERENCES artists (id) NOT NULL,
     secondary_artist_id INTEGER REFERENCES artists (id),
-    genre_id            INTEGER REFERENCES genres (id),
     is_available        BOOLEAN NOT NULL,
     duration            INTEGER NOT NULL,
     words               TEXT,

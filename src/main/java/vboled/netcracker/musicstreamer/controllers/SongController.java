@@ -111,14 +111,17 @@ public class SongController {
         try{
             Song res = null;
             Set<Permission> perm = user.getRole().getPermissions();
-            if (perm.contains(Permission.ADMIN_PERMISSION) ||
-               (perm.contains(Permission.OWNER_PERMISSION) &&
-                user.getId() == songService.read(song.getUuid()).getOwnerID())) {
-                res = songService.updateSong(song);
-                return new ResponseEntity<>(res, HttpStatus.OK);
+            if (perm.contains(Permission.ADMIN_PERMISSION)) {
+                res = songService.fullUpdateSong(song);
+            } else if (perm.contains(Permission.OWNER_PERMISSION) &&
+                       user.getId().equals(songService.read(song.getUuid()).getOwnerID())) {
+                res = songService.partialUpdateSong(song);
             }
-            return new ResponseEntity<>("You don't have permission!!!", HttpStatus.NOT_MODIFIED);
+            else
+                return new ResponseEntity<>("You don't have permission!!!", HttpStatus.NOT_MODIFIED);
+            return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (NoSuchElementException e) {
+            e.printStackTrace();
             return new ResponseEntity<>("Song not found", HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

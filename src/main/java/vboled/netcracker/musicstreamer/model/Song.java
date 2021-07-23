@@ -27,12 +27,10 @@ public class Song {
     @Column(name = "secondary_artist_id")
     private Long secondaryArtistId;
 
-    @Column(name = "genre_id")
-    private Long genreId;
-
     @Column(name = "is_available")
     private boolean isAvailable;
 
+    // need to be generated automatically
     @Column(name = "duration")
     private Long duration;
 
@@ -51,6 +49,7 @@ public class Song {
     @Column(name = "create_date")
     private LocalDateTime createDate;
 
+    // need to be generated automatically
     @Column(name = "edit_date")
     private Date editDate;
 
