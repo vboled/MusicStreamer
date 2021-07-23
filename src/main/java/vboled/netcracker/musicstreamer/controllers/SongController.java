@@ -39,7 +39,7 @@ public class SongController {
     }
 
     @GetMapping("/all/")
-    @PreAuthorize("hasAuthority('admin:perm')")
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     public ResponseEntity<?> readAll() {
         final List<Song> songs = songService.readAll();
         if (songs == null || songs.isEmpty())
@@ -84,7 +84,7 @@ public class SongController {
     }
 
     @DeleteMapping("/")
-    @PreAuthorize("hasAuthority('admin:perm')")
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     public ResponseEntity<?> delete(@RequestParam String uuid) {
         ResponseEntity<?> res = FileControllerServiceImpl.delete(uuid, uploadPath + "/" + audioDir);
         if (!res.getStatusCode().equals(HttpStatus.OK))
@@ -95,7 +95,7 @@ public class SongController {
     }
 
     @PutMapping("/file/")
-    @PreAuthorize("hasAuthority('admin:perm')")
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     public ResponseEntity<?> updateFile(@RequestParam("uuid") String uuid,
                                         @RequestParam("file") MultipartFile file) {
         ResponseEntity<?> res = FileControllerServiceImpl.delete(uuid, uploadPath + "/" + audioDir);

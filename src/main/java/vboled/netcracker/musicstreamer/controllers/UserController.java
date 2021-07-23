@@ -96,7 +96,7 @@ public class UserController {
     }
 
     @PutMapping("/update/")
-    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
+    @PreAuthorize("hasAuthority('user:perm')")
     public ResponseEntity<?> updateUser(@AuthenticationPrincipal User user,
                                         @RequestBody User updateUser) {
         try{

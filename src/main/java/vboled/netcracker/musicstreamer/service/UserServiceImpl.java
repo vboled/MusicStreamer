@@ -53,7 +53,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User read(int id) throws NoSuchElementException {
-        System.out.println(passwordEncoder.encode("owner"));
         return userRepository.findById(id).get();
     }
 
