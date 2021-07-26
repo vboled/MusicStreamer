@@ -1,4 +1,4 @@
-package vboled.netcracker.musicstreamer.service;
+package vboled.netcracker.musicstreamer.service.impl;
 
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;

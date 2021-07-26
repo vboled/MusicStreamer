@@ -18,8 +18,9 @@ public class Song {
     @Column(name = "owner_id")
     private Long ownerID;
 
-    @Column(name = "album_id")
-    private Long albumID;
+    @ManyToOne()
+    @JoinColumn(name="album_id")
+    private Album album;
 
     @Column(name = "main_artist_id")
     private Long mainArtistId;
@@ -37,6 +38,10 @@ public class Song {
     @Column(name = "duration")
     private Long duration;
 
+    @ManyToOne()
+    @JoinColumn(name = "genre_id")
+    private Genre genre;
+
     @Column(name = "words")
     private String words;
 
@@ -46,8 +51,8 @@ public class Song {
     @Column(name = "volume")
     private Long volume;
 
-    @Column(name = "realise_date")
-    private Date realiseDate;
+    @Column(name = "release_date")
+    private Date releaseDate;
 
     @Column(name = "create_date")
     private LocalDateTime createDate;

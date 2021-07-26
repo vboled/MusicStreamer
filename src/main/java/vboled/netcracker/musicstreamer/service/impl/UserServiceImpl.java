@@ -1,4 +1,4 @@
-package vboled.netcracker.musicstreamer.service;
+package vboled.netcracker.musicstreamer.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.repository.UserRepository;
+import vboled.netcracker.musicstreamer.service.UserService;
 
 import java.util.List;
 import java.util.Locale;

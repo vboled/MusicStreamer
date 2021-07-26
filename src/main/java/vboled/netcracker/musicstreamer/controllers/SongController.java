@@ -1,21 +1,16 @@
 package vboled.netcracker.musicstreamer.controllers;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.model.user.Permission;
 import vboled.netcracker.musicstreamer.model.user.User;
-import vboled.netcracker.musicstreamer.model.user.UserView;
-import vboled.netcracker.musicstreamer.service.FileControllerServiceImpl;
+import vboled.netcracker.musicstreamer.service.impl.FileControllerServiceImpl;
 import vboled.netcracker.musicstreamer.service.SongService;
 
 import java.util.*;

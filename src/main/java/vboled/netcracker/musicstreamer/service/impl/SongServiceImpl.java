@@ -1,4 +1,4 @@
-package vboled.netcracker.musicstreamer.service;
+package vboled.netcracker.musicstreamer.service.impl;
 
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.repository.SongRepository;
+import vboled.netcracker.musicstreamer.service.SongService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -57,12 +58,12 @@ public class SongServiceImpl implements SongService {
         if (update.getVolume() != null) {
             songToUpdate.setVolume(update.getVolume());
         }
-        if (update.getRealiseDate() != null) {
-            songToUpdate.setRealiseDate(update.getRealiseDate());
+        if (update.getReleaseDate() != null) {
+            songToUpdate.setReleaseDate(update.getReleaseDate());
         }
-        if (update.getAlbumID() != null) {
+        if (update.getAlbum() != null) {
             // Add validation
-            songToUpdate.setAlbumID(update.getAlbumID());
+            songToUpdate.setAlbum(update.getAlbum());
         }
         if (update.getMainArtistId() != null) {
             // Add validation

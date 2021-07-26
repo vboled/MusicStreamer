@@ -1,8 +1,9 @@
-package vboled.netcracker.musicstreamer.service;
+package vboled.netcracker.musicstreamer.service.impl;
 
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Genre;
 import vboled.netcracker.musicstreamer.repository.GenreRepository;
+import vboled.netcracker.musicstreamer.service.GenreService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -41,11 +42,6 @@ public class GenreServiceImpl implements GenreService {
     public boolean create(Genre genre) {
         genreRepository.save(genre);
         return true;
-    }
-
-    @Override
-    public boolean existById(Long id) {
-        return genreRepository.existsById(id);
     }
 
     @Override

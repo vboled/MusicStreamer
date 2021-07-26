@@ -1,8 +1,9 @@
-package vboled.netcracker.musicstreamer.service;
+package vboled.netcracker.musicstreamer.service.impl;
 
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.repository.ArtistRepository;
+import vboled.netcracker.musicstreamer.service.ArtistService;
 
 import java.util.List;
 
