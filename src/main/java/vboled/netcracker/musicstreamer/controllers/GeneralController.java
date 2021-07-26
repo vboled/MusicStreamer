@@ -6,10 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vboled.netcracker.musicstreamer.model.user.User;
-import vboled.netcracker.musicstreamer.service.ArtistService;
-import vboled.netcracker.musicstreamer.service.GenreService;
-import vboled.netcracker.musicstreamer.service.SongService;
-import vboled.netcracker.musicstreamer.service.UserService;
+import vboled.netcracker.musicstreamer.service.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,13 +20,16 @@ public class GeneralController {
     private final SongService songService;
     private final GenreService genreService;
     private final ArtistService artistService;
+    private final AlbumService albumService;
 
     @Autowired
-    public GeneralController(UserService userService, SongService songService, GenreService genreService, ArtistService artistService) {
+    public GeneralController(UserService userService, SongService songService, GenreService genreService,
+                             ArtistService artistService, AlbumService albumService) {
         this.userService = userService;
         this.songService = songService;
         this.genreService = genreService;
         this.artistService = artistService;
+        this.albumService = albumService;
     }
 
     @PostMapping("create/")
@@ -50,6 +50,7 @@ public class GeneralController {
         res.put("Songs: ", songService.search(search));
         res.put("Artists: ", artistService.search(search));
         res.put("Genres: ", genreService.search(search));
+        res.put("Albums: ", albumService.search(search));
         System.out.println(res);
         res.entrySet().removeIf(entry -> entry.getValue().isEmpty());
         return new ResponseEntity<>(

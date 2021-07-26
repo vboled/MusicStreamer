@@ -37,7 +37,11 @@ CREATE TABLE IF NOT EXISTS albums
 CREATE TABLE IF NOT EXISTS artists
 (
     id              BIGSERIAL PRIMARY KEY,
-    name            VARCHAR(50) NOT NULL UNIQUE
+    owner_id        INTEGER REFERENCES users (id) NOT NULL,
+    name            VARCHAR(50) NOT NULL UNIQUE,
+    uuid            VARCHAR(100),
+    create_date     TIMESTAMP NOT NULL,
+    edit_date       TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS songs

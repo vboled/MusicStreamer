@@ -38,7 +38,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public List<Album> search(String search) {
-        return null;
+        return albumRepository.findAllByNameLike(search);
     }
 
     private Album updateCommonFields(Album update) throws NoSuchElementException {
@@ -82,5 +82,12 @@ public class AlbumServiceImpl implements AlbumService {
         }
         albumRepository.save(toUpdate);
         return toUpdate;
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (!albumRepository.existsById(id))
+            throw new NoSuchElementException();
+        albumRepository.deleteById(id);
     }
 }

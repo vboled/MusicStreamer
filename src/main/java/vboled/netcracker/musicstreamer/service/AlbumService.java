@@ -18,4 +18,6 @@ public interface AlbumService {
     Album partialUpdateAlbum(Album update) throws NoSuchElementException;
 
     Album fullUpdateAlbum(Album update) throws NoSuchElementException;
+
+    void delete(Long id) throws NoSuchElementException;
 }

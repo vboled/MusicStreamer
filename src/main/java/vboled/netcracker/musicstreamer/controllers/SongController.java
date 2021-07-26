@@ -80,7 +80,17 @@ public class SongController {
 
     @DeleteMapping("/")
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
-    public ResponseEntity<?> delete(@RequestParam String uuid) {
+    public ResponseEntity<?> delete(@AuthenticationPrincipal User user,
+                                    @RequestParam String uuid) {
+        try{
+            if (user.getRole().getPermissions().contains(Permission.OWNER_PERMISSION) &&
+                    user.getId().equals(songService.read(uuid).getOwnerID())) {
+                return new ResponseEntity<>("You don't have permission!!!", HttpStatus.NOT_MODIFIED);
+            }
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Song not found", HttpStatus.NOT_FOUND);
+        }
         ResponseEntity<?> res = FileControllerServiceImpl.delete(uuid, uploadPath + "/" + audioDir);
         if (!res.getStatusCode().equals(HttpStatus.OK))
             return res;
