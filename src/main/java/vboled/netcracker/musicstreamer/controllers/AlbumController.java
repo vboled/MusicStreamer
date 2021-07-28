@@ -5,26 +5,46 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import vboled.netcracker.musicstreamer.model.Album;
+import org.springframework.web.multipart.MultipartFile;
 import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.model.user.Permission;
 import vboled.netcracker.musicstreamer.model.user.User;
+import vboled.netcracker.musicstreamer.model.validator.FileValidator;
+import vboled.netcracker.musicstreamer.model.validator.ImageValidator;
 import vboled.netcracker.musicstreamer.service.AlbumService;
 import vboled.netcracker.musicstreamer.service.impl.FileControllerServiceImpl;
+import vboled.netcracker.musicstreamer.service.impl.FileServiceImpl;
 
+import javax.security.auth.DestroyFailedException;
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/album")
 public class AlbumController {
+
+    private final FileValidator fileValidator = new ImageValidator();
+
     private final AlbumService albumService;
 
-    public AlbumController(AlbumService albumService) {
+    private final FileServiceImpl fileService;
+
+    public AlbumController(AlbumService albumService, FileServiceImpl fileService) {
         this.albumService = albumService;
+        this.fileService = fileService;
     }
 
+    void checkAdminOrOwnerPerm(User user, Long id) throws IllegalAccessError {
+        Set<Permission> perm = user.getRole().getPermissions();
+        if (!(perm.contains(Permission.ADMIN_PERMISSION) ||
+                (perm.contains(Permission.OWNER_PERMISSION) &&
+                        user.getId().equals(albumService.getById(id).getOwnerID())))) {
+            throw new IllegalAccessError();
+        }
+    }
 
     @PostMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
@@ -56,8 +76,60 @@ public class AlbumController {
         }
     }
 
+    @GetMapping("/cover/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    ResponseEntity<?> getAlbumCover(@RequestParam Long id) {
+        try {
+            return fileService.read(albumService.getById(id).getUuid(), fileValidator);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/cover/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    ResponseEntity<?> deleteAlbumCover(@AuthenticationPrincipal User user,
+                                       @RequestParam Long id) {
+        try {
+            checkAdminOrOwnerPerm(user, id);
+            fileService.delete(albumService.getById(id).getUuid(), fileValidator);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
+        } catch (DestroyFailedException e) {
+            return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/cover/")
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
+    ResponseEntity<?> uploadAlbumCover(@AuthenticationPrincipal User user,
+                                       @RequestParam Long id, @RequestParam MultipartFile file) {
+        try{
+            checkAdminOrOwnerPerm(user, id);
+            String name = fileService.uploadFile(file, fileValidator, UUID.randomUUID().toString());
+            return new ResponseEntity<>(albumService.setCover(id, name), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/cover/update/")
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
+    ResponseEntity<?> updateAlbumCover(@AuthenticationPrincipal User user,
+                                       @RequestParam Long id, @RequestParam MultipartFile file) {
+        ResponseEntity<?> res = delete(user, id);
+        if (!res.getStatusCode().equals(HttpStatus.OK))
+            return res;
+        return uploadAlbumCover(user, id, file);
+    }
+
     @PutMapping("/")
-    @PreAuthorize("hasAuthority('admin:perm')")
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     ResponseEntity<?> updateAlbum(@AuthenticationPrincipal User user,
                                   @RequestBody Album album) {
         try{
@@ -85,12 +157,9 @@ public class AlbumController {
     public ResponseEntity<?> delete(@AuthenticationPrincipal User user,
                                     @RequestParam Long id) {
         try{
-            if (user.getRole().getPermissions().contains(Permission.OWNER_PERMISSION) &&
-                    user.getId().equals(albumService.getById(id).getOwnerID())) {
-                return new ResponseEntity<>("You don't have permission!!!", HttpStatus.NOT_MODIFIED);
-            }
+            checkAdminOrOwnerPerm(user, id);
             albumService.delete(id);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return deleteAlbumCover(user, id);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

@@ -90,4 +90,12 @@ public class AlbumServiceImpl implements AlbumService {
             throw new NoSuchElementException();
         albumRepository.deleteById(id);
     }
+
+    @Override
+    public Album setCover(Long id, String uuid) {
+        Album album = getById(id);
+        album.setUuid(uuid);
+        albumRepository.save(album);
+        return album;
+    }
 }

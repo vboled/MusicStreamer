@@ -20,4 +20,6 @@ public interface AlbumService {
     Album fullUpdateAlbum(Album update) throws NoSuchElementException;
 
     void delete(Long id) throws NoSuchElementException;
+
+    Album setCover(Long id, String uuid);
 }
