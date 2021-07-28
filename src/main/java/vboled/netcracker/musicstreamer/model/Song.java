@@ -12,6 +12,10 @@ import java.util.Date;
 public class Song {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "serial", name = "id")
+    private Long id;
+
     @Column(name = "uuid")
     private String uuid;
 

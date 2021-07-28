@@ -47,9 +47,13 @@ public class AlbumController {
     }
 
     @PostMapping("/")
-    @PreAuthorize("hasAuthority('admin:perm')")
-    ResponseEntity<?> createAlbum(@RequestBody Album album) {
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
+    ResponseEntity<?> createAlbum(@AuthenticationPrincipal User user,
+                                  @RequestBody Album album) {
         try {
+            if (user.getRole().getPermissions().contains(Permission.OWNER_PERMISSION)) {
+                album.setOwnerID(user.getId());
+            }
             albumService.create(album);
             return new ResponseEntity<>(album, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
@@ -78,11 +82,17 @@ public class AlbumController {
 
     @GetMapping("/cover/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> getAlbumCover(@RequestParam Long id) {
+    ResponseEntity<?> getAlbumCover(@AuthenticationPrincipal User user,
+                                    @RequestParam Long id) {
         try {
+            checkAdminOrOwnerPerm(user, id);
             return fileService.read(albumService.getById(id).getUuid(), fileValidator);
         } catch (IOException e) {
+            return new ResponseEntity<>("Cover not found", HttpStatus.NOT_FOUND);
+        } catch (NoSuchElementException e) {
             return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -162,6 +172,8 @@ public class AlbumController {
             return deleteAlbumCover(user, id);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
         }
     }
 

@@ -46,7 +46,8 @@ CREATE TABLE IF NOT EXISTS albums
 
 CREATE TABLE IF NOT EXISTS songs
 (
-    uuid                VARCHAR(100) PRIMARY KEY,
+    id                  BIGSERIAL PRIMARY KEY,
+    uuid                VARCHAR(100),
     genre_id            INTEGER REFERENCES genres (id) NOT NULL,
     owner_id            INTEGER REFERENCES users (id) NOT NULL,
     album_id            INTEGER REFERENCES albums (id) NOT NULL,

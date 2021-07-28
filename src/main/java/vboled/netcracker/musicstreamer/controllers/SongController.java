@@ -1,6 +1,5 @@
 package vboled.netcracker.musicstreamer.controllers;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,9 +11,12 @@ import vboled.netcracker.musicstreamer.model.user.Permission;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.model.validator.AudioValidator;
 import vboled.netcracker.musicstreamer.model.validator.FileValidator;
+import vboled.netcracker.musicstreamer.service.FileService;
 import vboled.netcracker.musicstreamer.service.impl.FileControllerServiceImpl;
 import vboled.netcracker.musicstreamer.service.SongService;
 
+import javax.security.auth.DestroyFailedException;
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -23,14 +25,26 @@ public class SongController {
 
     private final FileValidator fileValidator = new AudioValidator();
 
+    private final FileService fileService;
+
     private final SongService songService;
 
-    public SongController(SongService songService) {
+    public SongController(FileService fileService, SongService songService) {
+        this.fileService = fileService;
         this.songService = songService;
     }
 
+    void checkAdminOrOwnerPerm(User user, Long id) throws IllegalAccessError {
+        Set<Permission> perm = user.getRole().getPermissions();
+        if (!(perm.contains(Permission.ADMIN_PERMISSION) ||
+                (perm.contains(Permission.OWNER_PERMISSION) &&
+                        user.getId().equals(songService.getById(id).getOwnerID())))) {
+            throw new IllegalAccessError();
+        }
+    }
+
     @GetMapping("/all/")
-    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
+    @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> readAll() {
         final List<Song> songs = songService.readAll();
         if (songs == null || songs.isEmpty())
@@ -38,34 +52,62 @@ public class SongController {
         return new ResponseEntity<>(songs, HttpStatus.OK);
     }
 
-    @GetMapping("/file/")
-    @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> readFileSong(@RequestParam String uuid) {
-        return FileControllerServiceImpl.read(uuid, fileValidator);
-    }
-
-    @GetMapping("/")
-    @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> readSong(@RequestParam String uuid) {
+    @GetMapping("/audio/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    public ResponseEntity<?> readFileSong(@AuthenticationPrincipal User user,
+                                          @RequestParam Long id) {
         try {
-            return new ResponseEntity<>(songService.read(uuid), HttpStatus.OK);
+            checkAdminOrOwnerPerm(user, id);
+            Song song = songService.getById(id);
+            if (!song.isAvailable())
+                return new ResponseEntity<>("File song is unavailable", HttpStatus.NOT_FOUND);
+            return fileService.read(song.getUuid(), fileValidator);
+        } catch (IOException e) {
+            return new ResponseEntity<>("File song not found", HttpStatus.NOT_FOUND);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("Song not found", HttpStatus.NOT_FOUND);
         }
     }
 
+    @GetMapping("/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    public ResponseEntity<?> readSong(@RequestParam Long id) {
+        try {
+            return new ResponseEntity<>(songService.getById(id), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Song not found", HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping("/upload/")
-    @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file) {
-        return FileControllerServiceImpl.uploadFile(file, fileValidator, UUID.randomUUID().toString());
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
+    public ResponseEntity<?> upload(@AuthenticationPrincipal User user,
+                                    @RequestParam Long id, @RequestParam MultipartFile file) {
+        try{
+            checkAdminOrOwnerPerm(user, id);
+            String name = fileService.uploadFile(file, fileValidator, UUID.randomUUID().toString());
+            return new ResponseEntity<>(songService.setSongFile(id, name), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Song not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/create/")
-    @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> create(@RequestBody Song song) {
-        if (readFileSong(song.getUuid()).getStatusCode().equals(HttpStatus.BAD_REQUEST))
-            return new ResponseEntity<>("Wrong file name!", HttpStatus.BAD_REQUEST);
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
+    public ResponseEntity<?> create(@AuthenticationPrincipal User user,
+                                    @RequestBody Song song) {
         try {
+            if (user.getRole().getPermissions().contains(Permission.OWNER_PERMISSION)) {
+                song.setOwnerID(user.getId());
+            }
             songService.create(song);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -73,35 +115,47 @@ public class SongController {
         return new ResponseEntity<>(song, HttpStatus.OK);
     }
 
+    @DeleteMapping("/audio/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    ResponseEntity<?> deleteAudio(@AuthenticationPrincipal User user,
+                                       @RequestParam Long id) {
+        try {
+            checkAdminOrOwnerPerm(user, id);
+            fileService.delete(songService.getById(id).getUuid(), fileValidator);
+            songService.deleteAudio(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
+        } catch (DestroyFailedException e) {
+            return new ResponseEntity<>("Song not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
     @DeleteMapping("/")
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     public ResponseEntity<?> delete(@AuthenticationPrincipal User user,
-                                    @RequestParam String uuid) {
+                                    @RequestParam Long id) {
         try{
-            if (user.getRole().getPermissions().contains(Permission.OWNER_PERMISSION) &&
-                    user.getId().equals(songService.read(uuid).getOwnerID())) {
-                return new ResponseEntity<>("You don't have permission!!!", HttpStatus.NOT_MODIFIED);
-            }
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Song not found", HttpStatus.NOT_FOUND);
-        }
-        ResponseEntity<?> res = FileControllerServiceImpl.delete(uuid, fileValidator);
-        if (!res.getStatusCode().equals(HttpStatus.OK))
-            return res;
-        if (songService.delete(uuid))
+            checkAdminOrOwnerPerm(user, id);
+            songService.delete(id);
+            if (songService.getById(id).isAvailable())
+                return deleteAudio(user, id);
             return new ResponseEntity<>(HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
+        }
     }
 
-    @PutMapping("/file/")
+    @PutMapping("/audio/update/")
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
-    public ResponseEntity<?> updateFile(@RequestParam("uuid") String uuid,
-                                        @RequestParam("file") MultipartFile file) {
-        ResponseEntity<?> res = FileControllerServiceImpl.delete(uuid, fileValidator);
+    ResponseEntity<?> updateSongFile(@AuthenticationPrincipal User user,
+                                       @RequestParam Long id, @RequestParam MultipartFile file) {
+        ResponseEntity<?> res = delete(user, id);
         if (!res.getStatusCode().equals(HttpStatus.OK))
             return res;
-        return FileControllerServiceImpl.uploadFile(file, fileValidator, uuid);
+        return upload(user, id, file);
     }
 
     @PutMapping("/song/")

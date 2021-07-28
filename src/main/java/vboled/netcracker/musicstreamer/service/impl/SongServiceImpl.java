@@ -32,12 +32,10 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public boolean delete(String uuid) {
-        if (songRepository.existsByUuid(uuid)) {
-            songRepository.deleteByUuid(uuid);
-            return true;
-        }
-        return false;
+    public void delete(Long id) throws NoSuchElementException {
+        if (!songRepository.existsById(id))
+            throw new NoSuchElementException();
+        songRepository.deleteById(id);
     }
 
     @Override
@@ -113,5 +111,27 @@ public class SongServiceImpl implements SongService {
     @Override
     public List<Song> search(String search) {
         return songRepository.findAllByTitleIsLike(search);
+    }
+
+    @Override
+    public Song getById(Long id) {
+        return songRepository.findById(id).get();
+    }
+
+    @Override
+    public Song setSongFile(Long id, String uuid) {
+        Song song = getById(id);
+        song.setUuid(uuid);
+        song.setAvailable(true);
+        songRepository.save(song);
+        return song;
+    }
+
+    @Override
+    public void deleteAudio(Long id) {
+        Song song = getById(id);
+        song.setUuid(null);
+        song.setAvailable(false);
+        songRepository.save(song);
     }
 }

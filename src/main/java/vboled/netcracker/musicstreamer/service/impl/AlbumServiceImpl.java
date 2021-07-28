@@ -98,4 +98,11 @@ public class AlbumServiceImpl implements AlbumService {
         albumRepository.save(album);
         return album;
     }
+
+    @Override
+    public void deleteCover(Long id) {
+        Album album = albumRepository.getById(id);
+        album.setUuid(null);
+        albumRepository.save(album);
+    }
 }

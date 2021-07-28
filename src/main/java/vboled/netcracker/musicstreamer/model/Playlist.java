@@ -12,6 +12,8 @@ import java.util.List;
 public class Playlist {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "serial", name = "id")
     private Long id;
 
     @Column(name = "owner_id")

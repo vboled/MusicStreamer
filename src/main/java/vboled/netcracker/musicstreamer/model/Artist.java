@@ -10,6 +10,7 @@ import java.util.Date;
 @Data
 @Table(name = "artists")
 public class Artist {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "serial", name = "id")

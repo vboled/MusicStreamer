@@ -12,7 +12,9 @@ import java.util.List;
 @Data
 @Table(name = "added_songs")
 public class AddedSong {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "serial", name = "id")
     private Long id;
 
