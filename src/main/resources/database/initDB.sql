@@ -20,6 +20,16 @@ CREATE TABLE IF NOT EXISTS genres
     name            VARCHAR(50) NOT NULL UNIQUE
 );
 
+CREATE TABLE IF NOT EXISTS artists
+(
+    id              BIGSERIAL PRIMARY KEY,
+    owner_id        INTEGER REFERENCES users (id) NOT NULL,
+    name            VARCHAR(50) NOT NULL UNIQUE,
+    uuid            VARCHAR(100),
+    create_date     TIMESTAMP NOT NULL,
+    edit_date       TIMESTAMP NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS albums
 (
     id              BIGSERIAL PRIMARY KEY,
@@ -34,24 +44,13 @@ CREATE TABLE IF NOT EXISTS albums
     type            VARCHAR(50)
 );
 
-CREATE TABLE IF NOT EXISTS artists
-(
-    id              BIGSERIAL PRIMARY KEY,
-    owner_id        INTEGER REFERENCES users (id) NOT NULL,
-    name            VARCHAR(50) NOT NULL UNIQUE,
-    uuid            VARCHAR(100),
-    create_date     TIMESTAMP NOT NULL,
-    edit_date       TIMESTAMP NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS songs
 (
     uuid                VARCHAR(100) PRIMARY KEY,
     genre_id            INTEGER REFERENCES genres (id) NOT NULL,
     owner_id            INTEGER REFERENCES users (id) NOT NULL,
     album_id            INTEGER REFERENCES albums (id) NOT NULL,
-    main_artist_id      INTEGER REFERENCES artists (id) NOT NULL,
-    secondary_artist_id INTEGER REFERENCES artists (id),
+    artist_id           INTEGER REFERENCES artists (id) NOT NULL,
     title               VARCHAR(100) NOT NULL,
     is_available        BOOLEAN NOT NULL,
     duration            INTEGER NOT NULL,
@@ -61,4 +60,21 @@ CREATE TABLE IF NOT EXISTS songs
     release_date        TIMESTAMP NOT NULL,
     create_date         TIMESTAMP NOT NULL,
     edit_date           TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS playlists
+(
+    id              BIGSERIAL PRIMARY KEY,
+    owner_id        INTEGER REFERENCES users (id) NOT NULL,
+    uuid            VARCHAR(100),
+    description     TEXT,
+    is_main         BOOLEAN
+);
+
+CREATE TABLE IF NOT EXISTS added_songs
+(
+    id              BIGSERIAL PRIMARY KEY,
+    owner_id        INTEGER REFERENCES users (id) NOT NULL,
+    playlist_id     INTEGER REFERENCES playlists (id) NOT NULL,
+    add_date        TIMESTAMP NOT NULL
 );

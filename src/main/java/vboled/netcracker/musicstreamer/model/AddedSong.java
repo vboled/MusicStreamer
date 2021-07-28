@@ -4,11 +4,13 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-//@Entity
+@Entity
 @Data
-@Table(name = "addedSongs")
+@Table(name = "added_songs")
 public class AddedSong {
     @Id
     @Column(columnDefinition = "serial", name = "id")

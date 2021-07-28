@@ -3,8 +3,10 @@ package vboled.netcracker.musicstreamer.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
-//@Entity
+@Entity
 @Data
 @Table(name = "playlists")
 public class Playlist {
@@ -14,10 +16,6 @@ public class Playlist {
 
     @Column(name = "owner_id")
     private Long ownerID;
-
-//    @OneToMany
-//    @JoinColumn()
-//    private AddedSong addedSong;
 
     @Column(name = "name")
     private String name;

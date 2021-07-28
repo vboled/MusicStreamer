@@ -65,13 +65,9 @@ public class SongServiceImpl implements SongService {
             // Add validation
             songToUpdate.setAlbum(update.getAlbum());
         }
-        if (update.getMainArtistId() != null) {
+        if (update.getArtist() != null) {
             // Add validation
-            songToUpdate.setMainArtistId(update.getMainArtistId());
-        }
-        if (update.getSecondaryArtistId() != null) {
-            // Add validation
-            songToUpdate.setSecondaryArtistId(update.getSecondaryArtistId());
+            songToUpdate.setArtist(update.getArtist());
         }
         if (update.getTitle() != null) {
             // Add validation

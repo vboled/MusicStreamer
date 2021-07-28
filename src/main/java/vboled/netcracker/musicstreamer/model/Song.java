@@ -22,11 +22,9 @@ public class Song {
     @JoinColumn(name="album_id")
     private Album album;
 
-    @Column(name = "main_artist_id")
-    private Long mainArtistId;
-
-    @Column(name = "secondary_artist_id")
-    private Long secondaryArtistId;
+    @ManyToOne()
+    @JoinColumn(name="artist_id")
+    private Artist artist;
 
     @Column(name = "is_available")
     private boolean isAvailable;
