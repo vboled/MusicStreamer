@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/images")
+@RequestMapping("/api/v1/images")
 public class ImageController {
 
     private final Set<String> imageExt = new HashSet<String>(Arrays.asList(".gif", ".png", ".jpeg", ".jpg"));

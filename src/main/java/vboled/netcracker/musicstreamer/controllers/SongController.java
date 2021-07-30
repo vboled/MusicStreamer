@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.*;
 
 @RestController
-@RequestMapping("/songs")
+@RequestMapping("/api/v1/songs")
 public class SongController {
 
     private final FileValidator fileValidator = new AudioValidator();

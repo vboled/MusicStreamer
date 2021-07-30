@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/genre")
+@RequestMapping("/api/v1/genre")
 public class GenreController {
 
     private final GenreService genreService;

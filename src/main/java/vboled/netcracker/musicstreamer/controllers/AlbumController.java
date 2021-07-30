@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/album")
+@RequestMapping("/api/v1/album")
 public class AlbumController {
 
     private final FileValidator fileValidator = new ImageValidator();

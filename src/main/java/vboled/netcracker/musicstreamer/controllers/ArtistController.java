@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/artist")
+@RequestMapping("/api/v1/artist")
 public class ArtistController {
     private final ArtistService artistService;
 
