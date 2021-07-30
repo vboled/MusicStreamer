@@ -132,7 +132,7 @@ public class AlbumController {
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     ResponseEntity<?> updateAlbumCover(@AuthenticationPrincipal User user,
                                        @RequestParam Long id, @RequestParam MultipartFile file) {
-        ResponseEntity<?> res = delete(user, id);
+        ResponseEntity<?> res = deleteAlbumCover(user, id);
         if (!res.getStatusCode().equals(HttpStatus.OK))
             return res;
         return uploadAlbumCover(user, id, file);

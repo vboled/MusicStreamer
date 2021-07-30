@@ -23,12 +23,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public void create(Playlist playlist) {
-        try {
-            playlistRepository.save(playlist);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
+    public Playlist create(Playlist playlist) {
+        return playlistRepository.save(playlist);
     }
 
     @Override
@@ -40,6 +36,9 @@ public class PlaylistServiceImpl implements PlaylistService {
         Playlist toUpdate = getById(update.getId());
         if (update.getName() != null) {
             toUpdate.setName(update.getName());
+        }
+        if (update.getDescription() != null) {
+            toUpdate.setDescription(update.getDescription());
         }
         return toUpdate;
     }
@@ -67,6 +66,25 @@ public class PlaylistServiceImpl implements PlaylistService {
         if (!playlistRepository.existsById(id))
             throw new NoSuchElementException();
         playlistRepository.deleteById(id);
+    }
+
+    @Override
+    public Playlist createMainPlaylist(Long ownerId) {
+        Playlist res = new Playlist();
+        res.setMain(true);
+        res.setOwnerID(ownerId);
+        res.setName("Favourite song");
+        res.setDescription("Songs marked \"liked\" will be stored here");
+        playlistRepository.save(res);
+        return res;
+    }
+
+    @Override
+    public Playlist setCover(Long id, String uuid) {
+        Playlist playlist = getById(id);
+        playlist.setUuid(uuid);
+        playlistRepository.save(playlist);
+        return playlist;
     }
 
 }

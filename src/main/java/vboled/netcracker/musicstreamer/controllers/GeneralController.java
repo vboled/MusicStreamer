@@ -21,21 +21,25 @@ public class GeneralController {
     private final GenreService genreService;
     private final ArtistService artistService;
     private final AlbumService albumService;
+    private final PlaylistService playlistService;
 
     @Autowired
     public GeneralController(UserService userService, SongService songService, GenreService genreService,
-                             ArtistService artistService, AlbumService albumService) {
+                             ArtistService artistService, AlbumService albumService, PlaylistService playlistService) {
         this.userService = userService;
         this.songService = songService;
         this.genreService = genreService;
         this.artistService = artistService;
         this.albumService = albumService;
+        this.playlistService = playlistService;
     }
 
     @PostMapping("create/")
+    @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> create(@RequestBody User user) {
         try {
-            userService.create(user);
+            User res = userService.create(user);
+            playlistService.createMainPlaylist(res.getId());
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

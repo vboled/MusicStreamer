@@ -69,6 +69,24 @@ public class SongController {
         }
     }
 
+    @GetMapping("/artist/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    public ResponseEntity<?> getAllSongsByArtist(@RequestParam Long id) {
+        List<Song> res = songService.getByArtistId(id);
+        if (res.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @GetMapping("/album/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    public ResponseEntity<?> getAllSongsByAlbum(@RequestParam Long id) {
+        List<Song> res = songService.getByAlbumId(id);
+        if (res.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
     @GetMapping("/")
     @PreAuthorize("hasAuthority('user:perm')")
     public ResponseEntity<?> readSong(@RequestParam Long id) {
@@ -76,8 +94,6 @@ public class SongController {
             return new ResponseEntity<>(songService.getById(id), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("Song not found", HttpStatus.NOT_FOUND);
-        } catch (IllegalAccessError e) {
-            return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
         }
     }
 

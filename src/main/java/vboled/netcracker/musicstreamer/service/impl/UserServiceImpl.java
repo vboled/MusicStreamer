@@ -35,11 +35,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void create(User user) {
+    public User create(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         checkEmail(user.getEmail());
         checkPhone(user.getPhoneNumber());
         checkUserName(user.getUserName());
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override

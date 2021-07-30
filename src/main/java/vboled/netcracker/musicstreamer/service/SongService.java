@@ -26,5 +26,9 @@ public interface SongService {
 
     Song setSongFile(Long id, String uuid);
 
+    List<Song> getByArtistId(Long artistId);
+
+    List<Song> getByAlbumId(Long albumId);
+
     void deleteAudio(Long id);
 }

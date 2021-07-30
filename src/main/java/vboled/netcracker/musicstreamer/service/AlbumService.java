@@ -22,6 +22,4 @@ public interface AlbumService {
     void delete(Long id) throws NoSuchElementException;
 
     Album setCover(Long id, String uuid);
-
-    void deleteCover(Long id);
 }

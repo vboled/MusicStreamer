@@ -1,5 +1,6 @@
 package vboled.netcracker.musicstreamer.service;
 
+import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.model.Playlist;
 
 import java.util.List;
@@ -9,7 +10,7 @@ public interface PlaylistService {
 
     Playlist getById(Long id) throws NoSuchElementException;
 
-    void create(Playlist playlist) throws IllegalArgumentException;
+    Playlist create(Playlist playlist) throws IllegalArgumentException;
 
     List<Playlist> readAll();
 
@@ -19,12 +20,7 @@ public interface PlaylistService {
 
     void delete(Long id) throws NoSuchElementException;
 
-    static Playlist createMainPlaylist(Long ownerId) {
-        Playlist res = new Playlist();
-        res.setMain(true);
-        res.setOwnerID(ownerId);
-        res.setName("Favourite song");
-        res.setDescription("Songs marked \"liked\" will be stored here");
-        return res;
-    }
+    Playlist createMainPlaylist(Long ownerId);
+
+    Playlist setCover(Long id, String uuid);
 }

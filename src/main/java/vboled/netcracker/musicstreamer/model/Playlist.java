@@ -30,6 +30,4 @@ public class Playlist {
 
     @Column(name = "is_main")
     private boolean isMain;
-
-
 }

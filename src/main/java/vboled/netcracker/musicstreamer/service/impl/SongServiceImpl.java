@@ -128,6 +128,16 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
+    public List<Song> getByArtistId(Long artistId) {
+        return songRepository.findAllByArtistId(artistId);
+    }
+
+    @Override
+    public List<Song> getByAlbumId(Long albumId) {
+        return songRepository.findAllByAlbumId(albumId);
+    }
+
+    @Override
     public void deleteAudio(Long id) {
         Song song = getById(id);
         song.setUuid(null);

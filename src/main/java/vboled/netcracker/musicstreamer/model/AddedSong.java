@@ -18,11 +18,13 @@ public class AddedSong {
     @Column(columnDefinition = "serial", name = "id")
     private Long id;
 
-    @Column(name = "owner_id")
-    private Long ownerID;
+    @ManyToOne()
+    @JoinColumn(name = "song_id")
+    private Song song;
 
-    @Column(name = "playlist_id")
-    private Long playlistID;
+    @ManyToOne()
+    @JoinColumn(name = "playlist_id")
+    private Playlist playlist;
 
     @Column(name = "add_date")
     private LocalDateTime addDate;

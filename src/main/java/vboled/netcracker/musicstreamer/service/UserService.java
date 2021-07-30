@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 
 public interface UserService {
 
-    void create(User user);
+    User create(User user);
 
     List<User> readAll();
 
