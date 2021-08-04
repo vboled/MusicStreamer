@@ -25,15 +25,9 @@ public class GenreController {
         this.genreService = genreService;
     }
 
-    @Value("${max.genre.name.length}")
-    private Long MAX_GENRE_NAME_LENGTH;
-
     @PostMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
     ResponseEntity<?> createGenre(@RequestBody Genre genre) {
-
-        if (genre.getName().length() > MAX_GENRE_NAME_LENGTH)
-            return new ResponseEntity<>("Too long name!!!", HttpStatus.BAD_REQUEST);
 
         if (genreService.existByName(genre.getName()))
             return new ResponseEntity<>("Genre already exist!!!", HttpStatus.NOT_MODIFIED);

@@ -49,13 +49,11 @@ public class GeneralController {
     @GetMapping("search/")
     @PreAuthorize("hasAuthority('user:perm')")
     public ResponseEntity<?> search(@RequestParam String search) {
-        System.out.println(search);
         Map<String, List<?>> res = new HashMap<>();
-        res.put("Songs: ", songService.search(search));
-        res.put("Artists: ", artistService.search(search));
-        res.put("Genres: ", genreService.search(search));
-        res.put("Albums: ", albumService.search(search));
-        System.out.println(res);
+        res.put("songs", songService.search(search));
+        res.put("artists", artistService.search(search));
+        res.put("genres", genreService.search(search));
+        res.put("albums", albumService.search(search));
         res.entrySet().removeIf(entry -> entry.getValue().isEmpty());
         return new ResponseEntity<>(
                 res,
