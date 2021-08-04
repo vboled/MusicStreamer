@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/api/v1/admin")
+@RequestMapping("/admin")
+@CrossOrigin(origins="http://localhost:3000")
 public class AdminController {
 
     private final UserService userService;
@@ -33,7 +34,7 @@ public class AdminController {
     }
 
     @GetMapping("/all/")
-    @PreAuthorize("hasAuthority('admin:perm')")
+//    @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> read() {
         final List<User> users = userService.readAll();
         if (users == null || users.isEmpty())
