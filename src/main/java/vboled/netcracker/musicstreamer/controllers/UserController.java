@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/v1/user")
 public class UserController {
 
     private final UserService userService;
@@ -96,7 +96,7 @@ public class UserController {
     }
 
     @PutMapping("/update/")
-    @PreAuthorize("hasAnyAuthority('admin:perm','user:perm')")
+    @PreAuthorize("hasAuthority('user:perm')")
     public ResponseEntity<?> updateUser(@AuthenticationPrincipal User user,
                                         @RequestBody User updateUser) {
         try{

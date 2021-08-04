@@ -1,27 +1,25 @@
 package vboled.netcracker.musicstreamer.service;
 
-import vboled.netcracker.musicstreamer.model.user.Role;
 import vboled.netcracker.musicstreamer.model.user.User;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 public interface UserService {
 
-    void create(User user);
+    User create(User user);
 
     List<User> readAll();
 
     User read(String userName);
 
-    User read(int id) throws NoSuchElementException;
+    User read(Long id) throws NoSuchElementException;
 
-    boolean update(User user, int id);
+    boolean update(User user, Long id);
 
-    boolean delete(int id);
+    boolean delete(Long id);
 
-    boolean updatePassword(String newPassword, int id);
+    boolean updatePassword(String newPassword, Long id);
 
     void checkEmail(String email);
 
@@ -29,9 +27,9 @@ public interface UserService {
 
     void checkUserName(String userName);
 
-    boolean updateEmail(String email, int id);
+    boolean updateEmail(String email, Long id);
 
-    boolean updatePhone(String phone, int id);
+    boolean updatePhone(String phone, Long id);
 
     boolean isValidUserName(String userName);
 
@@ -47,7 +45,7 @@ public interface UserService {
 
     User userFullUpdate(User update);
 
-    User userNotFullUpdate(User update, int id);
+    User userNotFullUpdate(User update, Long id);
 
     boolean matches(String hashed, String common);
 
