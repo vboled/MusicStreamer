@@ -1,4 +1,4 @@
-package vboled.netcracker.musicstreamer.service;
+package vboled.netcracker.musicstreamer.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.repository.UserRepository;
+import vboled.netcracker.musicstreamer.service.UserService;
 
 import java.util.List;
 import java.util.Locale;
@@ -34,11 +35,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void create(User user) {
+    public User create(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         checkEmail(user.getEmail());
         checkPhone(user.getPhoneNumber());
         checkUserName(user.getUserName());
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override
@@ -52,13 +54,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User read(int id) throws NoSuchElementException {
-        System.out.println(passwordEncoder.encode("owner"));
+    public User read(Long id) throws NoSuchElementException {
         return userRepository.findById(id).get();
     }
 
     @Override
-    public boolean update(User user, int id) {
+    public boolean update(User user, Long id) {
         if (userRepository.existsById(id)) {
             checkEmail(user.getEmail());
             checkPhone(user.getPhoneNumber());
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(Long id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             return true;
@@ -81,7 +82,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateEmail(String email, int id) {
+    public boolean updateEmail(String email, Long id) {
         if (userRepository.existsById(id)) {
             User user = userRepository.getById(id);
             user.setEmail(email);
@@ -92,7 +93,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updatePhone(String phone, int id) {
+    public boolean updatePhone(String phone, Long id) {
         if (userRepository.existsById(id)) {
             User user = userRepository.getById(id);
             user.setPhoneNumber(phone);
@@ -103,7 +104,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updatePassword(String password, int id) {
+    public boolean updatePassword(String password, Long id) {
         if (userRepository.existsById(id)) {
             User user = userRepository.getById(id);
             user.setPassword(password);
@@ -170,13 +171,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User userNotFullUpdate(User update, int id) {
+    public User userNotFullUpdate(User update, Long id) {
         User updated = updateCommonFields(update, id);
         userRepository.save(updated);
         return updated;
     }
 
-    private User updateCommonFields(User update, int id) throws UsernameNotFoundException, IllegalArgumentException {
+    private User updateCommonFields(User update, Long id) throws UsernameNotFoundException, IllegalArgumentException {
         if (!userRepository.existsById(id))
             throw new UsernameNotFoundException("No user with such id");
         User userToUpdate = userRepository.getById(id);

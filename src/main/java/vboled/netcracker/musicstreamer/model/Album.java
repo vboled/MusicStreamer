@@ -6,10 +6,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Entity
 @Data
-@Table(name = "artists")
-public class Artist {
+@Entity
+@Table(name = "albums")
+public class Album {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +18,6 @@ public class Artist {
 
     @Column(name = "owner_id")
     private Long ownerID;
-
-    @Column(name = "name")
-    private String name;
 
     @Column(name = "uuid")
     private String uuid;
@@ -31,8 +28,25 @@ public class Artist {
     @Column(name = "edit_date")
     private Date editDate;
 
+    @Column(name = "release_date")
+    private Date releaseDate;
+
+    @ManyToOne()
+    @JoinColumn(name = "genre_id")
+    private Genre genre;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "volumes")
+    private Long volumes;
+
+    @Column(name = "type")
+    private String type;
+
     @PrePersist
     public void prePersist() {
         createDate = LocalDateTime.now();
     }
+
 }

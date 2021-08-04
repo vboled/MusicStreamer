@@ -3,13 +3,13 @@ package vboled.netcracker.musicstreamer.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
-@Table(name = "artists")
-public class Artist {
+@Table(name = "playlists")
+public class Playlist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,14 +25,9 @@ public class Artist {
     @Column(name = "uuid")
     private String uuid;
 
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
+    @Column(name = "description")
+    private String description;
 
-    @Column(name = "edit_date")
-    private Date editDate;
-
-    @PrePersist
-    public void prePersist() {
-        createDate = LocalDateTime.now();
-    }
+    @Column(name = "is_main")
+    private boolean isMain;
 }
