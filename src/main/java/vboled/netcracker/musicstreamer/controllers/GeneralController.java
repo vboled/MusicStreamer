@@ -34,6 +34,11 @@ public class GeneralController {
         this.playlistService = playlistService;
     }
 
+    @GetMapping("login")
+    public String getLoginView() {
+        return "login";
+    }
+
     @PostMapping("create/")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> create(@RequestBody User user) {
