@@ -1,40 +1,65 @@
-import logo from './logo.svg';
 import './App.css';
-import anxios from 'axios';
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 
-const UserProfiles = () => {
+const WhoAmI = () => {
 
-  const [UserProfiles, setUserProfiles] = useState([]);
+  const [result, setResult] = useState("none");
 
-  const fetchUserProfiles = () => {
-    axios.get("http://localhost:8080/admin/all/").then(res => {
+  const getStatus = () => {
+    axios.get("http://localhost:8080/api/v1/whoami").then(res => {
       console.log(res);
-      setUserProfiles(res.data);
+      setResult(res.data);
     });
   }
 
   useEffect(() => {
-     fetchUserProfiles();
+    getStatus();
   }, []);
 
+  if (result === "anonymous")
+    return AnonymousPage()
+  else if (result === "none")
+    return ErrorPage();
+  return AuthorizedPage();
+}
 
-  return UserProfiles.map((userProfile, index) => {
+const Test = () => {
 
-    return (
-      <div key={index}>
-        <h1>{userProfile.userName}</h1>
-        <p>{userProfile.email}, {userProfile.phoneNumber}, {userProfile.name}</p>
-      </div>
-    )
-  })
+  const getStatus = () => {
+    axios.post("http://localhost:8080/login", {
+      "username":"admin",
+      "password":"admin"
+    }).
+    then(res => {
+      console.log(res);
+    });
+  }
+
+  useEffect(() => {
+    getStatus();
+  }, []);
+
+  return <h1>Test</h1>
+}
+
+function AnonymousPage() {
+  return <h1>Anonymous Page</h1>
+}
+
+function AuthorizedPage() {
+  return <h1>Authorized Page</h1>
+}
+
+function ErrorPage() {
+  return <h1>Error Page</h1>
 }
 
 function App() {
   return (
     <div className="App">
-    <UserProfiles/>
+    {/*<WhoAmI/>*/}
+    <Test/>
     </div>
   );
 }
