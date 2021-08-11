@@ -12,7 +12,6 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/admin")
-@CrossOrigin(origins="http://localhost:3000")
 public class AdminController {
 
     private final UserService userService;
