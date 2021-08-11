@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.service.*;
@@ -34,9 +35,11 @@ public class GeneralController {
         this.playlistService = playlistService;
     }
 
-    @GetMapping("login")
-    public String getLoginView() {
-        return "login";
+    @GetMapping("whoami")
+    public String WhoAmI(@AuthenticationPrincipal User user) {
+        if (user == null)
+            return "anonymous";
+        return user.getUsername();
     }
 
     @PostMapping("create/")

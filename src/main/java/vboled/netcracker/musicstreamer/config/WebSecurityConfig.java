@@ -13,11 +13,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     static final String TARGET_AFTER_SUCCESSFUL_LOGIN_PARAM = "target";
 
@@ -54,8 +56,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(redirectToOriginalUrlAuthenticationSuccessHandler)
 
                 .and().authorizeRequests()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/api/v1/whoami").permitAll()
                 .antMatchers("/**").authenticated();
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("*");
     }
 
     @Override
