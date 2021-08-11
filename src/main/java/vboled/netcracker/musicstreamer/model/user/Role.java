@@ -1,4 +1,4 @@
-package vboled.netcracker.musicstreamer.model;
+package vboled.netcracker.musicstreamer.model.user;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public enum Role {
     USER(Set.of(Permission.USER_CHANGE)),
     ADMIN(Set.of(Permission.ADMIN_PERMISSION, Permission.USER_CHANGE)),
-    OWNER(Set.of(Permission.OWNER_PERMISSION));
+    OWNER(Set.of(Permission.OWNER_PERMISSION, Permission.USER_CHANGE));
 
     private final Set<Permission> permissions;
 

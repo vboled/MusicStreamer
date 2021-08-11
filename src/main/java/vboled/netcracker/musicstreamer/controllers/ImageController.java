@@ -6,18 +6,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vboled.netcracker.musicstreamer.service.FileControllerService;
-import vboled.netcracker.musicstreamer.service.FileControllerServiceImpl;
+import vboled.netcracker.musicstreamer.service.impl.FileControllerServiceImpl;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/images")
+@RequestMapping("/api/v1/images")
 public class ImageController {
-
-    private final FileControllerService fileControllerService = new FileControllerServiceImpl();
 
     private final Set<String> imageExt = new HashSet<String>(Arrays.asList(".gif", ".png", ".jpeg", ".jpg"));
 
@@ -32,34 +30,35 @@ public class ImageController {
     @Value("${max.byte.image.size}")
     private int maxImageSize;
 
-    @GetMapping("/{uuid}")
-    @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> read(@PathVariable(name = "uuid") String uuid) {
-        return fileControllerService.read(uuid, uploadPath + "/" + imageDir);
-    }
-
-    @PostMapping("/")
-    @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> create(@RequestParam("file") MultipartFile file) {
-        if (file.getSize() > maxImageSize)
-            return new ResponseEntity<>("File size exceeds 5 MB", HttpStatus.BAD_REQUEST);
-        return fileControllerService.uploadFile(file, imageExt, uploadPath + "/" + imageDir);
-    }
-
-    @DeleteMapping("/{uuid}")
-    @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> delete(@PathVariable(name = "uuid") String uuid) {
-        return fileControllerService.delete(uuid, uploadPath + "/" + imageDir);
-    }
-
-    @PutMapping("/{uuid}")
-    @PreAuthorize("hasAuthority('admin:perm')")
-    public ResponseEntity<?> update(@PathVariable(name = "uuid") String uuid,
-                                    @RequestParam("file") MultipartFile file) {
-        if (file.getSize() > maxImageSize)
-            return new ResponseEntity<>("File size exceeds 5 MB", HttpStatus.BAD_REQUEST);
-        if (delete(uuid).getStatusCode().equals(HttpStatus.OK))
-            return create(file);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+//    @GetMapping("/{uuid}")
+//    @PreAuthorize("hasAuthority('admin:perm')")
+//    public ResponseEntity<?> read(@PathVariable(name = "uuid") String uuid) {
+//        return FileControllerServiceImpl.read(uuid, uploadPath + "/" + imageDir);
+//    }
+//
+//    @PostMapping("/")
+//    @PreAuthorize("hasAuthority('admin:perm')")
+//    public ResponseEntity<?> create(@RequestParam("file") MultipartFile file) {
+//        if (file.getSize() > maxImageSize)
+//            return new ResponseEntity<>("File size exceeds 5 MB", HttpStatus.BAD_REQUEST);
+//        return FileControllerServiceImpl.uploadFile(file, imageExt, uploadPath + "/" + imageDir,
+//                UUID.randomUUID().toString());
+//    }
+//
+//    @DeleteMapping("/{uuid}")
+//    @PreAuthorize("hasAuthority('admin:perm')")
+//    public ResponseEntity<?> delete(@PathVariable(name = "uuid") String uuid) {
+//        return FileControllerServiceImpl.delete(uuid, uploadPath + "/" + imageDir);
+//    }
+//
+//    @PutMapping("/{uuid}")
+//    @PreAuthorize("hasAuthority('admin:perm')")
+//    public ResponseEntity<?> update(@PathVariable(name = "uuid") String uuid,
+//                                    @RequestParam("file") MultipartFile file) {
+//        if (file.getSize() > maxImageSize)
+//            return new ResponseEntity<>("File size exceeds 5 MB", HttpStatus.BAD_REQUEST);
+//        if (delete(uuid).getStatusCode().equals(HttpStatus.OK))
+//            return create(file);
+//        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//    }
 }
