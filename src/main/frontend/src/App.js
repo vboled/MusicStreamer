@@ -1,6 +1,4 @@
-import logo from './logo.svg';
 import './App.css';
-import anxios from 'axios';
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 
@@ -26,6 +24,25 @@ const WhoAmI = () => {
   return AuthorizedPage();
 }
 
+const Test = () => {
+
+  const getStatus = () => {
+    axios.post("http://localhost:8080/login", {
+      "username":"admin",
+      "password":"admin"
+    }).
+    then(res => {
+      console.log(res);
+    });
+  }
+
+  useEffect(() => {
+    getStatus();
+  }, []);
+
+  return <h1>Test</h1>
+}
+
 function AnonymousPage() {
   return <h1>Anonymous Page</h1>
 }
@@ -41,7 +58,8 @@ function ErrorPage() {
 function App() {
   return (
     <div className="App">
-    <WhoAmI/>
+    {/*<WhoAmI/>*/}
+    <Test/>
     </div>
   );
 }
