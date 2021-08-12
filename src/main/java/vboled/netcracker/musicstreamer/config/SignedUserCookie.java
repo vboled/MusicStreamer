@@ -3,7 +3,6 @@ package vboled.netcracker.musicstreamer.config;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import vboled.netcracker.musicstreamer.exceptions.CookieVerificationFailedException;
-import vboled.netcracker.musicstreamer.model.user.Role;
 import vboled.netcracker.musicstreamer.model.user.User;
 
 import javax.crypto.Mac;

@@ -27,8 +27,8 @@ const WhoAmI = () => {
 const Test = () => {
 
   const getStatus = () => {
-    axios.post("http://localhost:8080/login", {
-      "username":"admin",
+    axios.post("http://localhost:8080/api/v1/auth/", {
+      "login":"admin",
       "password":"admin"
     }).
     then(res => {
