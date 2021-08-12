@@ -33,7 +33,7 @@ public class SignedUserCookie extends Cookie {
     private final String hmac;
 
     public SignedUserCookie(User user, String cookieHmacKey) {
-        super(NAME, "");
+        super(NAME, "UserCookie");
         this.payload = new Payload(
                 user.getUsername(),
                 user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(toList()));

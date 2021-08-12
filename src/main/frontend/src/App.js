@@ -30,9 +30,9 @@ const Test = () => {
     axios.post("http://localhost:8080/api/v1/auth/", {
       "login":"admin",
       "password":"admin"
-    }).
+    },{withCredentials: true}).
     then(res => {
-      console.log(res);
+      console.log(res.headers);
     });
   }
 
