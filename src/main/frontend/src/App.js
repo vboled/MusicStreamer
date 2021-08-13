@@ -40,14 +40,14 @@ const Test = () => {
   }
 
   const test = () => {
-    axios.get("http://localhost:8080/api/v1/user/info/", {withCredentials:true}).
+    axios.get("http://localhost:8080/api/v1/user/info/").
     then(res => {
       console.log(res.data)
     });
   }
 
   useEffect(() => {
-    test();
+    getStatus();
   }, []);
 
   return <h1>Test</h1>
@@ -64,7 +64,7 @@ function ErrorPage() {
 function App() {
   return (
     <div className="App">
-    {/*<WhoAmI/>*/}
+    <WhoAmI/>
     <Test/>
     </div>
   );
