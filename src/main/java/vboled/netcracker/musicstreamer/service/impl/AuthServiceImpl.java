@@ -1,6 +1,5 @@
 package vboled.netcracker.musicstreamer.service.impl;
 
-import javax.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -26,7 +25,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String createCookie(User user) {
-        return new SignedUserCookie(user, cookieHmacKey).getValue();
+        return new SignedUserCookie(userService, user, cookieHmacKey).getValue();
     }
 
     @Override

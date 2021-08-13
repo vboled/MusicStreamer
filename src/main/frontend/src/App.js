@@ -1,6 +1,9 @@
 import './App.css';
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
+import Cookie from 'js-cookie'
+import Anonymous from "./Anonymous";
+import SignedUser from "./SignedUser";
 
 const WhoAmI = () => {
 
@@ -18,10 +21,10 @@ const WhoAmI = () => {
   }, []);
 
   if (result === "anonymous")
-    return AnonymousPage()
+    return Anonymous();
   else if (result === "none")
     return ErrorPage();
-  return AuthorizedPage();
+  return SignedUser();
 }
 
 const Test = () => {
@@ -30,21 +33,24 @@ const Test = () => {
     axios.post("http://localhost:8080/api/v1/auth/", {
       "login":"admin",
       "password":"admin"
-    },{withCredentials: true}).
+    }).
     then(res => {
-      console.log(res.headers);
+      Cookie.set("User", res.data)
+    });
+  }
+
+  const test = () => {
+    axios.get("http://localhost:8080/api/v1/user/info/", {withCredentials:true}).
+    then(res => {
+      console.log(res.data)
     });
   }
 
   useEffect(() => {
-    getStatus();
+    test();
   }, []);
 
   return <h1>Test</h1>
-}
-
-function AnonymousPage() {
-  return <h1>Anonymous Page</h1>
 }
 
 function AuthorizedPage() {

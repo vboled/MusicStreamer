@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import vboled.netcracker.musicstreamer.exceptions.CookieVerificationFailedException;
 import vboled.netcracker.musicstreamer.model.user.User;
+import vboled.netcracker.musicstreamer.service.UserService;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -29,11 +30,13 @@ public class SignedUserCookie extends Cookie {
     private static final Pattern HMAC_PATTERN = Pattern.compile("hmac=([A-Za-z0-9+/=]*)");
     private static final String HMAC_SHA_512 = "HmacSHA512";
 
+    private final UserService userService;
     private final Payload payload;
     private final String hmac;
 
-    public SignedUserCookie(User user, String cookieHmacKey) {
+    public SignedUserCookie(UserService userService, User user, String cookieHmacKey) {
         super(NAME, "UserCookie");
+        this.userService = userService;
         this.payload = new Payload(
                 user.getUsername(),
                 user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(toList()));
@@ -43,8 +46,9 @@ public class SignedUserCookie extends Cookie {
         this.setHttpOnly(true);
     }
 
-    public SignedUserCookie(Cookie cookie, String cookieHmacKey) {
-        super(NAME, "");
+    public SignedUserCookie(Cookie cookie, String cookieHmacKey, UserService userService) {
+        super(NAME, "UserCookie");
+        this.userService = userService;
 
         if (!NAME.equals(cookie.getName()))
             throw new IllegalArgumentException("No " + NAME + " Cookie");
@@ -86,9 +90,7 @@ public class SignedUserCookie extends Cookie {
     }
 
     public User getUser() {
-        return new User(
-                payload.username,
-                payload.roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet()));
+        return userService.getByUserName(payload.username);
     }
 
     private String calculateHmac(Payload payload, String secretKey) {

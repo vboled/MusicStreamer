@@ -12,6 +12,7 @@ import org.springframework.security.web.context.SaveContextOnUpdateOrErrorRespon
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
 import vboled.netcracker.musicstreamer.model.user.User;
+import vboled.netcracker.musicstreamer.service.UserService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -27,9 +28,11 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
     private static final String ANONYMOUS_USER = "anonymousUser";
 
     private final String cookieHmacKey;
+    private final UserService userService;
 
-    public CookieSecurityContextRepository(@Value("${auth.cookie.hmac-key}") String cookieHmacKey) {
+    public CookieSecurityContextRepository(@Value("${auth.cookie.hmac-key}") String cookieHmacKey, UserService userService) {
         this.cookieHmacKey = cookieHmacKey;
+        this.userService = userService;
     }
 
     @Override
@@ -81,7 +84,7 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
     }
 
     private User createUser(Cookie cookie) {
-        return new SignedUserCookie(cookie, cookieHmacKey).getUser();
+        return new SignedUserCookie(cookie, cookieHmacKey, userService).getUser();
     }
 
     private class SaveToCookieResponseWrapper extends SaveContextOnUpdateOrErrorResponseWrapper {
@@ -113,7 +116,7 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
             }
 
             User user = (User) authentication.getPrincipal();
-            SignedUserCookie cookie = new SignedUserCookie(user, cookieHmacKey);
+            SignedUserCookie cookie = new SignedUserCookie(userService, user, cookieHmacKey);
             cookie.setSecure(request.isSecure());
             response.addCookie(cookie);
             LOG.debug("SecurityContext for principal '{}' saved in Cookie", user.getUsername());

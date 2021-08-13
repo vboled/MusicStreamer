@@ -38,24 +38,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http.cors().and()
                 // deactivate session creation
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().csrf().disable()
-//
+
                 // store SecurityContext in Cookie / delete Cookie on logout
                 .securityContext().securityContextRepository(cookieSecurityContextRepository)
                 .and().logout().permitAll().deleteCookies(SignedUserCookie.NAME)
-//
-//                // deactivate RequestCache and append originally requested URL as query parameter to login form request
-                .and().requestCache().disable()
 
-                // configure form-based login
-//                .formLogin()
-                // after successful login forward user to originally requested URL
-//                .successHandler(redirectToOriginalUrlAuthenticationSuccessHandler)
-
-                .authorizeRequests()
+                .and().authorizeRequests()
                 .antMatchers("/api/v1/whoami").permitAll()
                 .antMatchers("/api/v1/auth/").permitAll()
                 .antMatchers("/**").authenticated();
