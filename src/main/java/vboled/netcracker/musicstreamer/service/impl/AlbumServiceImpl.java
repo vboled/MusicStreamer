@@ -1,6 +1,8 @@
 package vboled.netcracker.musicstreamer.service.impl;
 
 import org.springframework.stereotype.Service;
+import vboled.netcracker.musicstreamer.exceptions.AlbumCreationFailed;
+import vboled.netcracker.musicstreamer.exceptions.AlbumNotFoundException;
 import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.repository.AlbumRepository;
 import vboled.netcracker.musicstreamer.service.AlbumService;
@@ -18,7 +20,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public Album getById(Long id) throws NoSuchElementException {
+    public Album getById(Long id) throws AlbumNotFoundException {
         return albumRepository.findById(id).get();
     }
 
@@ -27,7 +29,7 @@ public class AlbumServiceImpl implements AlbumService {
         try {
             albumRepository.save(album);
         } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
+            throw new AlbumCreationFailed(e.getMessage());
         }
     }
 
@@ -41,7 +43,7 @@ public class AlbumServiceImpl implements AlbumService {
         return albumRepository.findAllByNameLike(search);
     }
 
-    private Album updateCommonFields(Album update) throws NoSuchElementException {
+    private Album updateCommonFields(Album update) throws AlbumNotFoundException {
         Album toUpdate = getById(update.getId());
         if (update.getReleaseDate() != null)
             toUpdate.setReleaseDate(update.getReleaseDate());
@@ -61,14 +63,14 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public Album partialUpdateAlbum(Album update) throws NoSuchElementException {
+    public Album partialUpdateAlbum(Album update) throws AlbumNotFoundException {
         Album updated = updateCommonFields(update);
         albumRepository.save(updated);
         return updated;
     }
 
     @Override
-    public Album fullUpdateAlbum(Album update) throws NoSuchElementException {
+    public Album fullUpdateAlbum(Album update) throws AlbumNotFoundException {
         Album toUpdate = updateCommonFields(update);
         if (update.getOwnerID() != null) {
             // Add validation

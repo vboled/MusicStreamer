@@ -7,6 +7,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vboled.netcracker.musicstreamer.UserAdmin;
+import vboled.netcracker.musicstreamer.exceptions.AlbumCreationFailed;
+import vboled.netcracker.musicstreamer.exceptions.AlbumNotFoundException;
 import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.model.user.Permission;
 import vboled.netcracker.musicstreamer.model.user.User;
@@ -58,7 +60,7 @@ public class AlbumController {
             }
             albumService.create(album);
             return new ResponseEntity<>(album, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
+        } catch (AlbumCreationFailed e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_MODIFIED);
         }
     }
@@ -77,7 +79,7 @@ public class AlbumController {
     ResponseEntity<?> getAlbum(@RequestParam Long id) {
         try {
             return new ResponseEntity<>(albumService.getById(id), HttpStatus.OK);
-        } catch (NoSuchElementException e) {
+        } catch (AlbumNotFoundException e) {
             return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
         }
     }
@@ -91,9 +93,9 @@ public class AlbumController {
             return fileService.read(albumService.getById(id).getUuid(), fileValidator);
         } catch (IOException e) {
             return new ResponseEntity<>("Cover not found", HttpStatus.NOT_FOUND);
-        } catch (NoSuchElementException e) {
+        } catch (AlbumNotFoundException e) {
             return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
-        } catch (IllegalAccessError e) {
+        } catch (AlbumCreationFailed e) {
             return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
         }
     }
@@ -158,10 +160,10 @@ public class AlbumController {
             else
                 return new ResponseEntity<>("You don't have permission!!!", HttpStatus.NOT_MODIFIED);
             return new ResponseEntity<>(res, HttpStatus.OK);
-        } catch (NoSuchElementException e) {
+        } catch (AlbumNotFoundException e) {
             e.printStackTrace();
             return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
-        } catch (IllegalArgumentException e) {
+        } catch (AlbumCreationFailed e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
