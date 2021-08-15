@@ -18,11 +18,12 @@ import java.util.Set;
 @RequestMapping("/api/v1/artist")
 public class ArtistController {
     private final ArtistService artistService;
+    private final User user;
 
-    public ArtistController(ArtistService artistService) {
+    public ArtistController(ArtistService artistService, User user) {
         this.artistService = artistService;
+        this.user = user;
     }
-
 
     @PostMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
@@ -56,7 +57,7 @@ public class ArtistController {
 
     @PutMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    ResponseEntity<?> updateArtist(@AuthenticationPrincipal User user,
+    ResponseEntity<?> updateArtist(/*@AuthenticationPrincipal User user,*/
                                   @RequestBody Artist artist) {
         try{
             Artist res = null;
@@ -80,7 +81,7 @@ public class ArtistController {
 
     @DeleteMapping("/")
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
-    public ResponseEntity<?> delete(@AuthenticationPrincipal User user,
+    public ResponseEntity<?> delete(/*@AuthenticationPrincipal User user,*/
                                     @RequestParam Long id) {
         try{
             if (user.getRole().getPermissions().contains(Permission.OWNER_PERMISSION) &&

@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import vboled.netcracker.musicstreamer.UserAdmin;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.service.UserService;
 import java.util.List;
@@ -15,10 +16,12 @@ import java.util.NoSuchElementException;
 public class AdminController {
 
     private final UserService userService;
+    private final UserAdmin userAdmin;
 
     @Autowired
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, UserAdmin userAdmin) {
         this.userService = userService;
+        this.userAdmin = userAdmin;
     }
 
     @PostMapping("/create/")

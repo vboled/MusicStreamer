@@ -23,20 +23,22 @@ public class GeneralController {
     private final ArtistService artistService;
     private final AlbumService albumService;
     private final PlaylistService playlistService;
+    private final User user;
 
     @Autowired
     public GeneralController(UserService userService, SongService songService, GenreService genreService,
-                             ArtistService artistService, AlbumService albumService, PlaylistService playlistService) {
+                             ArtistService artistService, AlbumService albumService, PlaylistService playlistService, User user) {
         this.userService = userService;
         this.songService = songService;
         this.genreService = genreService;
         this.artistService = artistService;
         this.albumService = albumService;
         this.playlistService = playlistService;
+        this.user = user;
     }
 
     @GetMapping("whoami")
-    public String WhoAmI(@AuthenticationPrincipal User user) {
+    public String WhoAmI(/*@AuthenticationPrincipal User user*/) {
         if (user == null)
             return "anonymous";
         return user.getUsername();

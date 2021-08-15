@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import vboled.netcracker.musicstreamer.UserAdmin;
 import vboled.netcracker.musicstreamer.model.user.Permission;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.model.user.UserView;
@@ -20,17 +20,19 @@ import java.util.NoSuchElementException;
 public class UserController {
 
     private final UserService userService;
+    private final UserAdmin user;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserAdmin user) {
         this.userService = userService;
+        this.user = user;
     }
 
     @GetMapping("/info/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> read(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> read(/*@AuthenticationPrincipal User user*/) {
         try {
-            return new ResponseEntity<>(new UserView(userService.read(user.getId())), HttpStatus.OK);
+            return new ResponseEntity<>(userService.read(user.getId()), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
@@ -38,7 +40,7 @@ public class UserController {
 
     @PutMapping("/update/email/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> updateEmail(@AuthenticationPrincipal User user,
+    public ResponseEntity<?> updateEmail(/*@AuthenticationPrincipal User user,*/
                                          @RequestBody Map<String, String> json) {
         String password = json.get("password"), newEmail = json.get("newEmail");
         if (password == null || newEmail == null)
@@ -59,7 +61,7 @@ public class UserController {
 
     @PutMapping("/update/phone/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> updatePhoneNumber(@AuthenticationPrincipal User user,
+    public ResponseEntity<?> updatePhoneNumber(/*@AuthenticationPrincipal User user,*/
                                                @RequestBody Map<String, String> json) {
         String password = json.get("password"), newPhoneNumber = json.get("newPhoneNumber");
         if (password == null || newPhoneNumber == null)
@@ -79,7 +81,7 @@ public class UserController {
 
     @PutMapping("/update/password/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal User user,
+    public ResponseEntity<?> updatePassword(/*@AuthenticationPrincipal User user,*/
                                             @RequestBody Map<String, String> json) {
         String password = json.get("password"), newPassword1 = json.get("newPassword1"),
                 newPassword2 = json.get("newPassword2");
@@ -97,7 +99,7 @@ public class UserController {
 
     @PutMapping("/update/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> updateUser(@AuthenticationPrincipal User user,
+    public ResponseEntity<?> updateUser(/*@AuthenticationPrincipal User user,*/
                                         @RequestBody User updateUser) {
         try{
             User res = null;
