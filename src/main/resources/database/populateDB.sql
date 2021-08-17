@@ -14,3 +14,5 @@ VALUES (default, 3, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 
 INSERT INTO artists
 VALUES (default, 3, 'firstArtist', 'uuid', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
+INSERT INTO playlists
+VALUES (default, 1, NULL, 'default', 'desc', TRUE);

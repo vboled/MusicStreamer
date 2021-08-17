@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 
-function SignedUser() {
+function SignedUser(result) {
     return (
         <div>
-            Hello, SignedUser!!!
+            result
         </div>
     )
 }

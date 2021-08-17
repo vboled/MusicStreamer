@@ -43,10 +43,11 @@ public class GeneralController {
         if (user == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 //        try {
-//            User res = userService.getByUserName(user.getUserName());
-//            return new ResponseEntity<>(new UserInfoDto(user, userService.getAllPlaylists(res.getId())), HttpStatus.OK);
+            User res = userService.getByUserName(user.getUserName());
+//            return new ResponseEntity<>(res, HttpStatus.OK);
+            return new ResponseEntity<>(new UserInfoDto(user, userService.getAllPlaylists(res.getId())), HttpStatus.OK);
 //        } catch ()
-        return null;
+//        return null;
     }
 
     @PostMapping("create/")

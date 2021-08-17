@@ -51,6 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 //                .antMatchers("/api/v1/whoami").permitAll()
 //                .antMatchers("/api/v1/auth/").permitAll()
 //                .antMatchers("/**").authenticated();
+        http.csrf().disable().authorizeRequests().anyRequest().permitAll();
     }
 
     @Override

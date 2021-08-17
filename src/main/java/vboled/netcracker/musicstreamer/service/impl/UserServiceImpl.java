@@ -5,7 +5,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import vboled.netcracker.musicstreamer.model.Playlist;
 import vboled.netcracker.musicstreamer.model.user.User;
+import vboled.netcracker.musicstreamer.repository.PlaylistRepository;
 import vboled.netcracker.musicstreamer.repository.UserRepository;
 import vboled.netcracker.musicstreamer.service.UserService;
 
@@ -26,12 +28,13 @@ public class UserServiceImpl implements UserService {
     private final String PHONE_PATTERN = "^(\\d{1,3})(\\d{10})$";
 
     private final UserRepository userRepository;
-
+    private final PlaylistRepository playlistRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PlaylistRepository playlistRepository) {
         this.userRepository = userRepository;
+        this.playlistRepository = playlistRepository;
     }
 
     @Override
@@ -46,11 +49,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> readAll() {
         return userRepository.findAll();
-    }
-
-    @Override
-    public User read(String userName) {
-        return userRepository.findByUserName(userName).get();
     }
 
     @Override
@@ -234,5 +232,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public String encode(String toHash) {
         return passwordEncoder.encode(toHash);
+    }
+
+    @Override
+    public List<Playlist> getAllPlaylists(Long id) {
+        return playlistRepository.findAllPlaylistsByOwner(id);
     }
 }

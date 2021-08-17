@@ -18,7 +18,7 @@ public class UserAdmin extends User {
         this.setRegionID(Long.valueOf(1));
         this.setEmail("tEmail1@edu.ru");
         this.setPhoneNumber("79998881122");
-        this.setPlayListID(Long.valueOf(111));
+        this.setPlayListID(Long.valueOf(1));
         this.setRole(Role.ADMIN);
     }
 }

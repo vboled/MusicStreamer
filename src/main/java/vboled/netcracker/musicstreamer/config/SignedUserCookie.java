@@ -1,7 +1,8 @@
 package vboled.netcracker.musicstreamer.config;
 
+//import org.springframework.security.core.GrantedAuthority;
+//import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import vboled.netcracker.musicstreamer.exceptions.CookieVerificationFailedException;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.service.UserService;
