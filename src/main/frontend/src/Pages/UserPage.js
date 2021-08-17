@@ -1,27 +1,32 @@
-import {useEffect, useState} from "react";
-import axios from "axios";
+import {Image, Input, Layout, Menu} from 'antd';
+import {
+    AudioOutlined, HomeOutlined, NotificationOutlined,
+    UnorderedListOutlined,
+    UploadOutlined,
+    UserOutlined,
+    VideoCameraOutlined
+} from '@ant-design/icons';
+import "../App.css"
+import 'antd/dist/antd.css';
 
-function UserPage({match}) {
+import Search from "antd/es/input/Search";
+import {useState} from "react";
+import {random} from "nanoid";
+import {Link} from "react-router-dom";
 
-    const [item, setItem] = useState({})
+const { Header, Content, Footer, Sider } = Layout;
 
-    let playlistId = match.params.id;
+function UserPage() {
 
-    const getPlaylist = () => {
-        axios.get("http://localhost:8080/api/v1/playlist/", {
-            params: {id:playlistId}
-        }).then(res => {
-            console.log(res.data)
-        })
-    }
+    return <Layout>
+                <Header className="site-layout-sub-header-background" style={{ padding: 0 }} />
+                <Content style={{ margin: '24px 16px 0' }}>
+                    <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
+                        User Page
+                    </div>
+                </Content>
+            </Layout>
 
-    useEffect(() => {
-        getPlaylist();
-    }, []);
-
-    return (<div>
-        <h1>Hello, {match.params.username}</h1>
-    </div>);
 }
 
 export default UserPage;
