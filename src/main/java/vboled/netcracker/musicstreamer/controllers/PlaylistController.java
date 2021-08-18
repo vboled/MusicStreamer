@@ -6,6 +6,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import vboled.netcracker.musicstreamer.dto.PlaylistDto;
+import vboled.netcracker.musicstreamer.exceptions.SongAlreadyExistException;
 import vboled.netcracker.musicstreamer.model.AddedSong;
 import vboled.netcracker.musicstreamer.model.Playlist;
 import vboled.netcracker.musicstreamer.model.Song;
@@ -108,6 +110,8 @@ public class PlaylistController {
             return new ResponseEntity<>("Playlist or Song not found", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessError e) {
             return new ResponseEntity<>("You don't have permission", HttpStatus.NOT_FOUND);
+        } catch (SongAlreadyExistException e) {
+            return new ResponseEntity<>("Song exist in playlist", HttpStatus.NOT_MODIFIED);
         }
     }
 
@@ -150,7 +154,8 @@ public class PlaylistController {
     ResponseEntity<?> getPlaylist(/*@AuthenticationPrincipal User user,*/ @RequestParam Long id) {
         try {
             checkAdminOrUserPerm(user, id);
-            return new ResponseEntity<>(playlistService.getById(id), HttpStatus.OK);
+            return new ResponseEntity<>(new PlaylistDto(playlistService.getById(id),
+                    addedSongService.getAllByPlaylist(playlistService.getById(id))), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("Playlist not found", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessError e) {

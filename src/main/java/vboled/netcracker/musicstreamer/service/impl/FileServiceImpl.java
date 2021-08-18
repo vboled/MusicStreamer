@@ -43,7 +43,6 @@ public class FileServiceImpl implements FileService {
         newFileName = uuid + ext;
 
         file.transferTo(new File(uploadDir.getAbsolutePath() + "/" + newFileName));
-
         return newFileName;
     }
 

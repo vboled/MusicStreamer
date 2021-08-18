@@ -11,10 +11,10 @@ public class ImageValidator implements FileValidator {
     private final Set<String> imageExt = new HashSet<>(Arrays.asList(".jpeg",".jpg", ".png", ".gif"));
 
     @Value("${image.storage.dir}")
-    private String imageDir= "images";
+    private String imageDir= "img";
 
     @Value("${file.storage.path}")
-    private String uploadPath = "files";
+    private String uploadPath = "src/main/frontend/public";
 
     @Override
     public String getPath() {

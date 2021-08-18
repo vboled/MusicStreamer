@@ -28,6 +28,16 @@ public class UserController {
         this.user = user;
     }
 
+    @GetMapping("/playlists/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    public ResponseEntity<?> getAllPlaylists(/*@AuthenticationPrincipal User user*/) {
+        try {
+            return new ResponseEntity<>(userService.getAllPlaylists(user.getId()), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/info/")
     @PreAuthorize("hasAuthority('user:perm')")
     public ResponseEntity<?> read(/*@AuthenticationPrincipal User user*/) {

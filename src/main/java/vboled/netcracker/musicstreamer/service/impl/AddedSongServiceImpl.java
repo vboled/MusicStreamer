@@ -1,6 +1,7 @@
 package vboled.netcracker.musicstreamer.service.impl;
 
 import org.springframework.stereotype.Service;
+import vboled.netcracker.musicstreamer.exceptions.SongAlreadyExistException;
 import vboled.netcracker.musicstreamer.model.AddedSong;
 import vboled.netcracker.musicstreamer.model.Playlist;
 import vboled.netcracker.musicstreamer.model.Song;
@@ -20,11 +21,13 @@ public class AddedSongServiceImpl implements AddedSongService {
 
     @Override
     public List<AddedSong> getAllByPlaylist(Playlist playlist) {
-        return addedSongRepository.findAllByPlaylistOrderByAddDate(playlist.getId());
+        return addedSongRepository.findAllByPlaylistOrderByAddDate(playlist);
     }
 
     @Override
     public AddedSong addSongToPlaylist(Playlist playlist, Song song) {
+        if (addedSongRepository.existsByPlaylistAndSong(playlist, song))
+            throw new SongAlreadyExistException("");
         AddedSong add = new AddedSong();
         add.setPlaylist(playlist);
         add.setSong(song);

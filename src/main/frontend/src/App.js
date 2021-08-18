@@ -2,13 +2,14 @@ import './App.css';
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import PlaylistPage from "./Pages/PlaylistPage";
+import PlaylistsPage from "./Pages/PlaylistsPage";
 import UserPage from "./Pages/UserPage";
 import HomePage from "./Pages/HomePage";
-
-import Menu from './Elements/Menu'
+import PlaylistPage from "./Pages/PlaylistPage";
 import MyMenu from "./Elements/Menu";
 import {Layout} from "antd";
+import ArtistPage from "./Pages/ArtistPage";
+
 // const WhoAmI = () => {
 //
 //   const [result, setResult] = useState({user:{}, playlistLists: []});
@@ -73,7 +74,9 @@ function App() {
           <MyMenu/>
           <Route exact path={"/"} component={HomePage}></Route>
           <Route exact path={"/user/"} component={UserPage}></Route>
-          <Route exact path={"/playlist/"} component={PlaylistPage}></Route>
+          <Route exact path={"/playlist/"} component={PlaylistsPage}></Route>
+          <Route exact path="/playlist/:id" component={PlaylistPage}></Route>
+          <Route exact path="/artist/:id" component={ArtistPage}></Route>
         </Layout>
       </Switch>
     </Router>
