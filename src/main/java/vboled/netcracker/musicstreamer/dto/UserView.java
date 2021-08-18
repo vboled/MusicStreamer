@@ -7,11 +7,11 @@ import vboled.netcracker.musicstreamer.model.user.User;
 import java.util.List;
 
 @Data
-public class UserInfoDto {
+public class UserView {
     private User user;
     private List<Playlist> playlistLists;
 
-    public UserInfoDto(User user, List<Playlist> allPlaylists) {
+    public UserView(User user, List<Playlist> allPlaylists) {
         this.user = user;
         this.playlistLists = allPlaylists;
     }

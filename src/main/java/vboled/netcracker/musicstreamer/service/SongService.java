@@ -1,6 +1,7 @@
 package vboled.netcracker.musicstreamer.service;
 
 import vboled.netcracker.musicstreamer.model.Album;
+import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.model.Song;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public interface SongService {
 
     Song setSongFile(Long id, String uuid);
 
-    List<Song> getByArtistId(Long artistId);
+    List<Song> getByArtist(Artist artist);
 
     List<Song> getByAlbumId(Long albumId);
 

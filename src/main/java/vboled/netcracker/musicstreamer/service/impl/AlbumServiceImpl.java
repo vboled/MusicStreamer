@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.exceptions.AlbumCreationFailed;
 import vboled.netcracker.musicstreamer.exceptions.AlbumNotFoundException;
 import vboled.netcracker.musicstreamer.model.Album;
+import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.repository.AlbumRepository;
 import vboled.netcracker.musicstreamer.service.AlbumService;
 
@@ -99,6 +100,11 @@ public class AlbumServiceImpl implements AlbumService {
         album.setUuid(uuid);
         albumRepository.save(album);
         return album;
+    }
+
+    @Override
+    public List<Album> getByArtist(Artist artist) {
+        return albumRepository.findAllByArtist(artist);
     }
 
 }

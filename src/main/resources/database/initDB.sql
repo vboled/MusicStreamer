@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS albums
 (
     id              BIGSERIAL PRIMARY KEY,
     owner_id        BIGINT REFERENCES users (id) NOT NULL,
+    artist_id       BIGINT REFERENCES artists (id) NOT NULL,
     volumes         BIGINT,
     release_date    TIMESTAMP NOT NULL,
     create_date     TIMESTAMP NOT NULL,

@@ -70,15 +70,6 @@ public class SongController {
         }
     }
 
-    @GetMapping("/artist/")
-    @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> getAllSongsByArtist(@RequestParam Long id) {
-        List<Song> res = songService.getByArtistId(id);
-        if (res.isEmpty())
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(res, HttpStatus.OK);
-    }
-
     @GetMapping("/album/")
     @PreAuthorize("hasAuthority('user:perm')")
     public ResponseEntity<?> getAllSongsByAlbum(@RequestParam Long id) {

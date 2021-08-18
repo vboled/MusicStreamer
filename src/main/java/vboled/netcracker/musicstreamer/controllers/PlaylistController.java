@@ -3,10 +3,9 @@ package vboled.netcracker.musicstreamer.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vboled.netcracker.musicstreamer.dto.PlaylistDto;
+import vboled.netcracker.musicstreamer.dto.PlaylistView;
 import vboled.netcracker.musicstreamer.exceptions.SongAlreadyExistException;
 import vboled.netcracker.musicstreamer.model.AddedSong;
 import vboled.netcracker.musicstreamer.model.Playlist;
@@ -154,7 +153,7 @@ public class PlaylistController {
     ResponseEntity<?> getPlaylist(/*@AuthenticationPrincipal User user,*/ @RequestParam Long id) {
         try {
             checkAdminOrUserPerm(user, id);
-            return new ResponseEntity<>(new PlaylistDto(playlistService.getById(id),
+            return new ResponseEntity<>(new PlaylistView(playlistService.getById(id),
                     addedSongService.getAllByPlaylist(playlistService.getById(id))), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("Playlist not found", HttpStatus.NOT_FOUND);

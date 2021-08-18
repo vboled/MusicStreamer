@@ -9,7 +9,7 @@ VALUES (default, 'Rock'),
        (default, 'Classical');
 
 INSERT INTO albums
-VALUES (default, 3, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'firstAlbum', 1, 'uuid');
+VALUES (default, 3, 1, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'firstAlbum', 1, NULL);
 
 INSERT INTO artists
 VALUES (default, 3, 'firstArtist', 'uuid', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

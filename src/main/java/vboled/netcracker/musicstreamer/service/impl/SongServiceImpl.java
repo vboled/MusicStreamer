@@ -4,6 +4,7 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.repository.SongRepository;
@@ -128,8 +129,8 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public List<Song> getByArtistId(Long artistId) {
-        return songRepository.findAllByArtistId(artistId);
+    public List<Song> getByArtist(Artist artist) {
+        return songRepository.findAllByArtist(artist);
     }
 
     @Override
