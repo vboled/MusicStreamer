@@ -12,7 +12,7 @@ INSERT INTO albums
 VALUES (default, 3, 1, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'firstAlbum', 1, NULL);
 
 INSERT INTO artists
-VALUES (default, 3, 'firstArtist', 'uuid', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES (default, 3, 'firstArtist', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO playlists
 VALUES (default, 1, NULL, 'default', 'desc', TRUE);

@@ -27,4 +27,6 @@ public interface AlbumService {
     Album setCover(Long id, String uuid);
 
     List<Album> getByArtist(Artist artist);
+
+    List<Album> getAlbumsByOwnerId(Long id);
 }

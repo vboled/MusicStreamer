@@ -10,10 +10,14 @@ import vboled.netcracker.musicstreamer.UserAdmin;
 import vboled.netcracker.musicstreamer.model.user.Permission;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.model.user.UserView;
+import vboled.netcracker.musicstreamer.service.AlbumService;
+import vboled.netcracker.musicstreamer.service.ArtistService;
 import vboled.netcracker.musicstreamer.service.UserService;
+import vboled.netcracker.musicstreamer.view.ContentView;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -21,11 +25,15 @@ public class UserController {
 
     private final UserService userService;
     private final UserAdmin user;
+    private final AlbumService albumService;
+    private final ArtistService artistService;
 
     @Autowired
-    public UserController(UserService userService, UserAdmin user) {
+    public UserController(UserService userService, UserAdmin user, AlbumService albumService, ArtistService artistService) {
         this.userService = userService;
         this.user = user;
+        this.albumService = albumService;
+        this.artistService = artistService;
     }
 
     @GetMapping("/playlists/")
@@ -125,6 +133,25 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/content/")
+    @PreAuthorize("hasAnyAuthority('owner:perm', 'admin:perm')")
+    public ResponseEntity<?> getContentByUser(/*@AuthenticationPrincipal User user,*/) {
+        try {
+            User res = userService.getByUserName(user.getUserName());
+            Set<Permission> perm = user.getRole().getPermissions();
+            if (!(perm.contains(Permission.ADMIN_PERMISSION) ||
+                    (perm.contains(Permission.OWNER_PERMISSION)))) {
+                throw new IllegalAccessError();
+            }
+            return new ResponseEntity<>(new ContentView(albumService.getAlbumsByOwnerId(res.getId()),
+                    artistService.getArtistsByOwnerId(res.getId())), HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission", HttpStatus.NOT_FOUND);
         }
     }
 

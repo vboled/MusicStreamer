@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import vboled.netcracker.musicstreamer.dto.UserView;
+import vboled.netcracker.musicstreamer.view.UserView;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.service.*;
 
@@ -41,12 +41,7 @@ public class GeneralController {
     public ResponseEntity<?> WhoAmI(/*@AuthenticationPrincipal User user*/) {
         if (user == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        try {
-            User res = userService.getByUserName(user.getUserName());
-//            return new ResponseEntity<>(res, HttpStatus.OK);
-            return new ResponseEntity<>(new UserView(user, userService.getAllPlaylists(res.getId())), HttpStatus.OK);
-//        } catch ()
-//        return null;
+        return new ResponseEntity<>(userService.getByUserName(user.getUserName()), HttpStatus.OK);
     }
 
     @PostMapping("create/")

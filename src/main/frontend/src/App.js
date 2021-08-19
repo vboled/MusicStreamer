@@ -9,47 +9,16 @@ import PlaylistPage from "./Pages/PlaylistPage";
 import MyMenu from "./Elements/Menu";
 import {Layout} from "antd";
 import ArtistPage from "./Pages/ArtistPage";
+import AlbumPage from "./Pages/AlbumPage";
+import ContentPage from "./Pages/ContentPage";
 
-// const WhoAmI = () => {
-//
-//   const [result, setResult] = useState({user:{}, playlistLists: []});
-//
-//   const getStatus = () => {
-//     axios.get("http://localhost:8080/api/v1/whoami").then(res => {
-//       console.log(res.data);
-//       console.log(res.data);
-//       setResult(res.data);
-//     });
-//   }
-//
-//   useEffect(() => {
-//     getStatus();
-//   }, []);
-//
-//   return SignedPage(result)
-// }
-
-// function App() {
-//   return (
-//     <Router>
-//       <div className="App">
-//       <Switch>
-//         <Route exact path="/" component={WhoAmI}></Route>
-//         <Route exact path="/playlist/:id" component={PlaylistPage}></Route>
-//         <Route exact path="/user/:username" component={UserPage}></Route>
-//       </Switch>
-//       </div>
-//     </Router>
-//   );
-// }
 
 const WhoAmI = () => {
 
-  const [result, setResult] = useState({user:{}, playlistLists: []});
+  const [result, setResult] = useState({});
 
   const getStatus = () => {
     axios.get("http://localhost:8080/api/v1/whoami").then(res => {
-      console.log(res.data);
       console.log(res.data);
       setResult(res.data);
     });
@@ -58,25 +27,25 @@ const WhoAmI = () => {
   useEffect(() => {
     getStatus();
   }, []);
-  if (result.user === {})
-    return "Anonym"
-  return result
+  return result;
 }
 
 function App() {
-  let res = WhoAmI();
-  if (res === "Anonym")
+  let user = WhoAmI();
+  if (user.role === "ANON")
     return <div><h1>Anonym</h1></div>
   return <div>
     <Router>
       <Switch>
         <Layout>
-          <MyMenu/>
+          {MyMenu(user)}
           <Route exact path={"/"} component={HomePage}></Route>
           <Route exact path={"/user/"} component={UserPage}></Route>
           <Route exact path={"/playlist/"} component={PlaylistsPage}></Route>
-          <Route exact path="/playlist/:id" component={PlaylistPage}></Route>
-          <Route exact path="/artist/:id" component={ArtistPage}></Route>
+          <Route exact path="/playlist/id/:id" component={PlaylistPage}></Route>
+          <Route exact path="/artist/id/:id" component={ArtistPage}></Route>
+          <Route exact path="/album/id/:id" component={AlbumPage}></Route>
+          <Route exact path="/owner/" component={ContentPage}/>
         </Layout>
       </Switch>
     </Router>

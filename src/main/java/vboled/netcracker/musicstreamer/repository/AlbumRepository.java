@@ -11,4 +11,6 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
     List<Album> findAllByNameLike(String search);
 
     List<Album> findAllByArtist(Artist artist);
+
+    List<Album> findAllByOwnerID(Long id);
 }

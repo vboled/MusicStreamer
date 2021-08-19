@@ -1,4 +1,4 @@
-package vboled.netcracker.musicstreamer.dto;
+package vboled.netcracker.musicstreamer.view;
 
 import lombok.Data;
 import vboled.netcracker.musicstreamer.model.Playlist;

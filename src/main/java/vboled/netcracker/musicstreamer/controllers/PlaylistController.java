@@ -3,9 +3,11 @@ package vboled.netcracker.musicstreamer.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vboled.netcracker.musicstreamer.dto.PlaylistView;
+import vboled.netcracker.musicstreamer.model.user.UserView;
+import vboled.netcracker.musicstreamer.view.PlaylistView;
 import vboled.netcracker.musicstreamer.exceptions.SongAlreadyExistException;
 import vboled.netcracker.musicstreamer.model.AddedSong;
 import vboled.netcracker.musicstreamer.model.Playlist;
@@ -68,7 +70,7 @@ public class PlaylistController {
     @PreAuthorize("hasAuthority('user:perm')")
     ResponseEntity<?> createPlaylist(/*@AuthenticationPrincipal User user,*/
                                      @RequestBody Playlist playlist) {
-        if (!user.getRole().getPermissions().contains(Permission.ADMIN_PERMISSION))
+//        if (!user.getRole().getPermissions().contains(Permission.ADMIN_PERMISSION))
             playlist.setOwnerID(user.getId());
         return new ResponseEntity<>(playlistService.create(playlist), HttpStatus.OK);
     }
@@ -220,5 +222,19 @@ public class PlaylistController {
             return res;
 //        return uploadPlaylistCover(user, id, file);
         return uploadPlaylistCover(id, file);
+    }
+
+    @PutMapping("/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    ResponseEntity<?> updatePlaylist(/*@AuthenticationPrincipal User user,*/
+            @RequestBody Playlist playlist) {
+        try{
+            Playlist res = playlistService.fullUpdatePlaylist(playlist);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

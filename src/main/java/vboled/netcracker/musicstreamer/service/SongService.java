@@ -29,7 +29,7 @@ public interface SongService {
 
     List<Song> getByArtist(Artist artist);
 
-    List<Song> getByAlbumId(Long albumId);
-
     void deleteAudio(Long id);
+
+    List<Song> getByAlbum(Album album);
 }

@@ -3,7 +3,6 @@ package vboled.netcracker.musicstreamer.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vboled.netcracker.musicstreamer.UserAdmin;
@@ -15,7 +14,9 @@ import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.model.validator.FileValidator;
 import vboled.netcracker.musicstreamer.model.validator.ImageValidator;
 import vboled.netcracker.musicstreamer.service.AlbumService;
+import vboled.netcracker.musicstreamer.service.SongService;
 import vboled.netcracker.musicstreamer.service.impl.FileServiceImpl;
+import vboled.netcracker.musicstreamer.view.AlbumView;
 
 import javax.security.auth.DestroyFailedException;
 import java.io.IOException;
@@ -29,14 +30,14 @@ import java.util.UUID;
 public class AlbumController {
 
     private final FileValidator fileValidator = new ImageValidator();
-
     private final AlbumService albumService;
-
+    private final SongService songService;
     private final FileServiceImpl fileService;
     private final User user;
 
-    public AlbumController(AlbumService albumService, FileServiceImpl fileService, UserAdmin user) {
+    public AlbumController(AlbumService albumService, SongService songService, FileServiceImpl fileService, UserAdmin user) {
         this.albumService = albumService;
+        this.songService = songService;
         this.fileService = fileService;
         this.user = user;
     }
@@ -78,7 +79,8 @@ public class AlbumController {
     @PreAuthorize("hasAuthority('admin:perm')")
     ResponseEntity<?> getAlbum(@RequestParam Long id) {
         try {
-            return new ResponseEntity<>(albumService.getById(id), HttpStatus.OK);
+            Album album = albumService.getById(id);
+            return new ResponseEntity<>(new AlbumView(album, songService.getByAlbum(album)), HttpStatus.OK);
         } catch (AlbumNotFoundException e) {
             return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
         }

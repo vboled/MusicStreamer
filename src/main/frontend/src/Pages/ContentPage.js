@@ -1,12 +1,10 @@
-import {Button, Divider, Image, Layout, List, Space, Tooltip} from "antd";
-import axios from "axios";
+import {Divider, Image, Layout, List} from "antd";
 import {Content, Header} from "antd/es/layout/layout";
-import {Link} from "react-router-dom";
-import {useEffect, useState} from "react";
-import {CaretRightOutlined} from "@ant-design/icons";
-import SongList from "../Elements/SongList";
 import "../App.css"
 import 'antd/dist/antd.css';
+import axios from "axios";
+import {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
 
 function getCover(uuid, w) {
     let name = uuid
@@ -19,16 +17,14 @@ function getCover(uuid, w) {
     />
 }
 
-function ArtistPage({match}) {
+function ContentPage() {
 
-    const [artistView, setArtistView] = useState({artist:{}, songs: [], albums: []})
+    const [contentView, setContentView] = useState({artists:[], albums: []})
 
     const getArtist = () => {
-        axios.get("http://localhost:8080/api/v1/artist/", {
-            params: {id:match.params.id}
-        }).then(res => {
+        axios.get("http://localhost:8080/api/v1/user/content/").then(res => {
             console.log(res.data)
-            setArtistView(res.data)
+            setContentView(res.data)
         })
     }
 
@@ -36,17 +32,16 @@ function ArtistPage({match}) {
         getArtist();
     }, []);
 
+
     return <Layout>
         <Header className="site-layout-sub-header-background" style={{ padding: 0 }} />
         <Content style={{ margin: '24px 16px 0' }}>
             <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-                {getCover(artistView.artist.uuid, 400)}
-                <h1>{artistView.artist.name}</h1>
                 <Divider orientation="left">Albums:</Divider>
                 <List
                     size="large"
                     bordered
-                    dataSource={artistView.albums}
+                    dataSource={contentView.albums}
                     renderItem={item =>
                         <List.Item>
                             <Link to={`/album/id/${item.id}`}>
@@ -56,10 +51,23 @@ function ArtistPage({match}) {
                             <br/>
                         </List.Item>}
                 />
-                {SongList(artistView.songs)}
+                <Divider orientation="left">Artists:</Divider>
+                <List
+                    size="large"
+                    bordered
+                    dataSource={contentView.artists}
+                    renderItem={item =>
+                        <List.Item>
+                            <Link to={`/artist/id/${item.id}`}>
+                                {getCover(item.uuid, 200)}
+                                <h1>{item.name}</h1>
+                            </Link>
+                            <br/>
+                        </List.Item>}
+                />
             </div>
         </Content>
     </Layout>
 }
 
-export default ArtistPage
+export default ContentPage

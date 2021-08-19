@@ -1,12 +1,34 @@
 import {Layout, Menu} from "antd";
 import {Link} from "react-router-dom";
-import {HomeOutlined, NotificationOutlined, UnorderedListOutlined, UserOutlined} from "@ant-design/icons";
+import {
+    HomeOutlined,
+    NotificationOutlined,
+    ProjectTwoTone,
+    UnorderedListOutlined,
+    UserOutlined
+} from "@ant-design/icons";
 import {Content, Header} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import "../App.css"
 import 'antd/dist/antd.css';
 
-function MyMenu() {
+function AdditionalItems(user) {
+    if (user.role === "ADMIN")
+        return <Menu.Item key="4" icon={<ProjectTwoTone />}>
+                <Link>
+                    Administration
+                </Link>
+            </Menu.Item>
+    else if (user.role === "OWNER")
+        return <Menu.Item key="4" icon={<ProjectTwoTone />}>
+            <Link to="/owner/">
+                Content
+            </Link>
+        </Menu.Item>
+    else return ;
+}
+
+function MyMenu(user) {
     return <div>
             <Sider
                 style={{
@@ -23,9 +45,11 @@ function MyMenu() {
                     console.log(collapsed, type);
                 }}
             >
-                <div className="logo" >
-                    <h1 style={{color:"white"}}>MusicStreamer</h1>
-                </div>
+                <Link to={"/"}>
+                    <div className="logo" >
+                        <h1 style={{color:"white"}}>MusicStreamer</h1>
+                    </div>
+                </Link>
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
                     <Menu.Item key="1" icon={<HomeOutlined />}>
                         <Link to={"/"}>
@@ -42,11 +66,7 @@ function MyMenu() {
                             Playlists
                         </Link>
                     </Menu.Item>
-                    <Menu.Item key="4" icon={<NotificationOutlined />}>
-                        <Link>
-                            Artists
-                        </Link>
-                    </Menu.Item>
+                    {AdditionalItems(user)}
                 </Menu>
             </Sider>
     </div>

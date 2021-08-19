@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.model.Song;
 
@@ -19,8 +20,5 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 
     List<Song> findAllByArtist(Artist artist);
 
-    @Query(
-        value = "SELECT * FROM songs s WHERE s.album_id = ?1",
-        nativeQuery = true)
-    List<Song> findAllByAlbumId(Long id);
+    List<Song> findAllByAlbum(Album album);
 }

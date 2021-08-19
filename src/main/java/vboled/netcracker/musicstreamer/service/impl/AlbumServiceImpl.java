@@ -107,4 +107,9 @@ public class AlbumServiceImpl implements AlbumService {
         return albumRepository.findAllByArtist(artist);
     }
 
+    @Override
+    public List<Album> getAlbumsByOwnerId(Long id) {
+        return albumRepository.findAllByOwnerID(id);
+    }
+
 }

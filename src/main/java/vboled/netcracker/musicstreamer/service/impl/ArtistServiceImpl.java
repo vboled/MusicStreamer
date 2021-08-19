@@ -1,6 +1,7 @@
 package vboled.netcracker.musicstreamer.service.impl;
 
 import org.springframework.stereotype.Service;
+import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.repository.ArtistRepository;
 import vboled.netcracker.musicstreamer.service.ArtistService;
@@ -78,5 +79,19 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     public List<Artist> search(String search) {
         return artistRepository.findAllByNameLike(search);
+    }
+
+    @Override
+    public Artist setCover(Long id, String name) {
+        Artist artist = getById(id);
+        artist.setUuid(name);
+        artistRepository.save(artist);
+        System.out.println(artist);
+        return artist;
+    }
+
+    @Override
+    public List<Artist> getArtistsByOwnerId(Long id) {
+        return artistRepository.findAllByOwnerID(id);
     }
 }

@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vboled.netcracker.musicstreamer.dto.ArtistView;
+import vboled.netcracker.musicstreamer.view.ArtistView;
 import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.model.user.Permission;
 import vboled.netcracker.musicstreamer.model.user.User;
@@ -83,22 +83,22 @@ public class ArtistController {
         }
     }
 
-//    @PutMapping("/cover/")
-//    @PreAuthorize("hasAuthority('user:perm')")
-//    ResponseEntity<?> uploadArtistCover(/*@AuthenticationPrincipal User user,*/
-//            @RequestParam Long id, @RequestParam MultipartFile file) {
-//        try{
-//            checkAdminOrOwnerPerm(user, id);
-//            String name = fileService.uploadFile(file, fileValidator, UUID.randomUUID().toString());
-//            return new ResponseEntity<>(artistService.setCover(id, name), HttpStatus.OK);
-//        } catch (IllegalArgumentException e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        } catch (IllegalAccessError e) {
-//            return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
-//        } catch (IOException e) {
-//            return new ResponseEntity<>("artist not found", HttpStatus.NOT_FOUND);
-//        }
-//    }
+    @PutMapping("/cover/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    ResponseEntity<?> uploadArtistCover(/*@AuthenticationPrincipal User user,*/
+            @RequestParam Long id, @RequestParam MultipartFile file) {
+        try{
+            checkAdminOrOwnerPerm(user, id);
+            String name = fileService.uploadFile(file, fileValidator, UUID.randomUUID().toString());
+            return new ResponseEntity<>(artistService.setCover(id, name), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Artist not found", HttpStatus.NOT_FOUND);
+        }
+    }
 
 
     @PutMapping("/")
