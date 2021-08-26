@@ -21,4 +21,7 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     List<Song> findAllByArtist(Artist artist);
 
     List<Song> findAllByAlbum(Album album);
+
+    @Transactional
+    void deleteByAlbum(Album album);
 }

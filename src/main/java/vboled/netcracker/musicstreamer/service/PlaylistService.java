@@ -18,7 +18,7 @@ public interface PlaylistService {
 
     Playlist fullUpdatePlaylist(Playlist update) throws NoSuchElementException;
 
-    void delete(Long id) throws NoSuchElementException;
+    void delete(Playlist playlist);
 
     Playlist createMainPlaylist(Long ownerId);
 

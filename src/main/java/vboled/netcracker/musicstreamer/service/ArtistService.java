@@ -19,7 +19,7 @@ public interface ArtistService {
 
     Artist fullUpdateArtist(Artist update) throws NoSuchElementException;
 
-    void delete(Long id) throws NoSuchElementException;
+    void delete(Artist artist);
 
     List<Artist> search(String search);
 

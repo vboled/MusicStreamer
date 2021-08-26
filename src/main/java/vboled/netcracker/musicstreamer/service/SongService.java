@@ -11,7 +11,7 @@ public interface SongService {
 
     void create(Song song);
 
-    void delete(Long id) throws NoSuchElementException;
+    void delete(Song song);
 
     List<Song> readAll();
 
@@ -29,7 +29,9 @@ public interface SongService {
 
     List<Song> getByArtist(Artist artist);
 
-    void deleteAudio(Long id);
+    void deleteAudio(Song song);
 
     List<Song> getByAlbum(Album album);
+
+    void deleteByAlbum(Album album);
 }

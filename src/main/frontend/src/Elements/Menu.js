@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {
     HomeOutlined,
     NotificationOutlined,
-    ProjectTwoTone,
+    ProjectTwoTone, SearchOutlined,
     UnorderedListOutlined,
     UserOutlined
 } from "@ant-design/icons";
@@ -14,13 +14,13 @@ import 'antd/dist/antd.css';
 
 function AdditionalItems(user) {
     if (user.role === "ADMIN")
-        return <Menu.Item key="4" icon={<ProjectTwoTone />}>
+        return <Menu.Item key="5" icon={<ProjectTwoTone />}>
                 <Link>
                     Administration
                 </Link>
             </Menu.Item>
     else if (user.role === "OWNER")
-        return <Menu.Item key="4" icon={<ProjectTwoTone />}>
+        return <Menu.Item key="5" icon={<ProjectTwoTone />}>
             <Link to="/owner/">
                 Content
             </Link>
@@ -50,7 +50,7 @@ function MyMenu(user) {
                         <h1 style={{color:"white"}}>MusicStreamer</h1>
                     </div>
                 </Link>
-                <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
+                <Menu theme="dark" mode="inline" defaultSelectedKeys={['5']}>
                     <Menu.Item key="1" icon={<HomeOutlined />}>
                         <Link to={"/"}>
                             Home page

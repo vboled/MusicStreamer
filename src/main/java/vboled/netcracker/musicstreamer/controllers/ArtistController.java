@@ -45,7 +45,7 @@ public class ArtistController {
         Set<Permission> perm = user.getRole().getPermissions();
         if (!(perm.contains(Permission.ADMIN_PERMISSION) ||
                 (perm.contains(Permission.OWNER_PERMISSION) &&
-                        user.getId().equals(albumService.getById(id).getOwnerID())))) {
+                        user.getId().equals(artistService.getById(id).getOwnerID())))) {
             throw new IllegalAccessError();
         }
     }
@@ -95,7 +95,7 @@ public class ArtistController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (IllegalAccessError e) {
             return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
-        } catch (IOException e) {
+        } catch (IOException | NoSuchElementException e) {
             return new ResponseEntity<>("Artist not found", HttpStatus.NOT_FOUND);
         }
     }
@@ -111,14 +111,13 @@ public class ArtistController {
             if (perm.contains(Permission.ADMIN_PERMISSION)) {
                 res = artistService.fullUpdateArtist(artist);
             } else if (perm.contains(Permission.OWNER_PERMISSION) &&
-                    user.getId().equals(artistService.getById(artist.getOwnerID()))) {
+                    user.getId().equals(artistService.getById(artist.getId()).getOwnerID())) {
                 res = artistService.partialUpdateArtist(artist);
             }
             else
                 return new ResponseEntity<>("You don't have permission!!!", HttpStatus.NOT_MODIFIED);
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (NoSuchElementException e) {
-            e.printStackTrace();
             return new ResponseEntity<>("Artist not found", HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -130,11 +129,12 @@ public class ArtistController {
     public ResponseEntity<?> delete(/*@AuthenticationPrincipal User user,*/
                                     @RequestParam Long id) {
         try{
-            if (user.getRole().getPermissions().contains(Permission.OWNER_PERMISSION) &&
-                    user.getId().equals(artistService.getById(id).getOwnerID())) {
+            if (!(user.getRole().getPermissions().contains(Permission.OWNER_PERMISSION) &&
+                    user.getId().equals(artistService.getById(id).getOwnerID()))) {
                 return new ResponseEntity<>("You don't have permission!!!", HttpStatus.NOT_MODIFIED);
             }
-            artistService.delete(id);
+            Artist artist = artistService.getById(id);
+            artistService.delete(artist);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

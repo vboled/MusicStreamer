@@ -5,6 +5,7 @@ import vboled.netcracker.musicstreamer.exceptions.AlbumNotFoundException;
 import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.model.Artist;
 
+import javax.security.auth.DestroyFailedException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -22,11 +23,13 @@ public interface AlbumService {
 
     Album fullUpdateAlbum(Album update) throws AlbumNotFoundException;
 
-    void delete(Long id) throws AlbumNotFoundException;
+    void delete(Album album);
 
     Album setCover(Long id, String uuid);
 
     List<Album> getByArtist(Artist artist);
 
     List<Album> getAlbumsByOwnerId(Long id);
+
+    void deleteByArtist(Artist artist) throws DestroyFailedException;
 }

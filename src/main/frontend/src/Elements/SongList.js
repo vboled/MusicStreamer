@@ -19,10 +19,10 @@ function SongList(songs) {
                             <Button type="primary" shape="circle" icon={<CaretRightOutlined />} />
                         </Tooltip>
                         {item.title}
-                        <Link to={`/artist/id/${item.artist.id}`}>
+                        <Link to={`/artist/${item.artist.id}`}>
                             {item.artist.name}
                         </Link>
-                        <Link to={`/album/id/${item.album.id}`}>
+                        <Link to={`/album/${item.album.id}`}>
                             {item.album.name}
                         </Link>
                     </Space>

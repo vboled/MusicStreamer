@@ -1,27 +1,34 @@
 package vboled.netcracker.musicstreamer.service.impl;
 
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.model.Song;
-import vboled.netcracker.musicstreamer.model.user.User;
+import vboled.netcracker.musicstreamer.model.validator.AudioValidator;
+import vboled.netcracker.musicstreamer.model.validator.FileValidator;
 import vboled.netcracker.musicstreamer.repository.SongRepository;
+import vboled.netcracker.musicstreamer.service.AddedSongService;
+import vboled.netcracker.musicstreamer.service.FileService;
 import vboled.netcracker.musicstreamer.service.SongService;
 
+import javax.security.auth.DestroyFailedException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
 public class SongServiceImpl implements SongService {
 
+    private final FileValidator fileValidator = new AudioValidator();
     private final SongRepository songRepository;
+    private final AddedSongService addedSongService;
+    private final FileService fileService;
 
     @Autowired
-    public SongServiceImpl(SongRepository songRepository) {
+    public SongServiceImpl(SongRepository songRepository, AddedSongService addedSongService, FileService fileService) {
         this.songRepository = songRepository;
+        this.addedSongService = addedSongService;
+        this.fileService = fileService;
     }
 
     @Override
@@ -34,10 +41,16 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public void delete(Long id) throws NoSuchElementException {
-        if (!songRepository.existsById(id))
-            throw new NoSuchElementException();
-        songRepository.deleteById(id);
+    public void delete(Song song) {
+        addedSongService.deleteBySong(song);
+        if (song.getUuid() != null) {
+            try {
+                fileService.delete(song.getUuid(), fileValidator);
+            } catch (DestroyFailedException e) {
+                e.printStackTrace();
+            }
+        }
+        songRepository.deleteById(song.getId());
     }
 
     @Override
@@ -54,9 +67,6 @@ public class SongServiceImpl implements SongService {
         }
         if (update.getAuthor() != null) {
             songToUpdate.setAuthor(update.getAuthor());
-        }
-        if (update.getVolume() != null) {
-            songToUpdate.setVolume(update.getVolume());
         }
         if (update.getReleaseDate() != null) {
             songToUpdate.setReleaseDate(update.getReleaseDate());
@@ -140,8 +150,15 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public void deleteAudio(Long id) {
-        Song song = getById(id);
+    public void deleteByAlbum(Album album) {
+        List<Song> songs = getByAlbum(album);
+        for (Song song:songs) {
+            delete(song);
+        }
+    }
+
+    @Override
+    public void deleteAudio(Song song) {
         song.setUuid(null);
         song.setAvailable(false);
         songRepository.save(song);

@@ -11,6 +11,8 @@ import {Layout} from "antd";
 import ArtistPage from "./Pages/ArtistPage";
 import AlbumPage from "./Pages/AlbumPage";
 import ContentPage from "./Pages/ContentPage";
+import SearchPage from "./Pages/SearchPage";
+import {Header} from "antd/es/layout/layout";
 
 
 const WhoAmI = () => {
@@ -19,7 +21,6 @@ const WhoAmI = () => {
 
   const getStatus = () => {
     axios.get("http://localhost:8080/api/v1/whoami").then(res => {
-      console.log(res.data);
       setResult(res.data);
     });
   }
@@ -34,6 +35,7 @@ function App() {
   let user = WhoAmI();
   if (user.role === "ANON")
     return <div><h1>Anonym</h1></div>
+
   return <div>
     <Router>
       <Switch>
@@ -42,10 +44,11 @@ function App() {
           <Route exact path={"/"} component={HomePage}></Route>
           <Route exact path={"/user/"} component={UserPage}></Route>
           <Route exact path={"/playlist/"} component={PlaylistsPage}></Route>
-          <Route exact path="/playlist/id/:id" component={PlaylistPage}></Route>
-          <Route exact path="/artist/id/:id" component={ArtistPage}></Route>
-          <Route exact path="/album/id/:id" component={AlbumPage}></Route>
+          <Route exact path="/playlist/:id" component={PlaylistPage}></Route>
+          <Route exact path="/artist/:id" component={ArtistPage}></Route>
+          <Route exact path="/album/:id" component={AlbumPage}></Route>
           <Route exact path="/owner/" component={ContentPage}/>
+          <Route exact path="/search/:search" component={SearchPage}/>
         </Layout>
       </Switch>
     </Router>

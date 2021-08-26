@@ -146,7 +146,7 @@ public class UserController {
                     (perm.contains(Permission.OWNER_PERMISSION)))) {
                 throw new IllegalAccessError();
             }
-            return new ResponseEntity<>(new ContentView(albumService.getAlbumsByOwnerId(res.getId()),
+            return new ResponseEntity<>(new ContentView(res, albumService.getAlbumsByOwnerId(res.getId()),
                     artistService.getArtistsByOwnerId(res.getId())), HttpStatus.OK);
         } catch (UsernameNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

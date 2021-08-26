@@ -120,8 +120,11 @@ public class SongController {
                                        @RequestParam Long id) {
         try {
             checkAdminOrOwnerPerm(user, id);
-            fileService.delete(songService.getById(id).getUuid(), fileValidator);
-            songService.deleteAudio(id);
+            Song song = songService.getById(id);
+            if (song.getUuid() == null)
+                return new ResponseEntity<>(HttpStatus.OK);
+            fileService.delete(song.getUuid(), fileValidator);
+            songService.deleteAudio(song);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalAccessError e) {
             return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
@@ -136,10 +139,8 @@ public class SongController {
                                     @RequestParam Long id) {
         try{
             checkAdminOrOwnerPerm(user, id);
-            songService.delete(id);
-            if (songService.getById(id).isAvailable())
-//                return deleteAudio(user, id);
-                return deleteAudio(id);
+            Song song = songService.getById(id);
+            songService.delete(song);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -165,7 +166,7 @@ public class SongController {
     public ResponseEntity<?> update(/*@AuthenticationPrincipal User user,*/
                                     @RequestBody Song song) {
         try{
-            Song res = null;
+            Song res;
             Set<Permission> perm = user.getRole().getPermissions();
             if (perm.contains(Permission.ADMIN_PERMISSION)) {
                 res = songService.fullUpdateSong(song);

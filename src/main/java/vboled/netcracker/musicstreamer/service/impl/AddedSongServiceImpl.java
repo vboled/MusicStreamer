@@ -44,4 +44,9 @@ public class AddedSongServiceImpl implements AddedSongService {
     public AddedSong getById(Long addedSongID) {
         return addedSongRepository.getById(addedSongID);
     }
+
+    @Override
+    public void deleteBySong(Song song) {
+        addedSongRepository.deleteBySong(song);
+    }
 }

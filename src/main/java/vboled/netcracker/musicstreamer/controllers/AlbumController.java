@@ -108,11 +108,13 @@ public class AlbumController {
                                        @RequestParam Long id) {
         try {
             checkAdminOrOwnerPerm(user, id);
-            fileService.delete(albumService.getById(id).getUuid(), fileValidator);
+            Album album = albumService.getById(id);
+            if (album.getUuid() != null)
+                fileService.delete(album.getUuid(), fileValidator);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalAccessError e) {
             return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
-        } catch (DestroyFailedException e) {
+        } catch (DestroyFailedException | AlbumNotFoundException e) {
             return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
         }
     }
@@ -129,7 +131,7 @@ public class AlbumController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (IllegalAccessError e) {
             return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
-        } catch (IOException e) {
+        } catch (IOException | NoSuchElementException e) {
             return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
         }
     }
@@ -156,7 +158,7 @@ public class AlbumController {
             if (perm.contains(Permission.ADMIN_PERMISSION)) {
                 res = albumService.fullUpdateAlbum(album);
             } else if (perm.contains(Permission.OWNER_PERMISSION) &&
-                    user.getId().equals(albumService.getById(album.getOwnerID()))) {
+                    user.getId().equals(albumService.getById(album.getId()).getOwnerID())) {
                 res = albumService.partialUpdateAlbum(album);
             }
             else
@@ -176,10 +178,14 @@ public class AlbumController {
                                     @RequestParam Long id) {
         try{
             checkAdminOrOwnerPerm(user, id);
-            albumService.delete(id);
-            return deleteAlbumCover(id);
+            Album album = albumService.getById(id);
+            ResponseEntity<?> deleteRes = deleteAlbumCover(id);
+            if (!deleteRes.getStatusCode().equals(HttpStatus.OK))
+                return deleteRes;
+            albumService.delete(album);
+            return new ResponseEntity<>(HttpStatus.OK);
 //            return deleteAlbumCover(user, id);
-        } catch (NoSuchElementException e) {
+        } catch (AlbumNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (IllegalAccessError e) {
             return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);

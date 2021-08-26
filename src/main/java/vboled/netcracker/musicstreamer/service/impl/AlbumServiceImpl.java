@@ -5,19 +5,28 @@ import vboled.netcracker.musicstreamer.exceptions.AlbumCreationFailed;
 import vboled.netcracker.musicstreamer.exceptions.AlbumNotFoundException;
 import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.model.Artist;
+import vboled.netcracker.musicstreamer.model.validator.FileValidator;
+import vboled.netcracker.musicstreamer.model.validator.ImageValidator;
 import vboled.netcracker.musicstreamer.repository.AlbumRepository;
 import vboled.netcracker.musicstreamer.service.AlbumService;
+import vboled.netcracker.musicstreamer.service.FileService;
+import vboled.netcracker.musicstreamer.service.SongService;
 
+import javax.security.auth.DestroyFailedException;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class AlbumServiceImpl implements AlbumService {
 
     private final AlbumRepository albumRepository;
+    private final FileValidator fileValidator = new ImageValidator();
+    private final FileService fileService;
+    private final SongService songService;
 
-    public AlbumServiceImpl(AlbumRepository albumRepository) {
+    public AlbumServiceImpl(AlbumRepository albumRepository, FileService fileService, SongService songService) {
         this.albumRepository = albumRepository;
+        this.fileService = fileService;
+        this.songService = songService;
     }
 
     @Override
@@ -88,10 +97,16 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public void delete(Long id) {
-        if (!albumRepository.existsById(id))
-            throw new NoSuchElementException();
-        albumRepository.deleteById(id);
+    public void delete(Album album) {
+        if (album.getUuid() != null) {
+            try {
+                fileService.delete(album.getUuid(), fileValidator);
+            } catch (DestroyFailedException e) {
+                e.printStackTrace();
+            }
+        }
+        songService.deleteByAlbum(album);
+        albumRepository.deleteById(album.getId());
     }
 
     @Override
@@ -110,6 +125,15 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public List<Album> getAlbumsByOwnerId(Long id) {
         return albumRepository.findAllByOwnerID(id);
+    }
+
+    @Override
+    public void deleteByArtist(Artist artist) throws DestroyFailedException {
+        List<Album> albums = getByArtist(artist);
+        for (Album album : albums) {
+            delete(album);
+        }
+        albumRepository.deleteByArtist(artist);
     }
 
 }

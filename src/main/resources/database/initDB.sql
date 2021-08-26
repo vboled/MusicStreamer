@@ -24,10 +24,10 @@ CREATE TABLE IF NOT EXISTS artists
 (
     id              BIGSERIAL PRIMARY KEY,
     owner_id        BIGINT REFERENCES users (id) NOT NULL,
-    name            VARCHAR(50) NOT NULL UNIQUE,
+    name            VARCHAR(50) NOT NULL,
     uuid            VARCHAR(100),
     create_date     TIMESTAMP NOT NULL,
-    edit_date       TIMESTAMP NOT NULL
+    edit_date       TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS albums
@@ -36,11 +36,11 @@ CREATE TABLE IF NOT EXISTS albums
     owner_id        BIGINT REFERENCES users (id) NOT NULL,
     artist_id       BIGINT REFERENCES artists (id) NOT NULL,
     volumes         BIGINT,
-    release_date    TIMESTAMP NOT NULL,
+    release_date    TIMESTAMP,
     create_date     TIMESTAMP NOT NULL,
-    edit_date       TIMESTAMP NOT NULL,
+    edit_date       TIMESTAMP,
     name            VARCHAR(50) NOT NULL,
-    genre_id        BIGINT REFERENCES genres (id) NOT NULL,
+    genre_id        BIGINT REFERENCES genres (id),
     uuid            VARCHAR(100),
     type            VARCHAR(50)
 );
@@ -49,19 +49,17 @@ CREATE TABLE IF NOT EXISTS songs
 (
     id                  BIGSERIAL PRIMARY KEY,
     uuid                VARCHAR(100),
-    genre_id            BIGINT REFERENCES genres (id) NOT NULL,
     owner_id            BIGINT REFERENCES users (id) NOT NULL,
     album_id            BIGINT REFERENCES albums (id) NOT NULL,
     artist_id           BIGINT REFERENCES artists (id) NOT NULL,
     title               VARCHAR(100) NOT NULL,
     is_available        BOOLEAN NOT NULL,
-    duration            BIGINT NOT NULL,
+    duration            BIGINT,
     words               TEXT,
     author              VARCHAR(50),
-    volume              BIGINT,
-    release_date        TIMESTAMP NOT NULL,
+    release_date        TIMESTAMP,
     create_date         TIMESTAMP NOT NULL,
-    edit_date           TIMESTAMP NOT NULL
+    edit_date           TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS playlists
