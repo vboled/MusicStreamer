@@ -14,7 +14,7 @@ import getCover from "../Elements/getCover";
 function ArtistPage({match}) {
 
     const [artistView, setArtistView] = useState({artist:{}, songs: [], albums: []})
-    const [viewer, setViewer] = useState({})
+    const [viewer, setViewer] = useState({user:{}})
 
     const amIOwner = () => {
         axios.get("http://localhost:8080/api/v1/whoami").then(res => {
@@ -40,7 +40,7 @@ function ArtistPage({match}) {
         axios.put("http://localhost:8080/api/v1/artist/", {
             "name":values.name,
             "id":match.params.id,
-            "ownerID":viewer.id
+            "ownerID":viewer.user.id
         }).then(r=>{
             getArtist()
         })
@@ -78,7 +78,7 @@ function ArtistPage({match}) {
     const newDefaultName = "Album №" + artistView.albums.length
 
     const getArtistEditButton = () => {
-        if (artistView.artist.ownerID === viewer.id)
+        if (artistView.artist.ownerID === viewer.user.id)
             return <Button icon={<EditOutlined/>} type="primary" onClick={showModal}>
                 Edit Artist
             </Button>
@@ -86,7 +86,7 @@ function ArtistPage({match}) {
     }
 
     const getAlbumCreateButton = () => {
-        if (artistView.artist.ownerID === viewer.id)
+        if (artistView.artist.ownerID === viewer.user.id)
             return <Tooltip title="create Album">
                 <Button onClick={createAlbum} type="primary" shape="square" icon={<PlusOutlined />} >
                     Add Album

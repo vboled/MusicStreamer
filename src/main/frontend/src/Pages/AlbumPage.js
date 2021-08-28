@@ -1,26 +1,53 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Content, Header} from "antd/es/layout/layout";
-import {Button, Divider, Form, Image, Input, Layout, List, Space, Tooltip} from "antd";
+import {
+    Button,
+    DatePicker,
+    Divider,
+    Dropdown,
+    Form,
+    Image,
+    Input,
+    Layout,
+    List,
+    Menu,
+    Select,
+    Space,
+    Tooltip
+} from "antd";
 import {Link, useHistory} from "react-router-dom";
-import {CaretRightOutlined, CloseOutlined, EditOutlined, PlusCircleOutlined} from "@ant-design/icons";
+import {
+    CaretRightOutlined,
+    CloseOutlined,
+    DashOutlined,
+    DownOutlined,
+    EditOutlined, EllipsisOutlined, HeartFilled, HeartOutlined,
+    PlusCircleOutlined
+} from "@ant-design/icons";
 import SongList from "../Elements/SongList";
 import "../App.css"
 import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
 import MyHeader from "../Elements/Header";
 import getCover from "../Elements/getCover";
+import {Option} from "antd/es/mentions";
+
+const { SubMenu } = Menu;
 
 function AlbumPage({match}) {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+    const [isInfoModalVisible, setIsInfoModalVisible] = useState(false);
 
     const showModal = () => {
         setIsModalVisible(true);
     };
 
-    const showSongModal = () => {
+    const showSongModal = (item) => {
+        setEditedSong(item)
+        console.log("Edited:", editedSong)
         setIsEditModalVisible(true);
     };
 
@@ -37,14 +64,43 @@ function AlbumPage({match}) {
     };
 
     const songOnFinish = (values) => {
+        if (state !== undefined)
+            fileUploadHandler()
+
         axios.put("http://localhost:8080/api/v1/songs/song/", {
             "title":values.name,
-            "id":match.params.id
+            "id":editedSong.id
         }).then(r=>{
                 getAlbum()
             }
         )
     };
+
+    const showSongInfoModal = (item) => {
+        setEditedSong(item)
+        setIsInfoModalVisible(true);
+    };
+
+    const songInfoHandleOk = () => {
+        setIsInfoModalVisible(false);
+    };
+
+    const songInfoHandleCancel = () => {
+        setIsInfoModalVisible(false);
+    };
+
+    const fileUploadHandler = () => {
+        const fd = new FormData()
+        fd.append('file', state, state.name)
+        axios.put(`http://localhost:8080/api/v1/songs/audio/update/${editedSong.id}`,
+            fd
+        ).then(
+            res => {
+                console.log(res.data)
+                getAlbum()
+            }
+        )
+    }
 
     const handleOk = () => {
         setIsModalVisible(false);
@@ -58,34 +114,45 @@ function AlbumPage({match}) {
         console.log('Failed:', errorInfo);
     };
 
-    const [albumView, setAlbumView] = useState({album:{}, songs: []})
+    const [albumView, setAlbumView] = useState({album:{}, songs: [{song:{artist:{}, album:{}}, like:{}}]})
 
     const getAlbum = () => {
         axios.get("http://localhost:8080/api/v1/album/", {
             params: {id:match.params.id}
         }).then(res => {
-            console.log(res.data)
             setAlbumView(res.data)
+            console.log("songs", albumView.songs)
         })
     }
 
     const onFinish = (values) => {
-        axios.put("http://localhost:8080/api/v1/album/", {
+        let data = {
             "name":values.name,
-            "id":match.params.id
-        }).then(r=>{
+            "volume":values.volume,
+            "id":match.params.id,
+        }
+        if (albumType[0] !== "none")
+            data.type = albumType[0];
+        if (relAlbumDate[0] !== "none")
+            data.releaseDate = relAlbumDate[0]
+        axios.put("http://localhost:8080/api/v1/album/", data)
+            .then(r=>{
                 getAlbum()
         }
         )
     };
 
-    const [viewer, setViewer] = useState({})
+    const [viewer, setViewer] = useState({user:{}})
     const [editedSong, setEditedSong] = useState({})
+    let relAlbumDate = useState("none")
+    let albumType = useState("none")
+
     let history = useHistory()
 
     const amIOwner = () => {
         axios.get("http://localhost:8080/api/v1/whoami").then(res => {
             setViewer(res.data)
+            console.log(res.data)
         });
     }
 
@@ -119,7 +186,7 @@ function AlbumPage({match}) {
     const createSong = () => {
         axios.post("http://localhost:8080/api/v1/songs/create/", {
             "title":newDefaultName,
-            "ownerID":viewer.id,
+            "ownerID":viewer.user.id,
             "album":{
                 "id": match.params.id
             },
@@ -130,7 +197,7 @@ function AlbumPage({match}) {
     }
 
     function getAlbumEditButton() {
-        if (albumView.album.ownerID === viewer.id)
+        if (albumView.album.ownerID === viewer.user.id)
             return <Space size={"large"}>
                         <Button icon={<EditOutlined/>} type="primary" onClick={showModal}>
                             Edit Album
@@ -142,10 +209,18 @@ function AlbumPage({match}) {
         return ;
     }
 
-    function getSongEditButton() {
-        if (albumView.album.ownerID === viewer.id)
-            return <Button icon={<EditOutlined />} type="primary" shape={"circle"} onClick={showSongModal}/>
-        return ;
+    function getSongEditButton(item) {
+        if (albumView.album.ownerID === viewer.user.id) {
+                return <Button icon={<EditOutlined />} type="primary" shape={"circle"} onClick={() => showSongModal(item)}/>        }
+        return
+    }
+
+    function albumReleaseChange(date, dateString) {
+        relAlbumDate[0] = dateString
+    }
+
+    function selectTypeHandler(value) {
+        albumType[0] = value
     }
 
     function getEditModal() {
@@ -171,6 +246,46 @@ function AlbumPage({match}) {
                     rules={[
                         {
                             message: 'Update Name',
+                        },
+                    ]}
+                >
+                    <Input placeholder={albumView.album.name}/>
+                </Form.Item>
+
+                <Form.Item
+                    label="Volumes"
+                    name="volume"
+                    rules={[
+                        {
+                            message: 'Update number of disks',
+                        },
+                    ]}
+                >
+                    <Input placeholder={albumView.album.volume}/>
+                </Form.Item>
+
+                <Form.Item
+                    label="Release"
+                >
+                    <DatePicker onChange={albumReleaseChange} />
+                </Form.Item>
+
+                <Form.Item
+                    label="Release"
+                >
+                    <Select defaultValue="Album" style={{ width: 120 }} onChange={selectTypeHandler}>
+                        <Option value="album">Album</Option>
+                        <Option value="ep">EP</Option>
+                        <Option value="single">Single</Option>
+                    </Select>
+                </Form.Item>
+
+                <Form.Item
+                    label="Type"
+                    name="type"
+                    rules={[
+                        {
+                            message: 'Update type',
                         },
                     ]}
                 >
@@ -206,6 +321,12 @@ function AlbumPage({match}) {
         </Modal>
     }
 
+    const [state, setState] = useState()
+
+    const fileSelectedHandler = (event) => {
+        setState(event.target.files[0])
+    }
+
     function getSongEditModal() {
 
         return <Modal title="Edit Song" visible={isEditModalVisible} onOk={songHandleOk} onCancel={songHandleCancel}>
@@ -216,9 +337,6 @@ function AlbumPage({match}) {
                 }}
                 wrapperCol={{
                     span: 16,
-                }}
-                initialValues={{
-                    remember: true,
                 }}
                 onFinish={songOnFinish}
                 onFinishFailed={songOnFinishFailed}
@@ -232,17 +350,19 @@ function AlbumPage({match}) {
                         },
                     ]}
                 >
-                    <Input placeholder={editedSong.title}/>
+                    <Input defaultValue={editedSong.title}/>
                 </Form.Item>
 
                 <Form.Item
-                    name="remember"
-                    valuePropName="checked"
-                    wrapperCol={{
-                        offset: 8,
-                        span: 16,
-                    }}
+                    label="Upload file"
+                    name="update"
+                    rules={[
+                        {
+                            message: 'Upload file',
+                        },
+                    ]}
                 >
+                    <Input type={"file"} onChange={fileSelectedHandler}/>
                 </Form.Item>
 
                 <Form.Item
@@ -260,8 +380,71 @@ function AlbumPage({match}) {
                         </Button>
                     </Space>
                 </Form.Item>
+
             </Form>
         </Modal>
+    }
+
+    function getSongInfoModal() {
+
+        return <Modal title="Song Info" visible={isInfoModalVisible} onOk={songInfoHandleOk} onCancel={songInfoHandleCancel}>
+            <Menu>
+                <Menu.Item>Show info</Menu.Item>
+                <Menu.Item>Add to favourite</Menu.Item>
+                <SubMenu title="Add to playlist">
+                    <List
+                        size="small"
+                        bordered
+                        rowKey
+                        dataSource={viewer.playlistLists}
+                        renderItem={(item) => {
+                            if (item.main)
+                                return
+                            return <List.Item>
+                                <Button type="text" onClick={() => addToPlaylist(item)}>{item.name}</Button>
+                            </List.Item>
+                        }}
+                    />
+                </SubMenu>
+            </Menu>
+        </Modal>
+    }
+
+    const addToPlaylist = (playlist) => {
+        console.log(editedSong)
+        axios.put("http://localhost:8080/api/v1/playlist/add/", {},{
+            params:{
+                songID:editedSong.id,
+                playlistID:playlist.id
+            }
+        }).then()
+    }
+
+    const getLike = (like) => {
+        if (like === null)
+            return <HeartOutlined />
+        return <HeartFilled />
+    }
+
+    const setLike = (songView) => {
+        if (songView.like === null) {
+            axios.put("http://localhost:8080/api/v1/playlist/add/main/", {},{
+                params:{
+                    songID:songView.song.id
+                }
+            }).then(r=>{
+                getAlbum()
+            })
+        } else {
+            axios.delete("http://localhost:8080/api/v1/playlist/song/main/", {
+                params:{
+                    songId:songView.song.id
+                }
+            }).then(r=>{
+                getAlbum()
+            })
+        }
+        console.log(songView)
     }
 
     return <Layout>
@@ -272,7 +455,10 @@ function AlbumPage({match}) {
                     {getCover(albumView.album.uuid, 400, 'playlistDefault.png')}
                     <List>
                         <List.Item>
-                            <h1>{albumView.album.name}</h1>
+                            <p>{albumView.album.type}</p>
+                        </List.Item>
+                        <List.Item>
+                            <h1 style={{fontSize:"40px"}}>{albumView.album.name}</h1>
                         </List.Item>
                         <List.Item>
                             <h1>{albumView.songs.length} tracks</h1>
@@ -281,7 +467,10 @@ function AlbumPage({match}) {
                             <h1>Length</h1>
                         </List.Item>
                         <List.Item>
-                            <p>{albumView.album.releaseDate}</p>
+                            <p>{albumView.album.releaseDate.split("-")[0]}</p>
+                        </List.Item>
+                        <List.Item>
+                            <p>"Artists"</p>
                         </List.Item>
                         <List.Item>
                             {getAlbumEditButton()}
@@ -290,6 +479,7 @@ function AlbumPage({match}) {
                 </Space>
                 {getEditModal()}
             </div>
+            {getSongInfoModal()}
             {getSongEditModal()}
             <Divider orientation="left">Songs:</Divider>
             <List
@@ -304,15 +494,20 @@ function AlbumPage({match}) {
                             <Tooltip title="Play">
                                 <Button type="primary" shape="circle" icon={<CaretRightOutlined />} />
                             </Tooltip>
-                            {item.title}
-                            <Link to={`/artist/${item.artist.id}`}>
-                                {item.artist.name}
+                            {item.song.title}
+                            <Link to={`/artist/${item.song.artist.id}`}>
+                                {item.song.artist.name}
                             </Link>
-                            <Link to={`/album/${item.album.id}`}>
-                                {item.album.name}
+                            <Link to={`/album/${item.song.album.id}`}>
+                                {item.song.album.name}
                             </Link>
-                            {setEditedSong(item)}
-                            {getSongEditButton()}
+                            <Tooltip title="Like">
+                                <Button type="primary" shape="circle" onClick={() => setLike(item)}>
+                                    {getLike(item.like)}
+                                </Button>
+                            </Tooltip>
+                            {getSongEditButton(item.song)}
+                            <Button icon={<EllipsisOutlined />} type="primary" shape={"circle"} onClick={() => showSongInfoModal(item.song)}/>
                         </Space>
                     </List.Item>}
             />

@@ -74,12 +74,6 @@ function PlaylistPage({match}) {
         console.log('Failed:', errorInfo);
     };
 
-    let onlySongs = []
-
-    playlistDto.songs.map(song => {
-        onlySongs.push(song.song)
-    })
-
     const deletePlaylist = () => {
         axios.delete("http://localhost:8080/api/v1/playlist/", {
             params: {playlistID:playlistId}
@@ -189,6 +183,16 @@ function PlaylistPage({match}) {
         </Modal>
     }
 
+    const deleteSong = (song) => {
+        axios.delete("http://localhost:8080/api/v1/playlist/song/", {
+            params:{
+                addedSongId:song.id
+            }
+        }).then(
+            r=>getPlaylist()
+        )
+    }
+
     return <Layout>
         {MyHeader()}
         <Content style={{ margin: '24px 16px 0' }}>
@@ -212,7 +216,32 @@ function PlaylistPage({match}) {
                     </List>
                 </Space>
                 {getModal()}
-                {SongList(onlySongs)}
+                <Divider orientation="left">Songs:</Divider>
+                <List
+                    size="small"
+                    bordered
+                    rowKey
+                    dataSource={playlistDto.songs}
+                    renderItem={(item, index) =>
+                        <List.Item>
+                            <Space>
+                                {index + 1}
+                                <Tooltip title="Play">
+                                    <Button type="primary" shape="circle" icon={<CaretRightOutlined />} />
+                                </Tooltip>
+                                {item.song.title}
+                                <Link to={`/artist/${item.song.artist.id}`}>
+                                    {item.song.artist.name}
+                                </Link>
+                                <Link to={`/album/${item.song.album.id}`}>
+                                    {item.song.album.name}
+                                </Link>
+                                <Tooltip title="Remove">
+                                    <Button type="primary" shape="circle" icon={<CloseOutlined />} onClick={() => deleteSong(item)}/>
+                                </Tooltip>
+                            </Space>
+                        </List.Item>}
+                />
             </div>
         </Content>
     </Layout>

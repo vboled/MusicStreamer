@@ -1,6 +1,5 @@
 package vboled.netcracker.musicstreamer.service;
 
-import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.model.Playlist;
 
 import java.util.List;
@@ -23,4 +22,6 @@ public interface PlaylistService {
     Playlist createMainPlaylist(Long ownerId);
 
     Playlist setCover(Long id, String uuid);
+
+    Playlist getMainPlaylistByUserId(Long id);
 }

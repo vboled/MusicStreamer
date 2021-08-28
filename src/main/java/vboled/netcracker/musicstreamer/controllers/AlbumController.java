@@ -77,10 +77,11 @@ public class AlbumController {
 
     @GetMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    ResponseEntity<?> getAlbum(@RequestParam Long id) {
+    ResponseEntity<?> getAlbum(/*@AuthenticationPrincipal User user,*/
+            @RequestParam Long id) {
         try {
             Album album = albumService.getById(id);
-            return new ResponseEntity<>(new AlbumView(album, songService.getByAlbum(album)), HttpStatus.OK);
+            return new ResponseEntity<>(new AlbumView(album, songService.getByAlbum(album, user)), HttpStatus.OK);
         } catch (AlbumNotFoundException e) {
             return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
         }

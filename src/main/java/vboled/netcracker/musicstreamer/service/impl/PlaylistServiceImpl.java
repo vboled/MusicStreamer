@@ -89,4 +89,9 @@ public class PlaylistServiceImpl implements PlaylistService {
         return playlist;
     }
 
+    @Override
+    public Playlist getMainPlaylistByUserId(Long id) {
+        return playlistRepository.getMainPlaylist(id);
+    }
+
 }

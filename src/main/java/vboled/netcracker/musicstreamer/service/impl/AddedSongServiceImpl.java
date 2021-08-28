@@ -49,4 +49,9 @@ public class AddedSongServiceImpl implements AddedSongService {
     public void deleteBySong(Song song) {
         addedSongRepository.deleteBySong(song);
     }
+
+    @Override
+    public AddedSong getBySongAndPlaylist(Song song, Playlist playlist) {
+        return addedSongRepository.getBySongAndPlaylist(song, playlist);
+    }
 }

@@ -25,7 +25,7 @@ function ContentPage() {
 
     const [contentView, setContentView] = useState({owner:{}, artists:[], albums: []})
 
-    const getArtist = () => {
+    const getContent = () => {
         axios.get("http://localhost:8080/api/v1/user/content/").then(res => {
             console.log(res.data)
             setContentView(res.data)
@@ -33,7 +33,7 @@ function ContentPage() {
     }
 
     useEffect(() => {
-        getArtist();
+        getContent();
     }, []);
 
     const newDefaultName = "Artist №" + contentView.artists.length
@@ -44,7 +44,7 @@ function ContentPage() {
             ownerID:contentView.owner.id,
             name:newDefaultName
         }).then(r => {
-            getArtist()
+            getContent();
         })
 
     }

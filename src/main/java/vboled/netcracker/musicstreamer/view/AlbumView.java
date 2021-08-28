@@ -10,9 +10,9 @@ import java.util.List;
 public class AlbumView {
 
     private Album album;
-    private List<Song> songs;
+    private List<SongView> songs;
 
-    public AlbumView(Album album, List<Song> songs) {
+    public AlbumView(Album album, List<SongView> songs) {
         this.album = album;
         this.songs = songs;
     }

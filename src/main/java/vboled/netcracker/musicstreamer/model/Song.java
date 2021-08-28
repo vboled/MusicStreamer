@@ -31,7 +31,7 @@ public class Song {
     private Artist artist;
 
     @Column(name = "is_available")
-    private boolean isAvailable = false;
+    private boolean isAvailable;
 
     @Column(name = "title")
     private String title;
@@ -58,6 +58,7 @@ public class Song {
     @PrePersist
     public void prePersist() {
         createDate = LocalDateTime.now();
+        editDate = createDate;
     }
 
     @PreUpdate

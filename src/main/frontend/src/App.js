@@ -15,32 +15,29 @@ import SearchPage from "./Pages/SearchPage";
 import {Header} from "antd/es/layout/layout";
 
 
-const WhoAmI = () => {
+function App() {
 
-  const [result, setResult] = useState({});
+  const [userView, setUserView] = useState({user:{}, playlistLists:[]})
 
-  const getStatus = () => {
+  const whoAmI = () => {
     axios.get("http://localhost:8080/api/v1/whoami").then(res => {
-      setResult(res.data);
+      setUserView(res.data);
+      console.log(res.data)
     });
   }
 
-  useEffect(() => {
-    getStatus();
-  }, []);
-  return result;
-}
+    useEffect(() => {
+      whoAmI();
+    }, []);
 
-function App() {
-  let user = WhoAmI();
-  if (user.role === "ANON")
+  if (userView.user.role === "ANON")
     return <div><h1>Anonym</h1></div>
 
   return <div>
     <Router>
       <Switch>
         <Layout>
-          {MyMenu(user)}
+          {MyMenu(userView.user)}
           <Route exact path={"/"} component={HomePage}></Route>
           <Route exact path={"/user/"} component={UserPage}></Route>
           <Route exact path={"/playlist/"} component={PlaylistsPage}></Route>

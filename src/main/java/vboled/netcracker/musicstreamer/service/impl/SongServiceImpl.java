@@ -5,16 +5,20 @@ import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.model.Song;
+import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.model.validator.AudioValidator;
 import vboled.netcracker.musicstreamer.model.validator.FileValidator;
 import vboled.netcracker.musicstreamer.repository.SongRepository;
 import vboled.netcracker.musicstreamer.service.AddedSongService;
 import vboled.netcracker.musicstreamer.service.FileService;
+import vboled.netcracker.musicstreamer.service.LikeService;
 import vboled.netcracker.musicstreamer.service.SongService;
+import vboled.netcracker.musicstreamer.view.SongView;
 
 import javax.security.auth.DestroyFailedException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class SongServiceImpl implements SongService {
@@ -23,12 +27,14 @@ public class SongServiceImpl implements SongService {
     private final SongRepository songRepository;
     private final AddedSongService addedSongService;
     private final FileService fileService;
+    private final LikeService likeService;
 
     @Autowired
-    public SongServiceImpl(SongRepository songRepository, AddedSongService addedSongService, FileService fileService) {
+    public SongServiceImpl(SongRepository songRepository, AddedSongService addedSongService, FileService fileService, LikeService likeService) {
         this.songRepository = songRepository;
         this.addedSongService = addedSongService;
         this.fileService = fileService;
+        this.likeService = likeService;
     }
 
     @Override
@@ -61,7 +67,7 @@ public class SongServiceImpl implements SongService {
     private Song updateCommonFields(Song update) {
 //        if (!songRepository.existsByUuid(update.getUuid()))
 //            throw new NoSuchElementException("No song with such id");
-        Song songToUpdate = songRepository.findByUuid(update.getUuid()).get();
+        Song songToUpdate = songRepository.findById(update.getId()).get();
         if (update.getWords() != null) {
             songToUpdate.setWords(update.getWords());
         }
@@ -147,6 +153,12 @@ public class SongServiceImpl implements SongService {
     @Override
     public List<Song> getByAlbum(Album album) {
         return songRepository.findAllByAlbum(album);
+    }
+
+    @Override
+    public List<SongView> getByAlbum(Album album, User user) {
+        List<Song> songs = songRepository.findAllByAlbum(album);
+        return songs.stream().map(a -> new SongView(a, likeService.getLike(a, user))).collect(Collectors.toList());
     }
 
     @Override

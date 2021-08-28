@@ -17,4 +17,11 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
             nativeQuery = true
     )
     List<Playlist> findAllPlaylistsByOwner(Long id);
+
+
+    @Query(
+            value = "SELECT * FROM playlists p WHERE p.owner_id = ?1 AND is_main",
+            nativeQuery = true
+    )
+    Playlist getMainPlaylist(Long id);
 }

@@ -17,4 +17,6 @@ public interface AddedSongService {
     AddedSong getById(Long addedSongID);
 
     void deleteBySong(Song song);
+
+    AddedSong getBySongAndPlaylist(Song song, Playlist playlist);
 }

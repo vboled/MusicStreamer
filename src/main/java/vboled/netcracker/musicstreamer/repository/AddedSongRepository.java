@@ -20,4 +20,6 @@ public interface AddedSongRepository extends JpaRepository<AddedSong, Long> {
 
     @Transactional
     void deleteBySong(Song song);
+
+    AddedSong getBySongAndPlaylist(Song song, Playlist playlist);
 }

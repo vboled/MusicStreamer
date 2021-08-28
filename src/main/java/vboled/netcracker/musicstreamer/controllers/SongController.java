@@ -140,6 +140,8 @@ public class SongController {
         try{
             checkAdminOrOwnerPerm(user, id);
             Song song = songService.getById(id);
+            if (song.getUuid() == null)
+                return new ResponseEntity<>(HttpStatus.OK);
             songService.delete(song);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -149,10 +151,10 @@ public class SongController {
         }
     }
 
-    @PutMapping("/audio/update/")
+    @PutMapping("/audio/update/{id}")
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     ResponseEntity<?> updateSongFile(/*@AuthenticationPrincipal User user,*/
-                                       @RequestParam Long id, @RequestParam MultipartFile file) {
+                                       @PathVariable Long id, @RequestParam MultipartFile file) {
 //        ResponseEntity<?> res = delete(user, id);
         ResponseEntity<?> res = delete(id);
         if (!res.getStatusCode().equals(HttpStatus.OK))
@@ -171,7 +173,7 @@ public class SongController {
             if (perm.contains(Permission.ADMIN_PERMISSION)) {
                 res = songService.fullUpdateSong(song);
             } else if (perm.contains(Permission.OWNER_PERMISSION) &&
-                       user.getId().equals(songService.read(song.getUuid()).getOwnerID())) {
+                       user.getId().equals(songService.getById(song.getId()).getOwnerID())) {
                 res = songService.partialUpdateSong(song);
             }
             else

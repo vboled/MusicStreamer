@@ -79,3 +79,11 @@ CREATE TABLE IF NOT EXISTS added_songs
     song_id         BIGINT REFERENCES songs (id) NOT NULL,
     add_date        TIMESTAMP NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS likes
+(
+    id              BIGSERIAL PRIMARY KEY,
+    user_id         BIGINT REFERENCES users (id) NOT NULL,
+    song_id         BIGINT REFERENCES songs (id) NOT NULL,
+    create_date     TIMESTAMP NOT NULL
+);

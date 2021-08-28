@@ -41,7 +41,10 @@ public class GeneralController {
     public ResponseEntity<?> WhoAmI(/*@AuthenticationPrincipal User user*/) {
         if (user == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(userService.getByUserName(user.getUserName()), HttpStatus.OK);
+//        try {
+            User userView = userService.getByUserName(user.getUserName());
+            return new ResponseEntity<>(new UserView(userView, userService.getAllPlaylists(user.getId())), HttpStatus.OK);
+//        }
     }
 
     @PostMapping("create/")

@@ -6,7 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vboled.netcracker.musicstreamer.model.user.UserView;
+import vboled.netcracker.musicstreamer.service.LikeService;
 import vboled.netcracker.musicstreamer.view.PlaylistView;
 import vboled.netcracker.musicstreamer.exceptions.SongAlreadyExistException;
 import vboled.netcracker.musicstreamer.model.AddedSong;
@@ -38,13 +38,15 @@ public class PlaylistController {
     private final AddedSongService addedSongService;
     private final FileServiceImpl fileService;
     private final FileValidator fileValidator = new ImageValidator();
+    private final LikeService likeService;
     private final User user;
 
-    public PlaylistController(PlaylistService playlistService, SongService songService, AddedSongService addedSongService, FileServiceImpl fileService, User user) {
+    public PlaylistController(PlaylistService playlistService, SongService songService, AddedSongService addedSongService, FileServiceImpl fileService, LikeService likeService, User user) {
         this.playlistService = playlistService;
         this.songService = songService;
         this.addedSongService = addedSongService;
         this.fileService = fileService;
+        this.likeService = likeService;
         this.user = user;
     }
 
@@ -116,6 +118,27 @@ public class PlaylistController {
         }
     }
 
+    @PutMapping("/add/main/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    ResponseEntity<?> addSongToMain(/*@AuthenticationPrincipal User user,*/
+            @RequestParam Long songID) {
+        try {
+            Song song = songService.getById(songID);
+            Playlist main = playlistService.getMainPlaylistByUserId(user.getId());
+            ResponseEntity<?> res = addSong(songID, main.getId());
+            if (!res.getStatusCode().equals(HttpStatus.OK))
+                return res;
+            likeService.create(song, user);
+            return res;
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Playlist or Song not found", HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission", HttpStatus.NOT_FOUND);
+        } catch (SongAlreadyExistException e) {
+            return new ResponseEntity<>("Song exist in playlist", HttpStatus.NOT_MODIFIED);
+        }
+    }
+
     @DeleteMapping("/")
     @PreAuthorize("hasAuthority('user:perm')")
     ResponseEntity<?> deletePlaylist(/*@AuthenticationPrincipal User user,*/
@@ -145,9 +168,26 @@ public class PlaylistController {
         try {
             AddedSong added = addedSongService.getById(addedSongId);
             checkAdminOrOwnerPerm(user, added.getPlaylist().getId());
+            if (added.getPlaylist().isMain())
+                likeService.delete(added.getSong(), user);
             addedSongService.deleteSong(added);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>("No such added song", HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/song/main/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    ResponseEntity<?> deleteSongFromMain(/*@AuthenticationPrincipal User user,*/
+            @RequestParam Long songId) {
+        try {
+            Song song = songService.getById(songId);
+            Playlist main = playlistService.getMainPlaylistByUserId(user.getId());
+            return deleteSong(addedSongService.getBySongAndPlaylist(song, main).getId());
+        } catch (EntityNotFoundException | NoSuchElementException e) {
             return new ResponseEntity<>("No such added song", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessError e) {
             return new ResponseEntity<>("You don't have permission", HttpStatus.NOT_FOUND);
