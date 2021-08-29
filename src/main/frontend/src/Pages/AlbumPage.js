@@ -35,7 +35,7 @@ import {Option} from "antd/es/mentions";
 
 const { SubMenu } = Menu;
 
-function AlbumPage({match}) {
+function AlbumPage(props) {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -118,7 +118,7 @@ function AlbumPage({match}) {
 
     const getAlbum = () => {
         axios.get("http://localhost:8080/api/v1/album/", {
-            params: {id:match.params.id}
+            params: {id:props.match.params.id}
         }).then(res => {
             setAlbumView(res.data)
             console.log("songs", albumView.songs)
@@ -129,7 +129,7 @@ function AlbumPage({match}) {
         let data = {
             "name":values.name,
             "volume":values.volume,
-            "id":match.params.id,
+            "id":props.match.params.id,
         }
         if (albumType[0] !== "none")
             data.type = albumType[0];
@@ -142,28 +142,19 @@ function AlbumPage({match}) {
         )
     };
 
-    const [viewer, setViewer] = useState({user:{}})
     const [editedSong, setEditedSong] = useState({})
     let relAlbumDate = useState("none")
     let albumType = useState("none")
 
     let history = useHistory()
 
-    const amIOwner = () => {
-        axios.get("http://localhost:8080/api/v1/whoami").then(res => {
-            setViewer(res.data)
-            console.log(res.data)
-        });
-    }
-
     useEffect(() => {
         getAlbum();
-        amIOwner();
     }, []);
 
     const deleteAlbum = () => {
         axios.delete("http://localhost:8080/api/v1/album/", {
-            params: {id:match.params.id}
+            params: {id:props.match.params.id}
         }).then(r => {
             history.push("/owner/")
             console.log(r)
@@ -186,9 +177,9 @@ function AlbumPage({match}) {
     const createSong = () => {
         axios.post("http://localhost:8080/api/v1/songs/create/", {
             "title":newDefaultName,
-            "ownerID":viewer.user.id,
+            "ownerID":props.userView.user.id,
             "album":{
-                "id": match.params.id
+                "id": props.match.params.id
             },
             "artist": albumView.album.artist
         }).then(r=>{
@@ -197,7 +188,7 @@ function AlbumPage({match}) {
     }
 
     function getAlbumEditButton() {
-        if (albumView.album.ownerID === viewer.user.id)
+        if (albumView.album.ownerID === props.userView.user.id)
             return <Space size={"large"}>
                         <Button icon={<EditOutlined/>} type="primary" onClick={showModal}>
                             Edit Album
@@ -210,7 +201,7 @@ function AlbumPage({match}) {
     }
 
     function getSongEditButton(item) {
-        if (albumView.album.ownerID === viewer.user.id) {
+        if (albumView.album.ownerID === props.userView.user.id) {
                 return <Button icon={<EditOutlined />} type="primary" shape={"circle"} onClick={() => showSongModal(item)}/>        }
         return
     }
@@ -396,7 +387,7 @@ function AlbumPage({match}) {
                         size="small"
                         bordered
                         rowKey
-                        dataSource={viewer.playlistLists}
+                        dataSource={props.userView.playlistLists}
                         renderItem={(item) => {
                             if (item.main)
                                 return
@@ -447,38 +438,36 @@ function AlbumPage({match}) {
         console.log(songView)
     }
 
-    return <Layout>
-        {MyHeader()}
-        <Content style={{ margin: '24px 16px 0' }}>
-            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-                <Space size={200}>
-                    {getCover(albumView.album.uuid, 400, 'playlistDefault.png')}
-                    <List>
-                        <List.Item>
-                            <p>{albumView.album.type}</p>
-                        </List.Item>
-                        <List.Item>
-                            <h1 style={{fontSize:"40px"}}>{albumView.album.name}</h1>
-                        </List.Item>
-                        <List.Item>
-                            <h1>{albumView.songs.length} tracks</h1>
-                        </List.Item>
-                        <List.Item>
-                            <h1>Length</h1>
-                        </List.Item>
-                        <List.Item>
-                            <p>{albumView.album.releaseDate.split("-")[0]}</p>
-                        </List.Item>
-                        <List.Item>
-                            <p>"Artists"</p>
-                        </List.Item>
-                        <List.Item>
-                            {getAlbumEditButton()}
-                        </List.Item>
-                    </List>
-                </Space>
-                {getEditModal()}
-            </div>
+
+    return (<Content style={{ margin: '24px 16px 0' }}>
+        <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
+            <Space size={200}>
+                {getCover(albumView.album.uuid, 400, 'playlistDefault.png')}
+                <List>
+                    <List.Item>
+                        <p>{albumView.album.type}</p>
+                    </List.Item>
+                    <List.Item>
+                        <h1 style={{fontSize:"40px"}}>{albumView.album.name}</h1>
+                    </List.Item>
+                    <List.Item>
+                        <h1>{albumView.songs.length} tracks</h1>
+                    </List.Item>
+                    <List.Item>
+                        <h1>Length</h1>
+                    </List.Item>
+                    {/*<List.Item>*/}
+                    {/*    <p>{albumView.album.releaseDate.split("-")[0]}</p>*/}
+                    {/*</List.Item>*/}
+                    <List.Item>
+                        <p>"Artists"</p>
+                    </List.Item>
+                    <List.Item>
+                        {getAlbumEditButton()}
+                    </List.Item>
+                </List>
+            </Space>
+            {getEditModal()}
             {getSongInfoModal()}
             {getSongEditModal()}
             <Divider orientation="left">Songs:</Divider>
@@ -511,8 +500,8 @@ function AlbumPage({match}) {
                         </Space>
                     </List.Item>}
             />
-        </Content>
-    </Layout>
+        </div>
+    </Content>)
 }
 
 export default AlbumPage

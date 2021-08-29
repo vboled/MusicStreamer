@@ -10,9 +10,7 @@ import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
 import MyHeader from "../Elements/Header";
 
-function PlaylistPage({match}) {
-
-    let playlistId = match.params.id;
+function PlaylistPage(props) {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     let history = useHistory()
@@ -33,7 +31,7 @@ function PlaylistPage({match}) {
 
     const getPlaylist = () => {
         axios.get("http://localhost:8080/api/v1/playlist/", {
-            params: {id:playlistId}
+            params: {id:props.match.params.id}
         }).then(res => {
             console.log(res.data)
             setPlaylistDto(res.data)
@@ -48,7 +46,7 @@ function PlaylistPage({match}) {
     const fileUploadHandler = () => {
         const fd = new FormData()
         fd.append('file', state, state.name)
-        axios.put(`http://localhost:8080/api/v1/playlist/cover/${match.params.id}`,
+        axios.put(`http://localhost:8080/api/v1/playlist/cover/${props.match.params.id}`,
             fd
         ).then(
             res => {
@@ -64,7 +62,7 @@ function PlaylistPage({match}) {
         axios.put("http://localhost:8080/api/v1/playlist/", {
             "name":values.name,
             "description":values.description,
-            "id":playlistId
+            "id":props.match.params.id
         }).then(r=>{
             getPlaylist()
         })
@@ -76,7 +74,7 @@ function PlaylistPage({match}) {
 
     const deletePlaylist = () => {
         axios.delete("http://localhost:8080/api/v1/playlist/", {
-            params: {playlistID:playlistId}
+            params: {playlistID:props.match.params.id}
         }).then(r => {
             history.push("/playlist/")
             console.log(r)
@@ -193,58 +191,55 @@ function PlaylistPage({match}) {
         )
     }
 
-    return <Layout>
-        {MyHeader()}
-        <Content style={{ margin: '24px 16px 0' }}>
-            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-                <Space size={200}>
-                    {getCover(playlistDto.playlist.uuid, 400)}
-                    <List>
-                        <List.Item>
-                            <h1>{playlistDto.playlist.name}</h1>
-                        </List.Item>
-                        <List.Item>
-                            <h1>{playlistDto.songs.length} tracks</h1>
-                        </List.Item>
-                        <List.Item>
-                            <h1>Length</h1>
-                        </List.Item>
-                        <List.Item>
-                            <p>{playlistDto.playlist.description}</p>
-                        </List.Item>
-                        {getEditButton()}
-                    </List>
-                </Space>
-                {getModal()}
-                <Divider orientation="left">Songs:</Divider>
-                <List
-                    size="small"
-                    bordered
-                    rowKey
-                    dataSource={playlistDto.songs}
-                    renderItem={(item, index) =>
-                        <List.Item>
-                            <Space>
-                                {index + 1}
-                                <Tooltip title="Play">
-                                    <Button type="primary" shape="circle" icon={<CaretRightOutlined />} />
-                                </Tooltip>
-                                {item.song.title}
-                                <Link to={`/artist/${item.song.artist.id}`}>
-                                    {item.song.artist.name}
-                                </Link>
-                                <Link to={`/album/${item.song.album.id}`}>
-                                    {item.song.album.name}
-                                </Link>
-                                <Tooltip title="Remove">
-                                    <Button type="primary" shape="circle" icon={<CloseOutlined />} onClick={() => deleteSong(item)}/>
-                                </Tooltip>
-                            </Space>
-                        </List.Item>}
-                />
-            </div>
-        </Content>
-    </Layout>
+    return (<Content style={{ margin: '24px 16px 0' }}>
+        <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
+            <Space size={200}>
+                {getCover(playlistDto.playlist.uuid, 400)}
+                <List>
+                    <List.Item>
+                        <h1>{playlistDto.playlist.name}</h1>
+                    </List.Item>
+                    <List.Item>
+                        <h1>{playlistDto.songs.length} tracks</h1>
+                    </List.Item>
+                    <List.Item>
+                        <h1>Length</h1>
+                    </List.Item>
+                    <List.Item>
+                        <p>{playlistDto.playlist.description}</p>
+                    </List.Item>
+                    {getEditButton()}
+                </List>
+            </Space>
+            {getModal()}
+            <Divider orientation="left">Songs:</Divider>
+            <List
+                size="small"
+                bordered
+                rowKey
+                dataSource={playlistDto.songs}
+                renderItem={(item, index) =>
+                    <List.Item>
+                        <Space>
+                            {index + 1}
+                            <Tooltip title="Play">
+                                <Button type="primary" shape="circle" icon={<CaretRightOutlined />} />
+                            </Tooltip>
+                            {item.song.title}
+                            <Link to={`/artist/${item.song.artist.id}`}>
+                                {item.song.artist.name}
+                            </Link>
+                            <Link to={`/album/${item.song.album.id}`}>
+                                {item.song.album.name}
+                            </Link>
+                            <Tooltip title="Remove">
+                                <Button type="primary" shape="circle" icon={<CloseOutlined />} onClick={() => deleteSong(item)}/>
+                            </Tooltip>
+                        </Space>
+                    </List.Item>}
+            />
+        </div>
+    </Content>)
 }
 
 export default PlaylistPage

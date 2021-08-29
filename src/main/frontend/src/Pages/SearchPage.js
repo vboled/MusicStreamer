@@ -27,16 +27,13 @@ function SearchPage({match}) {
         getSearch();
     }, []);
 
-    return <Layout>
-        {MyHeader()}
-        <Content style={{ margin: '24px 16px 0' }}>
+    return (<Content style={{ margin: '24px 16px 0' }}>
             <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
                 {SongList(searchView.songs)}
                 {AlbumList(searchView.albums)}
                 {ArtistList(searchView.artists)}
             </div>
-        </Content>
-    </Layout>
+        </Content>)
 }
 
 export default SearchPage

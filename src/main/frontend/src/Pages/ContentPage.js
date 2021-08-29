@@ -49,40 +49,37 @@ function ContentPage() {
 
     }
 
-    return <Layout>
-        {MyHeader()}
-        <Content style={{ margin: '24px 16px 0' }}>
-            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-                <Divider orientation="left">
-                    Artists:
-                </Divider>
-                <List
-                    size="large"
-                    bordered
-                    header={
-                        <Tooltip title="create Artist">
-                            <Button onClick={createArtist} type="primary" shape="square" icon={<PlusOutlined />} >
-                                Add Artist
-                            </Button>
-                        </Tooltip>}
-                    dataSource={contentView.artists}
-                    renderItem={item =>
-                        <List.Item>
-                            <Space size={100}>
-                                <Link to={`/artist/${item.id}`}>
-                                    {getCover(item.uuid, 200)}
-                                </Link>
-                                <Link to={`/artist/${item.id}`}>
-                                    <h1>{item.name}</h1>
-                                </Link>
-                            </Space>
-                        </List.Item>}
-                >
-                </List>
-                {AlbumList(contentView.albums)}
-            </div>
-        </Content>
-    </Layout>
+    return (<Content style={{ margin: '24px 16px 0' }}>
+        <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
+            <Divider orientation="left">
+                Artists:
+            </Divider>
+            <List
+                size="large"
+                bordered
+                header={
+                    <Tooltip title="create Artist">
+                        <Button onClick={createArtist} type="primary" shape="square" icon={<PlusOutlined />} >
+                            Add Artist
+                        </Button>
+                    </Tooltip>}
+                dataSource={contentView.artists}
+                renderItem={item =>
+                    <List.Item>
+                        <Space size={100}>
+                            <Link to={`/artist/${item.id}`}>
+                                {getCover(item.uuid, 200)}
+                            </Link>
+                            <Link to={`/artist/${item.id}`}>
+                                <h1>{item.name}</h1>
+                            </Link>
+                        </Space>
+                    </List.Item>}
+            >
+            </List>
+            {AlbumList(contentView.albums)}
+        </div>
+    </Content>)
 }
 
 export default ContentPage

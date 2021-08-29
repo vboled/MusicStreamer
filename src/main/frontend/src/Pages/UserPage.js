@@ -22,16 +22,13 @@ const HomeButton = () => {
     );
 }
 
-function UserPage() {
+function UserPage(props) {
 
-    return <Layout>
-                 {MyHeader()}
-                <Content style={{ margin: '24px 16px 0' }}>
+    return (<Content style={{ margin: '24px 16px 0' }}>
                     <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
-                        {HomeButton()}
+                        <h1>{props.match.params.id}, {props.userView.user.name}</h1>
                     </div>
-                </Content>
-            </Layout>
+            </Content>)
 
 }
 

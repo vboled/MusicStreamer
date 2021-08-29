@@ -11,20 +11,13 @@ import Modal from "antd/es/modal/Modal";
 import MyHeader from "../Elements/Header";
 import getCover from "../Elements/getCover";
 
-function ArtistPage({match}) {
+function ArtistPage(props) {
 
     const [artistView, setArtistView] = useState({artist:{}, songs: [], albums: []})
-    const [viewer, setViewer] = useState({user:{}})
-
-    const amIOwner = () => {
-        axios.get("http://localhost:8080/api/v1/whoami").then(res => {
-            setViewer(res.data)
-        });
-    }
 
     const getArtist = () => {
         axios.get("http://localhost:8080/api/v1/artist/", {
-            params: {id:match.params.id}
+            params: {id:props.match.params.id}
         }).then(res => {
             setArtistView(res.data)
         })
@@ -33,14 +26,13 @@ function ArtistPage({match}) {
 
     useEffect(() => {
         getArtist();
-        amIOwner();
     }, []);
 
     const onFinish = (values) => {
         axios.put("http://localhost:8080/api/v1/artist/", {
             "name":values.name,
-            "id":match.params.id,
-            "ownerID":viewer.user.id
+            "id":props.match.params.id,
+            "ownerID":props.userView.user.id
         }).then(r=>{
             getArtist()
         })
@@ -68,7 +60,7 @@ function ArtistPage({match}) {
 
     const deleteArtist = () => {
         axios.delete("http://localhost:8080/api/v1/artist/", {
-            params: {id:match.params.id}
+            params: {id:props.match.params.id}
         }).then(r => {
             console.log(r)
             history.push("/owner/")
@@ -78,7 +70,7 @@ function ArtistPage({match}) {
     const newDefaultName = "Album №" + artistView.albums.length
 
     const getArtistEditButton = () => {
-        if (artistView.artist.ownerID === viewer.user.id)
+        if (artistView.artist.ownerID === props.userView.user.id)
             return <Button icon={<EditOutlined/>} type="primary" onClick={showModal}>
                 Edit Artist
             </Button>
@@ -86,7 +78,7 @@ function ArtistPage({match}) {
     }
 
     const getAlbumCreateButton = () => {
-        if (artistView.artist.ownerID === viewer.user.id)
+        if (artistView.artist.ownerID === props.userView.user.id)
             return <Tooltip title="create Album">
                 <Button onClick={createAlbum} type="primary" shape="square" icon={<PlusOutlined />} >
                     Add Album
@@ -99,7 +91,7 @@ function ArtistPage({match}) {
         axios.post("http://localhost:8080/api/v1/album/", {
             name:newDefaultName,
             artist:{
-                id:match.params.id
+                id:props.match.params.id
             }
         }).then(
             r=>{
@@ -165,9 +157,7 @@ function ArtistPage({match}) {
         </Modal>
     }
 
-    return <Layout>
-        {MyHeader()}
-        <Content style={{ margin: '24px 16px 0' }}>
+    return (<Content style={{ margin: '24px 16px 0' }}>
             <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
                 <Space size={200}>
                     {getCover(artistView.artist.uuid, 400, 'playlistDefault.png')}
@@ -202,8 +192,7 @@ function ArtistPage({match}) {
                 </List>
                 {SongList(artistView.songs)}
             </div>
-        </Content>
-    </Layout>
+        </Content>)
 }
 
 export default ArtistPage

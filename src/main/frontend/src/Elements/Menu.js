@@ -12,14 +12,14 @@ import Sider from "antd/es/layout/Sider";
 import "../App.css"
 import 'antd/dist/antd.css';
 
-function AdditionalItems(user) {
-    if (user.role === "ADMIN")
+function AdditionalItems(userView) {
+    if (userView.user.role === "ADMIN")
         return <Menu.Item key="5" icon={<ProjectTwoTone />}>
                 <Link>
                     Administration
                 </Link>
             </Menu.Item>
-    else if (user.role === "OWNER")
+    else if (userView.user.role === "OWNER")
         return <Menu.Item key="5" icon={<ProjectTwoTone />}>
             <Link to="/owner/">
                 Content
@@ -28,8 +28,9 @@ function AdditionalItems(user) {
     else return ;
 }
 
-function MyMenu(user) {
-    return <div>
+function MyMenu(props) {
+    return (
+        <div>
             <Sider
                 style={{
                     overflow: 'auto',
@@ -57,7 +58,7 @@ function MyMenu(user) {
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="2" icon={<UserOutlined />}>
-                        <Link to={"/user/"}>
+                        <Link to={`/user/${1}`}>
                             View profile
                         </Link>
                     </Menu.Item>
@@ -66,10 +67,11 @@ function MyMenu(user) {
                             Playlists
                         </Link>
                     </Menu.Item>
-                    {AdditionalItems(user)}
+                    {AdditionalItems(props.userView)}
                 </Menu>
             </Sider>
-    </div>
+        </div>
+    )
 }
 
 export default MyMenu;
