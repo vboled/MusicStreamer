@@ -4,11 +4,10 @@ import {Content, Header} from "antd/es/layout/layout";
 import {Button, message, Divider, Form, Image, Input, Layout, List, Popover, Space, Tooltip, Upload} from "antd";
 import {withRouter, Link, useHistory} from "react-router-dom";
 import {CaretRightOutlined, CloseOutlined, EditOutlined, PlusOutlined, UploadOutlined} from "@ant-design/icons";
-import SongList from "../Elements/SongList";
 import "../App.css"
 import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
-import MyHeader from "../Elements/Header";
+import Player from '../Elements/Player'
 
 function PlaylistPage(props) {
 
@@ -28,15 +27,6 @@ function PlaylistPage(props) {
     };
 
     const [playlistDto, setPlaylistDto] = useState({playlist:{}, songs: []})
-
-    const getPlaylist = () => {
-        axios.get("http://localhost:8080/api/v1/playlist/", {
-            params: {id:props.match.params.id}
-        }).then(res => {
-            console.log(res.data)
-            setPlaylistDto(res.data)
-        })
-    }
 
     useEffect(() => {
         getPlaylist();
@@ -191,6 +181,22 @@ function PlaylistPage(props) {
         )
     }
 
+    const getPlaylist = () => {
+        axios.get("http://localhost:8080/api/v1/playlist/", {
+            params: {id:props.match.params.id}
+        }).then(res => {
+            console.log(res.data)
+            setPlaylistDto(res.data)
+        })
+
+    }
+
+    const playSong = (song) => {
+        props.setCurrentSongIndex(() => {
+            return 10;
+        });
+    }
+
     return (<Content style={{ margin: '24px 16px 0' }}>
         <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
             <Space size={200}>
@@ -223,7 +229,8 @@ function PlaylistPage(props) {
                         <Space>
                             {index + 1}
                             <Tooltip title="Play">
-                                <Button type="primary" shape="circle" icon={<CaretRightOutlined />} />
+                                <Button type="primary" shape="circle" icon={<CaretRightOutlined />}
+                                onClick={() => playSong(item.song)}/>
                             </Tooltip>
                             {item.song.title}
                             <Link to={`/artist/${item.song.artist.id}`}>
@@ -239,7 +246,8 @@ function PlaylistPage(props) {
                     </List.Item>}
             />
         </div>
-    </Content>)
+    </Content>
+    )
 }
 
 export default PlaylistPage

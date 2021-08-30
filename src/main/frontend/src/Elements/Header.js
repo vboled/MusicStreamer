@@ -4,6 +4,7 @@ import React from "react";
 import axios from "axios";
 import {Redirect, Route, useHistory} from "react-router-dom";
 import {SearchOutlined} from "@ant-design/icons";
+import Player from "./Player";
 
 const onFinish = (values) => {
     console.log("values", values.search)
@@ -14,7 +15,7 @@ const onFinishFailed = (errorInfo) => {
 };
 
 
-function MyHeader() {
+function MyHeader(props) {
 
     let history = useHistory();
 
@@ -53,6 +54,7 @@ function MyHeader() {
                                 Submit
                             </Button>
                         </Form.Item>
+                        <Player song={props.song}/>
                     </Space>
                 </Form>
             </div>
