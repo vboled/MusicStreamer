@@ -1,13 +1,12 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {Content, Header} from "antd/es/layout/layout";
-import {Button, message, Divider, Form, Image, Input, Layout, List, Popover, Space, Tooltip, Upload} from "antd";
-import {withRouter, Link, useHistory} from "react-router-dom";
-import {CaretRightOutlined, CloseOutlined, EditOutlined, PlusOutlined, UploadOutlined} from "@ant-design/icons";
+import {Content} from "antd/es/layout/layout";
+import {Button, Divider, Form, Image, Input, Layout, List, Popover, Space, Tooltip} from "antd";
+import {Link, useHistory} from "react-router-dom";
+import {CaretRightOutlined, CloseOutlined, EditOutlined, PauseOutlined} from "@ant-design/icons";
 import "../App.css"
 import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
-import Player from '../Elements/Player'
 
 function PlaylistPage(props) {
 
@@ -26,7 +25,7 @@ function PlaylistPage(props) {
         setIsModalVisible(false);
     };
 
-    const [playlistDto, setPlaylistDto] = useState({playlist:{}, songs: []})
+    const [playlistDto, setPlaylistDto] = useState({playlist:{}, songs: [{song:{album:{uuid:{}}, artist:{}}, playlist:{}}]})
 
     useEffect(() => {
         getPlaylist();
@@ -191,10 +190,15 @@ function PlaylistPage(props) {
 
     }
 
-    const playSong = (song) => {
-        props.setCurrentSongIndex(() => {
-            return 10;
-        });
+    const playSong = (index) => {
+        if (props.isPlaying) {
+            props.setIsPlaying(false)
+        } else {
+            props.setIsActive(true)
+            props.setIsPlaying(true)
+            props.setSongList(playlistDto.songs)
+            props.setCurrentSongIndex(index)
+        }
     }
 
     return (<Content style={{ margin: '24px 16px 0' }}>
@@ -224,13 +228,24 @@ function PlaylistPage(props) {
                 bordered
                 rowKey
                 dataSource={playlistDto.songs}
-                renderItem={(item, index) =>
-                    <List.Item>
+                renderItem={(item, index) => {
+                    let playIcon = <CaretRightOutlined />
+                    let disabled = false
+                    if (item.song.uuid === null)
+                        disabled = true
+                    else if (index == props.currentSongIndex && playlistDto.songs === props.songList) {
+                        if (!props.isPlaying) {
+                            playIcon = <CaretRightOutlined />
+                        } else {
+                            playIcon = <PauseOutlined />
+                        }
+                    }
+                    return <List.Item>
                         <Space>
                             {index + 1}
                             <Tooltip title="Play">
-                                <Button type="primary" shape="circle" icon={<CaretRightOutlined />}
-                                onClick={() => playSong(item.song)}/>
+                                <Button disabled={disabled} type="primary" shape="circle" icon={playIcon}
+                                        onClick={() => playSong(index)}/>
                             </Tooltip>
                             {item.song.title}
                             <Link to={`/artist/${item.song.artist.id}`}>
@@ -240,10 +255,12 @@ function PlaylistPage(props) {
                                 {item.song.album.name}
                             </Link>
                             <Tooltip title="Remove">
-                                <Button type="primary" shape="circle" icon={<CloseOutlined />} onClick={() => deleteSong(item)}/>
+                                <Button type="primary" size={"small"} shape="circle" icon={<CloseOutlined />} onClick={() => deleteSong(item)}/>
                             </Tooltip>
                         </Space>
-                    </List.Item>}
+                    </List.Item>
+                }
+                }
             />
         </div>
     </Content>

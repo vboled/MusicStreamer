@@ -1,13 +1,11 @@
-import {Layout, Menu} from "antd";
+import {Menu} from "antd";
 import {Link} from "react-router-dom";
 import {
     HomeOutlined,
-    NotificationOutlined,
-    ProjectTwoTone, SearchOutlined,
+    ProjectTwoTone,
     UnorderedListOutlined,
     UserOutlined
 } from "@ant-design/icons";
-import {Content, Header} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import "../App.css"
 import 'antd/dist/antd.css';
@@ -34,7 +32,7 @@ function MyMenu(props) {
             <Sider
                 style={{
                     overflow: 'auto',
-                    minHeight: '100vh',
+                    height:"100%",
                     left: 0,
                 }}
                 breakpoint="lg"

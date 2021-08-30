@@ -1,5 +1,4 @@
-import {Button, Divider, List, Space, Tooltip} from "antd";
-import {CaretRightOutlined} from "@ant-design/icons";
+import {Divider, List, Space} from "antd";
 import {Link} from "react-router-dom";
 import getCover from "./getCover";
 

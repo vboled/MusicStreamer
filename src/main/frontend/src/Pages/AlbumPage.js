@@ -1,15 +1,12 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Content, Header} from "antd/es/layout/layout";
+import {Content} from "antd/es/layout/layout";
 import {
     Button,
     DatePicker,
     Divider,
-    Dropdown,
     Form,
-    Image,
     Input,
-    Layout,
     List,
     Menu,
     Select,
@@ -20,16 +17,12 @@ import {Link, useHistory} from "react-router-dom";
 import {
     CaretRightOutlined,
     CloseOutlined,
-    DashOutlined,
-    DownOutlined,
     EditOutlined, EllipsisOutlined, HeartFilled, HeartOutlined,
     PlusCircleOutlined
 } from "@ant-design/icons";
-import SongList from "../Elements/SongList";
 import "../App.css"
 import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
-import MyHeader from "../Elements/Header";
 import getCover from "../Elements/getCover";
 import {Option} from "antd/es/mentions";
 
@@ -300,7 +293,7 @@ function AlbumPage(props) {
                     }}
                 >
                     <Space size={170}>
-                        <Button icon={<CloseOutlined />} type="primary"onClick={deleteAlbum}>
+                        <Button icon={<CloseOutlined />} type="primary" onClick={deleteAlbum}>
                             Delete
                         </Button>
                         <Button type="primary" htmlType="submit">

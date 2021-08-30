@@ -1,10 +1,8 @@
 import {Button, Form, Input, Layout, Space} from "antd";
 import {Header} from "antd/es/layout/layout";
 import React from "react";
-import axios from "axios";
-import {Redirect, Route, useHistory} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {SearchOutlined} from "@ant-design/icons";
-import Player from "./Player";
 
 const onFinish = (values) => {
     console.log("values", values.search)
@@ -13,7 +11,6 @@ const onFinish = (values) => {
 const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
 };
-
 
 function MyHeader(props) {
 
@@ -54,7 +51,6 @@ function MyHeader(props) {
                                 Submit
                             </Button>
                         </Form.Item>
-                        <Player song={props.song}/>
                     </Space>
                 </Form>
             </div>

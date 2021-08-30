@@ -1,11 +1,7 @@
-import {Button, Divider, Empty, Form, Input, Layout, List, Space} from "antd";
-import {Content, Header} from "antd/es/layout/layout";
+import {Content} from "antd/es/layout/layout";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import MyHeader from "../Elements/Header";
 import SongList from "../Elements/SongList";
-import {Link} from "react-router-dom";
-import getCover from "../Elements/getCover";
 import AlbumList from "../Elements/AlbumList";
 import ArtistList from "../Elements/ArtistList";
 

@@ -1,13 +1,11 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Button, Divider, Image, Layout, List, Menu, Space, Tooltip} from "antd";
-import {Link, Redirect, useHistory} from "react-router-dom";
-import {HomeOutlined, NotificationOutlined, PlusOutlined, UnorderedListOutlined, UserOutlined} from "@ant-design/icons";
-import {Content, Header} from "antd/es/layout/layout";
-import Sider from "antd/es/layout/Sider";
+import {Button, Divider, Image, List, Space, Tooltip} from "antd";
+import {Link} from "react-router-dom";
+import {PlusOutlined} from "@ant-design/icons";
+import {Content} from "antd/es/layout/layout";
 import "../App.css"
 import 'antd/dist/antd.css';
-import MyHeader from "../Elements/Header";
 
 function getCover(uuid, main) {
     let name = uuid

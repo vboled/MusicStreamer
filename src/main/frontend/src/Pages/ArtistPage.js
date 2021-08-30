@@ -1,14 +1,13 @@
 import {Button, Divider, Form, Image, Input, Layout, List, Space, Tooltip} from "antd";
 import axios from "axios";
-import {Content, Header} from "antd/es/layout/layout";
+import {Content} from "antd/es/layout/layout";
 import {Link, useHistory} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {CaretRightOutlined, CloseOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
+import {CloseOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
 import SongList from "../Elements/SongList";
 import "../App.css"
 import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
-import MyHeader from "../Elements/Header";
 import getCover from "../Elements/getCover";
 
 function ArtistPage(props) {

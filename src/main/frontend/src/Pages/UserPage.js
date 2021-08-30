@@ -1,12 +1,11 @@
-import {Image, Input, Layout, Menu} from 'antd';
+import {Layout} from 'antd';
 
 import "../App.css"
 import 'antd/dist/antd.css';
 import {useHistory} from "react-router-dom";
-import MyHeader from "../Elements/Header";
 
 
-const { Header, Content, Footer, Sider } = Layout;
+const {Content} = Layout;
 
 const HomeButton = () => {
     let history = useHistory();

@@ -1,13 +1,11 @@
-import {Button, Divider, Form, Image, Input, Layout, List, Space, Tooltip} from "antd";
-import {Content, Header} from "antd/es/layout/layout";
+import {Button, Divider, Image, List, Space, Tooltip} from "antd";
+import {Content} from "antd/es/layout/layout";
 import "../App.css"
 import 'antd/dist/antd.css';
 import axios from "axios";
 import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
-import {CloseOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
-import Modal from "antd/es/modal/Modal";
-import MyHeader from "../Elements/Header";
+import {PlusOutlined} from "@ant-design/icons";
 import AlbumList from "../Elements/AlbumList";
 
 function getCover(uuid, w) {
