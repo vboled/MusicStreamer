@@ -1,5 +1,6 @@
 import {Image} from "antd";
 import {useEffect, useMemo, useState} from "react";
+import React from 'react'
 
 function GetImage(props) {
 

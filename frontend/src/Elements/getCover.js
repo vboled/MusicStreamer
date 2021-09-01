@@ -1,4 +1,5 @@
 import {Image} from "antd";
+import React from 'react'
 
 function getCover(uuid, w, defaultCoverName) {
     let name = uuid

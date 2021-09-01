@@ -4,7 +4,7 @@ import axios from "axios";
 import SongList from "../Elements/SongList";
 import AlbumList from "../Elements/AlbumList";
 import ArtistList from "../Elements/ArtistList";
-
+import React from 'react'
 
 function SearchPage({match}) {
 

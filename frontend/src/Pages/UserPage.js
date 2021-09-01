@@ -1,4 +1,6 @@
 import {Layout} from 'antd';
+import React from 'react'
+
 
 import "../App.css"
 import 'antd/dist/antd.css';

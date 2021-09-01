@@ -1,6 +1,7 @@
 import {Divider, List, Space} from "antd";
 import {Link} from "react-router-dom";
 import getCover from "./getCover";
+import React from 'react'
 
 function AlbumList(albums) {
 
