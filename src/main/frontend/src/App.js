@@ -20,7 +20,7 @@ function App() {
 
     const [userView, setUserView] = useState({user:{}, playlistLists:[]})
     const [songList, setSongList] = useState([{song:{album:{}, artist:{}}, playlist:{}}])
-    const [currentSongIndex, setCurrentSongIndex] = useState(-1);
+    const [currentSongIndex, setCurrentSongIndex] = useState(0);
     const [nextSongIndex, setNextSongIndex] = useState(currentSongIndex + 1);
     const [isPlaying, setIsPlaying] = useState(false)
     const [isActive, setIsActive] = useState(false)
@@ -28,7 +28,7 @@ function App() {
     const whoAmI = () => {
     axios.get("http://localhost:8080/api/v1/whoami").then(res => {
       setUserView(res.data);
-      console.log(res.data)
+      console.log(userView.playlistLists)
     });
     }
 
@@ -55,7 +55,10 @@ function App() {
                    <MyHeader/>
                    <Route exact path={"/"}><HomePage user={userView.user}/></Route>
                    <Route exact path="/user/:id" render={(props) => <UserPage {...props} userView={userView}/>}></Route>
-                   <Route exact path={"/playlist/"} component={PlaylistsPage}></Route>
+                   <Route exact path={"/playlist/"} >
+                       <PlaylistsPage
+                            whoAmI={whoAmI}/>
+                   </Route>
                    <Route exact path="/playlist/:id" render={(props) => <PlaylistPage {...props}
                           userView={userView}
                           setSongList={setSongList}
@@ -65,10 +68,32 @@ function App() {
                           isPlaying={isPlaying}
                           setIsPlaying={setIsPlaying}
                           setIsActive={setIsActive}
+                          whoAmI={whoAmI}
                    />}
                    ></Route>
-                   <Route exact path="/artist/:id" render={(props) => <ArtistPage {...props} userView={userView}/>}></Route>
-                   <Route exact path="/album/:id" render={(props) => <AlbumPage {...props} userView={userView}/>}></Route>
+                   <Route exact path="/artist/:id" render={(props) => <ArtistPage {...props}
+                          userView={userView}
+                          setSongList={setSongList}
+                          songList={songList}
+                          setCurrentSongIndex={setCurrentSongIndex}
+                          currentSongIndex={currentSongIndex}
+                          isPlaying={isPlaying}
+                          setIsPlaying={setIsPlaying}
+                          setIsActive={setIsActive}
+                          whoAmI={whoAmI}
+                   />}></Route>
+                   <Route exact path="/album/:id" render={(props) => <AlbumPage {...props}
+                        userView={userView}
+                        setSongList={setSongList}
+                        songList={songList}
+                        setCurrentSongIndex={setCurrentSongIndex}
+                        currentSongIndex={currentSongIndex}
+                        isPlaying={isPlaying}
+                        setIsPlaying={setIsPlaying}
+                        setIsActive={setIsActive}
+                        whoAmI={whoAmI}
+                   />}>
+                   </Route>
                    <Route exact path="/owner/" component={ContentPage}/>
                    <Route exact path="/search/:search" component={SearchPage}/>
                    <Layout>

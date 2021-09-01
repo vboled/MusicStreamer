@@ -45,7 +45,7 @@ function Player(props) {
 
     if (props.isActive)
         return (
-            <div     style={{position:"fixed", bottom:0, backgroundColor:"#001529", width:"100%", height:"170"}}>
+            <div style={{position:"fixed", bottom:0, backgroundColor:"#001529", width:"100%", height:"170"}}>
                 <audio src={'../audio/' + props.songList[props.currentSongIndex].song.uuid} ref={audioEl}></audio>
                 <Space size={30}>
                     <div style={{marginTop:"10px"}}>
@@ -86,9 +86,7 @@ function Player(props) {
                 </Space>
             </div>
         )
-    return <div>
-        <h1>Empty</h1>
-    </div>
+    return <div/>
 }
 
 export default Player

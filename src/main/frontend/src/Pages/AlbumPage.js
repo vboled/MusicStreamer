@@ -25,75 +25,17 @@ import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
 import getCover from "../Elements/getCover";
 import {Option} from "antd/es/mentions";
+import SongsList from "../Elements/SongsList";
 
 const { SubMenu } = Menu;
 
 function AlbumPage(props) {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-    const [isInfoModalVisible, setIsInfoModalVisible] = useState(false);
 
     const showModal = () => {
         setIsModalVisible(true);
     };
-
-    const showSongModal = (item) => {
-        setEditedSong(item)
-        console.log("Edited:", editedSong)
-        setIsEditModalVisible(true);
-    };
-
-    const songHandleOk = () => {
-        setIsEditModalVisible(false);
-    };
-
-    const songHandleCancel = () => {
-        setIsEditModalVisible(false);
-    };
-
-    const songOnFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
-    };
-
-    const songOnFinish = (values) => {
-        if (state !== undefined)
-            fileUploadHandler()
-
-        axios.put("http://localhost:8080/api/v1/songs/song/", {
-            "title":values.name,
-            "id":editedSong.id
-        }).then(r=>{
-                getAlbum()
-            }
-        )
-    };
-
-    const showSongInfoModal = (item) => {
-        setEditedSong(item)
-        setIsInfoModalVisible(true);
-    };
-
-    const songInfoHandleOk = () => {
-        setIsInfoModalVisible(false);
-    };
-
-    const songInfoHandleCancel = () => {
-        setIsInfoModalVisible(false);
-    };
-
-    const fileUploadHandler = () => {
-        const fd = new FormData()
-        fd.append('file', state, state.name)
-        axios.put(`http://localhost:8080/api/v1/songs/audio/update/${editedSong.id}`,
-            fd
-        ).then(
-            res => {
-                console.log(res.data)
-                getAlbum()
-            }
-        )
-    }
 
     const handleOk = () => {
         setIsModalVisible(false);
@@ -135,7 +77,6 @@ function AlbumPage(props) {
         )
     };
 
-    const [editedSong, setEditedSong] = useState({})
     let relAlbumDate = useState("none")
     let albumType = useState("none")
 
@@ -155,17 +96,6 @@ function AlbumPage(props) {
     }
 
     const newDefaultName = "Song №" + albumView.songs.length
-
-    const deleteSong = () => {
-        axios.delete("http://localhost:8080/api/v1/songs/", {
-            params:{
-                id:editedSong.id
-            }
-        }).then(r => {
-            setIsEditModalVisible(false);
-            getAlbum()
-        })
-    }
 
     const createSong = () => {
         axios.post("http://localhost:8080/api/v1/songs/create/", {
@@ -191,12 +121,6 @@ function AlbumPage(props) {
                         </Button>
                 </Space>
         return ;
-    }
-
-    function getSongEditButton(item) {
-        if (albumView.album.ownerID === props.userView.user.id) {
-                return <Button icon={<EditOutlined />} type="primary" shape={"circle"} onClick={() => showSongModal(item)}/>        }
-        return
     }
 
     function albumReleaseChange(date, dateString) {
@@ -305,133 +229,6 @@ function AlbumPage(props) {
         </Modal>
     }
 
-    const [state, setState] = useState()
-
-    const fileSelectedHandler = (event) => {
-        setState(event.target.files[0])
-    }
-
-    function getSongEditModal() {
-
-        return <Modal title="Edit Song" visible={isEditModalVisible} onOk={songHandleOk} onCancel={songHandleCancel}>
-            <Form
-                name="basic"
-                labelCol={{
-                    span: 8,
-                }}
-                wrapperCol={{
-                    span: 16,
-                }}
-                onFinish={songOnFinish}
-                onFinishFailed={songOnFinishFailed}
-            >
-                <Form.Item
-                    label="Name"
-                    name="name"
-                    rules={[
-                        {
-                            message: 'Update Name',
-                        },
-                    ]}
-                >
-                    <Input defaultValue={editedSong.title}/>
-                </Form.Item>
-
-                <Form.Item
-                    label="Upload file"
-                    name="update"
-                    rules={[
-                        {
-                            message: 'Upload file',
-                        },
-                    ]}
-                >
-                    <Input type={"file"} onChange={fileSelectedHandler}/>
-                </Form.Item>
-
-                <Form.Item
-                    wrapperCol={{
-                        offset: 8,
-                        span: 16,
-                    }}
-                >
-                    <Space size={170}>
-                        <Button icon={<CloseOutlined />} type="primary"onClick={deleteSong}>
-                            Delete
-                        </Button>
-                        <Button type="primary" htmlType="submit">
-                            Save
-                        </Button>
-                    </Space>
-                </Form.Item>
-
-            </Form>
-        </Modal>
-    }
-
-    function getSongInfoModal() {
-
-        return <Modal title="Song Info" visible={isInfoModalVisible} onOk={songInfoHandleOk} onCancel={songInfoHandleCancel}>
-            <Menu>
-                <Menu.Item>Show info</Menu.Item>
-                <Menu.Item>Add to favourite</Menu.Item>
-                <SubMenu title="Add to playlist">
-                    <List
-                        size="small"
-                        bordered
-                        rowKey
-                        dataSource={props.userView.playlistLists}
-                        renderItem={(item) => {
-                            if (item.main)
-                                return
-                            return <List.Item>
-                                <Button type="text" onClick={() => addToPlaylist(item)}>{item.name}</Button>
-                            </List.Item>
-                        }}
-                    />
-                </SubMenu>
-            </Menu>
-        </Modal>
-    }
-
-    const addToPlaylist = (playlist) => {
-        console.log(editedSong)
-        axios.put("http://localhost:8080/api/v1/playlist/add/", {},{
-            params:{
-                songID:editedSong.id,
-                playlistID:playlist.id
-            }
-        }).then()
-    }
-
-    const getLike = (like) => {
-        if (like === null)
-            return <HeartOutlined />
-        return <HeartFilled />
-    }
-
-    const setLike = (songView) => {
-        if (songView.like === null) {
-            axios.put("http://localhost:8080/api/v1/playlist/add/main/", {},{
-                params:{
-                    songID:songView.song.id
-                }
-            }).then(r=>{
-                getAlbum()
-            })
-        } else {
-            axios.delete("http://localhost:8080/api/v1/playlist/song/main/", {
-                params:{
-                    songId:songView.song.id
-                }
-            }).then(r=>{
-                getAlbum()
-            })
-        }
-        console.log(songView)
-    }
-
-
     return (<Content style={{ margin: '24px 16px 0' }}>
         <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
             <Space size={200}>
@@ -461,37 +258,19 @@ function AlbumPage(props) {
                 </List>
             </Space>
             {getEditModal()}
-            {getSongInfoModal()}
-            {getSongEditModal()}
-            <Divider orientation="left">Songs:</Divider>
-            <List
-                size="small"
-                bordered
-                rowKey
-                dataSource={albumView.songs}
-                renderItem={(item, index) =>
-                    <List.Item>
-                        <Space>
-                            {index + 1}
-                            <Tooltip title="Play">
-                                <Button type="primary" shape="circle" icon={<CaretRightOutlined />} />
-                            </Tooltip>
-                            {item.song.title}
-                            <Link to={`/artist/${item.song.artist.id}`}>
-                                {item.song.artist.name}
-                            </Link>
-                            <Link to={`/album/${item.song.album.id}`}>
-                                {item.song.album.name}
-                            </Link>
-                            <Tooltip title="Like">
-                                <Button type="primary" shape="circle" onClick={() => setLike(item)}>
-                                    {getLike(item.like)}
-                                </Button>
-                            </Tooltip>
-                            {getSongEditButton(item.song)}
-                            <Button icon={<EllipsisOutlined />} type="primary" shape={"circle"} onClick={() => showSongInfoModal(item.song)}/>
-                        </Space>
-                    </List.Item>}
+            <SongsList
+                updatePage={getAlbum}
+                isPlaying={props.isPlaying}
+                setIsPlaying={props.setIsPlaying}
+                setSongList={props.setSongList}
+                setIsActive={props.setIsActive}
+                setCurrentSongIndex={props.setCurrentSongIndex}
+                songList={props.songList}
+                songs={albumView.songs}
+                isPlaylist={false}
+                playlists={props.userView.playlistLists}
+                currentSongIndex={props.currentSongIndex}
+                userView={props.userView}
             />
         </div>
     </Content>)

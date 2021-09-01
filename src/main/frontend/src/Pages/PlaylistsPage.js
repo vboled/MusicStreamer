@@ -20,7 +20,7 @@ function getCover(uuid, main) {
     />
 }
 
-function PlaylistsPage(){
+function PlaylistsPage(props){
     const [playlists, setPlaylists] = useState([])
 
     const getPlaylists = () => {
@@ -40,6 +40,7 @@ function PlaylistsPage(){
         axios.post("http://localhost:8080/api/v1/playlist/", {
             name:newDefaultName
         }).then(r => {
+            props.whoAmI()
             getPlaylists()
         })
     }

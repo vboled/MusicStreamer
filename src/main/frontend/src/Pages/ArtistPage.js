@@ -9,18 +9,19 @@ import "../App.css"
 import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
 import getCover from "../Elements/getCover";
+import SongsList from "../Elements/SongsList";
 
 function ArtistPage(props) {
 
-    const [artistView, setArtistView] = useState({artist:{}, songs: [], albums: []})
+    const [artistView, setArtistView] = useState({artist:{}, songs: [{song:{artist:{}, album:{}}, like:{}}], albums: []})
 
     const getArtist = () => {
         axios.get("http://localhost:8080/api/v1/artist/", {
             params: {id:props.match.params.id}
         }).then(res => {
             setArtistView(res.data)
+            console.log("artist", artistView.songs)
         })
-        console.log(artistView)
     }
 
     useEffect(() => {
@@ -189,7 +190,20 @@ function ArtistPage(props) {
                         </List.Item>}
                 >
                 </List>
-                {SongList(artistView.songs)}
+                <SongsList
+                    updatePage={getArtist}
+                    isPlaying={props.isPlaying}
+                    setIsPlaying={props.setIsPlaying}
+                    setSongList={props.setSongList}
+                    setIsActive={props.setIsActive}
+                    setCurrentSongIndex={props.setCurrentSongIndex}
+                    songList={props.songList}
+                    songs={artistView.songs}
+                    isPlaylist={false}
+                    playlists={props.userView.playlistLists}
+                    currentSongIndex={props.currentSongIndex}
+                    userView={props.userView}
+                />
             </div>
         </Content>)
 }

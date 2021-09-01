@@ -76,7 +76,7 @@ public class ArtistController {
         try {
             Artist artist = artistService.getById(id);
             ArtistView artistView = new ArtistView(artist,
-                    albumService.getByArtist(artist), songService.getByArtist(artist));
+                    albumService.getByArtist(artist), songService.getByArtist(artist, user));
             return new ResponseEntity<>(artistView, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("Artist not found", HttpStatus.NOT_FOUND);

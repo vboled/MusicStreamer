@@ -31,6 +31,8 @@ public interface SongService {
 
     List<Song> getByArtist(Artist artist);
 
+    List<SongView> getByArtist(Artist artist, User user);
+
     void deleteAudio(Song song);
 
     List<Song> getByAlbum(Album album);

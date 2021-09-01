@@ -155,10 +155,18 @@ public class SongServiceImpl implements SongService {
         return songRepository.findAllByAlbum(album);
     }
 
+    List<SongView> getSongView(List<Song> songs, User user) {
+        return songs.stream().map(a -> new SongView(a, likeService.getLike(a, user))).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SongView> getByArtist(Artist artist, User user) {
+        return getSongView(songRepository.findAllByArtist(artist), user);
+    }
+
     @Override
     public List<SongView> getByAlbum(Album album, User user) {
-        List<Song> songs = songRepository.findAllByAlbum(album);
-        return songs.stream().map(a -> new SongView(a, likeService.getLike(a, user))).collect(Collectors.toList());
+        return getSongView(songRepository.findAllByAlbum(album), user);
     }
 
     @Override

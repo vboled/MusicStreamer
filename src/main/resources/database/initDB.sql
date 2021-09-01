@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS playlists
     id              BIGSERIAL PRIMARY KEY,
     owner_id        BIGINT REFERENCES users (id) NOT NULL,
     uuid            VARCHAR(100),
-    name            VARCHAR(100) NOT NULL UNIQUE ,
+    name            VARCHAR(100) NOT NULL ,
     description     TEXT,
     is_main         BOOLEAN
 );

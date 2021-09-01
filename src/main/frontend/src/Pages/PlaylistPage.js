@@ -7,6 +7,7 @@ import {CaretRightOutlined, CloseOutlined, EditOutlined, PauseOutlined} from "@a
 import "../App.css"
 import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
+import SongsList from "../Elements/SongsList";
 
 function PlaylistPage(props) {
 
@@ -65,6 +66,7 @@ function PlaylistPage(props) {
         axios.delete("http://localhost:8080/api/v1/playlist/", {
             params: {playlistID:props.match.params.id}
         }).then(r => {
+            props.whoAmI()
             history.push("/playlist/")
             console.log(r)
         })
@@ -170,16 +172,6 @@ function PlaylistPage(props) {
         </Modal>
     }
 
-    const deleteSong = (song) => {
-        axios.delete("http://localhost:8080/api/v1/playlist/song/", {
-            params:{
-                addedSongId:song.id
-            }
-        }).then(
-            r=>getPlaylist()
-        )
-    }
-
     const getPlaylist = () => {
         axios.get("http://localhost:8080/api/v1/playlist/", {
             params: {id:props.match.params.id}
@@ -188,17 +180,6 @@ function PlaylistPage(props) {
             setPlaylistDto(res.data)
         })
 
-    }
-
-    const playSong = (index) => {
-        if (props.isPlaying) {
-            props.setIsPlaying(false)
-        } else {
-            props.setIsActive(true)
-            props.setIsPlaying(true)
-            props.setSongList(playlistDto.songs)
-            props.setCurrentSongIndex(index)
-        }
     }
 
     return (<Content style={{ margin: '24px 16px 0' }}>
@@ -222,45 +203,19 @@ function PlaylistPage(props) {
                 </List>
             </Space>
             {getModal()}
-            <Divider orientation="left">Songs:</Divider>
-            <List
-                size="small"
-                bordered
-                rowKey
-                dataSource={playlistDto.songs}
-                renderItem={(item, index) => {
-                    let playIcon = <CaretRightOutlined />
-                    let disabled = false
-                    if (item.song.uuid === null)
-                        disabled = true
-                    else if (index == props.currentSongIndex && playlistDto.songs === props.songList) {
-                        if (!props.isPlaying) {
-                            playIcon = <CaretRightOutlined />
-                        } else {
-                            playIcon = <PauseOutlined />
-                        }
-                    }
-                    return <List.Item>
-                        <Space>
-                            {index + 1}
-                            <Tooltip title="Play">
-                                <Button disabled={disabled} type="primary" shape="circle" icon={playIcon}
-                                        onClick={() => playSong(index)}/>
-                            </Tooltip>
-                            {item.song.title}
-                            <Link to={`/artist/${item.song.artist.id}`}>
-                                {item.song.artist.name}
-                            </Link>
-                            <Link to={`/album/${item.song.album.id}`}>
-                                {item.song.album.name}
-                            </Link>
-                            <Tooltip title="Remove">
-                                <Button type="primary" size={"small"} shape="circle" icon={<CloseOutlined />} onClick={() => deleteSong(item)}/>
-                            </Tooltip>
-                        </Space>
-                    </List.Item>
-                }
-                }
+            <SongsList
+                updatePage={getPlaylist}
+                isPlaying={props.isPlaying}
+                setIsPlaying={props.setIsPlaying}
+                setSongList={props.setSongList}
+                setIsActive={props.setIsActive}
+                setCurrentSongIndex={props.setCurrentSongIndex}
+                songList={props.songList}
+                songs={playlistDto.songs}
+                isPlaylist={true}
+                playlists={props.userView.playlistLists}
+                currentSongIndex={props.currentSongIndex}
+                userView={props.userView}
             />
         </div>
     </Content>
