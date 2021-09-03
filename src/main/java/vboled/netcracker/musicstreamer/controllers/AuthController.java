@@ -21,8 +21,9 @@ public class AuthController {
     public ResponseEntity<?> getCookie(@RequestBody AuthDto authDto) {
         try {
             HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.add(HttpHeaders.SET_COOKIE, authService.createCookie(authService.validateCredentials(authDto.getLogin(), authDto.getPassword())));
-            return new ResponseEntity<>("Ok!", responseHeaders, HttpStatus.OK);
+            String cookie = authService.createCookie(authService.validateCredentials(authDto.getLogin(), authDto.getPassword()));
+            responseHeaders.add(HttpHeaders.COOKIE, cookie);
+            return new ResponseEntity<>(cookie, responseHeaders, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>("Not Ok!", HttpStatus.NOT_ACCEPTABLE);
         }

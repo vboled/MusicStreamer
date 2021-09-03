@@ -27,12 +27,10 @@ public class SongController {
     private final FileService fileService;
 
     private final SongService songService;
-    private final User user;
 
-    public SongController(FileService fileService, SongService songService, User user) {
+    public SongController(FileService fileService, SongService songService) {
         this.fileService = fileService;
         this.songService = songService;
-        this.user = user;
     }
 
     void checkAdminOrOwnerPerm(User user, Long id) throws IllegalAccessError {
@@ -55,7 +53,7 @@ public class SongController {
 
     @GetMapping("/audio/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> readFileSong(/*@AuthenticationPrincipal User user,*/
+    public ResponseEntity<?> readFileSong(@AuthenticationPrincipal User user,
                                           @RequestParam Long id) {
         try {
             checkAdminOrOwnerPerm(user, id);
@@ -82,7 +80,7 @@ public class SongController {
 
     @PostMapping("/upload/")
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
-    public ResponseEntity<?> upload(/*@AuthenticationPrincipal User user,*/
+    public ResponseEntity<?> upload(@AuthenticationPrincipal User user,
                                     @RequestParam Long id, @RequestParam MultipartFile file) {
         try{
             checkAdminOrOwnerPerm(user, id);
@@ -101,7 +99,7 @@ public class SongController {
 
     @PostMapping("/create/")
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
-    public ResponseEntity<?> create(/*@AuthenticationPrincipal User user,*/
+    public ResponseEntity<?> create(@AuthenticationPrincipal User user,
                                     @RequestBody Song song) {
         try {
             if (user.getRole().getPermissions().contains(Permission.OWNER_PERMISSION)) {
@@ -116,7 +114,7 @@ public class SongController {
 
     @DeleteMapping("/audio/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> deleteAudio(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> deleteAudio(@AuthenticationPrincipal User user,
                                        @RequestParam Long id) {
         try {
             checkAdminOrOwnerPerm(user, id);
@@ -135,7 +133,7 @@ public class SongController {
 
     @DeleteMapping("/")
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
-    public ResponseEntity<?> delete(/*@AuthenticationPrincipal User user,*/
+    public ResponseEntity<?> delete(@AuthenticationPrincipal User user,
                                     @RequestParam Long id) {
         try{
             checkAdminOrOwnerPerm(user, id);
@@ -153,19 +151,17 @@ public class SongController {
 
     @PutMapping("/audio/update/{id}")
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
-    ResponseEntity<?> updateSongFile(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> updateSongFile(@AuthenticationPrincipal User user,
                                        @PathVariable Long id, @RequestParam MultipartFile file) {
-//        ResponseEntity<?> res = delete(user, id);
-        ResponseEntity<?> res = delete(id);
+        ResponseEntity<?> res = delete(user, id);
         if (!res.getStatusCode().equals(HttpStatus.OK))
             return res;
-//        return upload(user, id, file);
-        return upload(id, file);
+        return upload(user, id, file);
     }
 
     @PutMapping("/song/")
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
-    public ResponseEntity<?> update(/*@AuthenticationPrincipal User user,*/
+    public ResponseEntity<?> update(@AuthenticationPrincipal User user,
                                     @RequestBody Song song) {
         try{
             Song res;

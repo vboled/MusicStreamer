@@ -3,6 +3,7 @@ package vboled.netcracker.musicstreamer.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,15 +40,14 @@ public class PlaylistController {
     private final FileServiceImpl fileService;
     private final FileValidator fileValidator = new ImageValidator();
     private final LikeService likeService;
-    private final User user;
 
-    public PlaylistController(PlaylistService playlistService, SongService songService, AddedSongService addedSongService, FileServiceImpl fileService, LikeService likeService, User user) {
+    public PlaylistController(PlaylistService playlistService, SongService songService,
+                              AddedSongService addedSongService, FileServiceImpl fileService, LikeService likeService) {
         this.playlistService = playlistService;
         this.songService = songService;
         this.addedSongService = addedSongService;
         this.fileService = fileService;
         this.likeService = likeService;
-        this.user = user;
     }
 
     void checkAdminOrOwnerPerm(User user, Long id) throws IllegalAccessError {
@@ -70,17 +70,23 @@ public class PlaylistController {
 
     @PostMapping("/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> createPlaylist(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> createPlaylist(@AuthenticationPrincipal User user,
                                      @RequestBody Playlist playlist) {
-//        if (!user.getRole().getPermissions().contains(Permission.ADMIN_PERMISSION))
-            playlist.setOwnerID(user.getId());
+        if (playlist.getOwnerID() == null) {
+            if (!user.getRole().getPermissions().contains(Permission.ADMIN_PERMISSION)) {
+                playlist.setOwnerID(user.getId());
+            }
+            else {
+                return new ResponseEntity<>("OwnerId not found", HttpStatus.BAD_REQUEST);
+            }
+
+        }
         return new ResponseEntity<>(playlistService.create(playlist), HttpStatus.OK);
     }
 
     @GetMapping("/songs/all")
     @PreAuthorize("hasAuthority('admin:perm')")
-    ResponseEntity<?> getAllSongsByPlaylist(/*@AuthenticationPrincipal User user,*/
-                                      @RequestParam Long playlistID) {
+    ResponseEntity<?> getAllSongsByPlaylist(@RequestParam Long playlistID) {
         try {
             final List<AddedSong> songs = addedSongService.getAllByPlaylist(playlistService.getById(playlistID));
             if (songs == null || songs.isEmpty())
@@ -102,7 +108,7 @@ public class PlaylistController {
 
     @PutMapping("/add/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> addSong(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> addSong(@AuthenticationPrincipal User user,
                               @RequestParam Long songID, @RequestParam Long playlistID) {
         try {
             checkAdminOrUserPerm(user, playlistID);
@@ -120,12 +126,13 @@ public class PlaylistController {
 
     @PutMapping("/add/main/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> addSongToMain(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> addSongToMain(@AuthenticationPrincipal User user,
             @RequestParam Long songID) {
         try {
             Song song = songService.getById(songID);
             Playlist main = playlistService.getMainPlaylistByUserId(user.getId());
-            ResponseEntity<?> res = addSong(songID, main.getId());
+            checkAdminOrUserPerm(user, main.getId());
+            ResponseEntity<?> res = addSong(user, songID, main.getId());
             if (!res.getStatusCode().equals(HttpStatus.OK))
                 return res;
             likeService.create(song, user);
@@ -141,14 +148,14 @@ public class PlaylistController {
 
     @DeleteMapping("/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> deletePlaylist(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> deletePlaylist(@AuthenticationPrincipal User user,
                                      @RequestParam Long playlistID) {
         try {
             checkAdminOrUserPerm(user, playlistID);
             Playlist playlist = playlistService.getById(playlistID);
             if (playlist.isMain())
                 return new ResponseEntity<>("It's default playlist", HttpStatus.NOT_MODIFIED);
-            ResponseEntity<?> deleteRes = deletePlaylistCover(playlistID);
+            ResponseEntity<?> deleteRes = deletePlaylistCover(user, playlistID);
             if (!deleteRes.getStatusCode().equals(HttpStatus.OK))
                 return deleteRes;
             playlistService.delete(playlist);
@@ -163,7 +170,7 @@ public class PlaylistController {
 
     @DeleteMapping("/song/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> deleteSong(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> deleteSong(@AuthenticationPrincipal User user,
                                  @RequestParam Long addedSongId) {
         try {
             AddedSong added = addedSongService.getById(addedSongId);
@@ -181,12 +188,12 @@ public class PlaylistController {
 
     @DeleteMapping("/song/main/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> deleteSongFromMain(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> deleteSongFromMain(@AuthenticationPrincipal User user,
             @RequestParam Long songId) {
         try {
             Song song = songService.getById(songId);
             Playlist main = playlistService.getMainPlaylistByUserId(user.getId());
-            return deleteSong(addedSongService.getBySongAndPlaylist(song, main).getId());
+            return deleteSong(user, addedSongService.getBySongAndPlaylist(song, main).getId());
         } catch (EntityNotFoundException | NoSuchElementException e) {
             return new ResponseEntity<>("No such added song", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessError e) {
@@ -196,7 +203,7 @@ public class PlaylistController {
 
     @GetMapping("/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> getPlaylist(/*@AuthenticationPrincipal User user,*/ @RequestParam Long id) {
+    ResponseEntity<?> getPlaylist(@AuthenticationPrincipal User user, @RequestParam Long id) {
         try {
             checkAdminOrUserPerm(user, id);
             return new ResponseEntity<>(new PlaylistView(playlistService.getById(id),
@@ -210,7 +217,7 @@ public class PlaylistController {
 
     @GetMapping("/cover/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> getPlaylistCover(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> getPlaylistCover(@AuthenticationPrincipal User user,
                                     @RequestParam Long id) {
         try {
             checkAdminOrUserPerm(user, id);
@@ -226,7 +233,7 @@ public class PlaylistController {
 
     @DeleteMapping("/cover/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> deletePlaylistCover(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> deletePlaylistCover(@AuthenticationPrincipal User user,
                                           @RequestParam Long id) {
         try {
             checkAdminOrUserPerm(user, id);
@@ -246,7 +253,7 @@ public class PlaylistController {
 
     @PutMapping("/cover/{id}")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> uploadPlaylistCover(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> uploadPlaylistCover(@AuthenticationPrincipal User user,
             @PathVariable Long id, @RequestParam MultipartFile file) {
         try{
             checkAdminOrUserPerm(user, id);
@@ -263,19 +270,17 @@ public class PlaylistController {
 
     @PutMapping("/cover/update/{id}")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> updatePlaylistCover(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> updatePlaylistCover(@AuthenticationPrincipal User user,
                                        @PathVariable Long id, @RequestParam MultipartFile file) {
-//        ResponseEntity<?> res = deletePlaylistCover(user, id);
-        ResponseEntity<?> res = deletePlaylistCover(id);
+        ResponseEntity<?> res = deletePlaylistCover(user, id);
         if (!res.getStatusCode().equals(HttpStatus.OK))
             return res;
-//        return uploadPlaylistCover(user, id, file);
-        return uploadPlaylistCover(id, file);
+        return uploadPlaylistCover(user, id, file);
     }
 
     @PutMapping("/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> updatePlaylist(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> updatePlaylist(@AuthenticationPrincipal User user,
             @RequestBody Playlist playlist) {
         try{
             Playlist res = playlistService.fullUpdatePlaylist(playlist);

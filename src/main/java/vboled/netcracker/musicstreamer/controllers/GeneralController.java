@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import vboled.netcracker.musicstreamer.view.UserView;
 import vboled.netcracker.musicstreamer.model.user.User;
@@ -38,7 +39,7 @@ public class GeneralController {
     }
 
     @GetMapping("whoami")
-    public ResponseEntity<?> WhoAmI(/*@AuthenticationPrincipal User user*/) {
+    public ResponseEntity<?> WhoAmI(@AuthenticationPrincipal User user) {
         if (user == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 //        try {

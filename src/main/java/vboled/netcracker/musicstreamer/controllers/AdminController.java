@@ -16,12 +16,10 @@ import java.util.NoSuchElementException;
 public class AdminController {
 
     private final UserService userService;
-    private final UserAdmin userAdmin;
 
     @Autowired
-    public AdminController(UserService userService, UserAdmin userAdmin) {
+    public AdminController(UserService userService) {
         this.userService = userService;
-        this.userAdmin = userAdmin;
     }
 
     @PostMapping("/create/")
@@ -36,7 +34,7 @@ public class AdminController {
     }
 
     @GetMapping("/all/")
-//    @PreAuthorize("hasAuthority('admin:perm')")
+    @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> read() {
         final List<User> users = userService.readAll();
         if (users == null || users.isEmpty())

@@ -3,6 +3,7 @@ package vboled.netcracker.musicstreamer.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import vboled.netcracker.musicstreamer.model.Like;
@@ -20,13 +21,11 @@ import java.util.NoSuchElementException;
 public class LikeController {
 
     private final LikeService likeService;
-    private final User user;
     private final SongService songService;
     private final UserService userService;
 
-    public LikeController(LikeService likeService, User user, SongService songService, UserService userService) {
+    public LikeController(LikeService likeService, SongService songService, UserService userService) {
         this.likeService = likeService;
-        this.user = user;
         this.songService = songService;
         this.userService = userService;
     }
@@ -39,7 +38,7 @@ public class LikeController {
 
     @PostMapping("/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> setLike(/*@AuthenticationPrincipal User user,*/
+    public ResponseEntity<?> setLike(@AuthenticationPrincipal User user,
                         Long songID) {
         try {
             Song song = songService.getById(songID);
@@ -51,7 +50,7 @@ public class LikeController {
 
     @DeleteMapping("/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> deleteLike(/*@AuthenticationPrincipal User user,*/
+    public ResponseEntity<?> deleteLike(@AuthenticationPrincipal User user,
             Long likeID) {
         try {
             Like like = likeService.getById(likeID);

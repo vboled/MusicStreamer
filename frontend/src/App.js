@@ -6,7 +6,6 @@ import PlaylistsPage from "./Pages/PlaylistsPage";
 import UserPage from "./Pages/UserPage";
 import HomePage from "./Pages/HomePage";
 import PlaylistPage from "./Pages/PlaylistPage";
-// import MyMenu from "./Elements/Menu";
 import {Layout} from "antd";
 import ArtistPage from "./Pages/ArtistPage";
 import AlbumPage from "./Pages/AlbumPage";
@@ -45,7 +44,7 @@ function App() {
         })
     }, [currentSongIndex]);
 
-  return (
+    return (
       <div>
         <Router>
          <Switch>
@@ -112,7 +111,7 @@ function App() {
          </Switch>
         </Router>
       </div>
-  );
+    );
 }
 
 export default App;

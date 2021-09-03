@@ -3,6 +3,7 @@ package vboled.netcracker.musicstreamer.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vboled.netcracker.musicstreamer.view.ArtistView;
@@ -28,16 +29,14 @@ public class ArtistController {
     private final ArtistService artistService;
     private final SongService songService;
     private final AlbumService albumService;
-    private final User user;
     private final FileServiceImpl fileService;
     private final FileValidator fileValidator = new ImageValidator();
 
-    public ArtistController(ArtistService artistService, SongService songService, AlbumService albumService, User user,
+    public ArtistController(ArtistService artistService, SongService songService, AlbumService albumService,
                             FileServiceImpl fileService) {
         this.artistService = artistService;
         this.songService = songService;
         this.albumService = albumService;
-        this.user = user;
         this.fileService = fileService;
     }
 
@@ -72,7 +71,7 @@ public class ArtistController {
 
     @GetMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    ResponseEntity<?> getArtist(@RequestParam Long id) {
+    ResponseEntity<?> getArtist(@AuthenticationPrincipal User user, @RequestParam Long id) {
         try {
             Artist artist = artistService.getById(id);
             ArtistView artistView = new ArtistView(artist,
@@ -85,7 +84,7 @@ public class ArtistController {
 
     @PutMapping("/cover/")
     @PreAuthorize("hasAuthority('user:perm')")
-    ResponseEntity<?> uploadArtistCover(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> uploadArtistCover(@AuthenticationPrincipal User user,
             @RequestParam Long id, @RequestParam MultipartFile file) {
         try{
             checkAdminOrOwnerPerm(user, id);
@@ -103,7 +102,7 @@ public class ArtistController {
 
     @PutMapping("/")
     @PreAuthorize("hasAuthority('admin:perm')")
-    ResponseEntity<?> updateArtist(/*@AuthenticationPrincipal User user,*/
+    ResponseEntity<?> updateArtist(@AuthenticationPrincipal User user,
                                   @RequestBody Artist artist) {
         try{
             Artist res = null;
@@ -126,7 +125,7 @@ public class ArtistController {
 
     @DeleteMapping("/")
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
-    public ResponseEntity<?> delete(/*@AuthenticationPrincipal User user,*/
+    public ResponseEntity<?> delete(@AuthenticationPrincipal User user,
                                     @RequestParam Long id) {
         try{
             if (!(user.getRole().getPermissions().contains(Permission.OWNER_PERMISSION) &&

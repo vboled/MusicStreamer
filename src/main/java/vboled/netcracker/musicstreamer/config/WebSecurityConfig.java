@@ -46,11 +46,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
                 // store SecurityContext in Cookie / delete Cookie on logout
                 .securityContext().securityContextRepository(cookieSecurityContextRepository)
                 .and().logout().permitAll().deleteCookies(SignedUserCookie.NAME)
-                .and().formLogin()
+//                .and().formLogin()
                 .and().authorizeRequests()
+                .antMatchers("/").permitAll()
                 .antMatchers("/api/v1/whoami").permitAll()
                 .antMatchers("/api/v1/auth/").permitAll()
-                .antMatchers("/**").authenticated();
+                .antMatchers("/api/v1").authenticated();
     }
 
     @Override
