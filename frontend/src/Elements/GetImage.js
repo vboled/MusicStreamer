@@ -6,8 +6,9 @@ function GetImage(props) {
 
     const getName = () => {
         let name = props.uuid
-        if (name === undefined)
+        if (name === null || name === undefined) {
             name = props.defaultName
+        }
         return window.location.origin + '/img/' + name
     }
 

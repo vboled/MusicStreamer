@@ -17,8 +17,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-//@EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     static final String TARGET_AFTER_SUCCESSFUL_LOGIN_PARAM = "target";
@@ -38,20 +38,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.cors().and()
-//                // deactivate session creation
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and().csrf().disable()
-//
-//                // store SecurityContext in Cookie / delete Cookie on logout
-//                .securityContext().securityContextRepository(cookieSecurityContextRepository)
-//                .and().logout().permitAll().deleteCookies(SignedUserCookie.NAME)
-//                .and().formLogin()
-//                .and().authorizeRequests()
-//                .antMatchers("/api/v1/whoami").permitAll()
-//                .antMatchers("/api/v1/auth/").permitAll()
-//                .antMatchers("/**").authenticated();
-        http.csrf().disable().authorizeRequests().anyRequest().permitAll();
+        http
+                // deactivate session creation
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().csrf().disable()
+
+                // store SecurityContext in Cookie / delete Cookie on logout
+                .securityContext().securityContextRepository(cookieSecurityContextRepository)
+                .and().logout().permitAll().deleteCookies(SignedUserCookie.NAME)
+                .and().formLogin()
+                .and().authorizeRequests()
+                .antMatchers("/api/v1/whoami").permitAll()
+                .antMatchers("/api/v1/auth/").permitAll()
+                .antMatchers("/**").authenticated();
     }
 
     @Override

@@ -14,7 +14,7 @@ public class ImageValidator implements FileValidator {
     private String imageDir= "img";
 
     @Value("${file.storage.path}")
-    private String uploadPath = "src/main/frontend/public";
+    private String uploadPath = "frontend/public";
 
     @Override
     public String getPath() {

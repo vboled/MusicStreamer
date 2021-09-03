@@ -31,7 +31,6 @@ public class LikeController {
         this.userService = userService;
     }
 
-
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('admin:perm')")
     public List<Like> getAllLikes() {

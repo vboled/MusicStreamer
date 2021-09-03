@@ -8,6 +8,7 @@ import "../App.css"
 import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
 import SongsList from "../Elements/SongsList";
+import GetImage from "../Elements/GetImage";
 
 function PlaylistPage(props) {
 
@@ -70,19 +71,6 @@ function PlaylistPage(props) {
             history.push("/playlist/")
             console.log(r)
         })
-    }
-
-    function getCover(uuid, w) {
-        let name = uuid
-        if (name === null)
-            name = 'playlistDefault.png'
-        if (playlistDto.playlist.main)
-            name = 'favouritePlaylist.png'
-        return <Image
-            width={w}
-            preview={false}
-            src={window.location.origin + '/img/' + name}
-        />
     }
 
     function getEditButton() {
@@ -182,10 +170,22 @@ function PlaylistPage(props) {
 
     }
 
+    function GetPlaylistCover(props) {
+        let uuid = props.uuid
+        if (props.main)
+            uuid = "favouritePlaylist.png"
+        return <GetImage
+            uuid={uuid}
+            w={200}
+            defaultName={"playlistDefault.png"}/>
+    }
+
     return (<Content style={{ margin: '24px 16px 0' }}>
         <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
             <Space size={200}>
-                {getCover(playlistDto.playlist.uuid, 400)}
+                <GetPlaylistCover
+                    uuid={playlistDto.playlist.uuid}
+                    main={playlistDto.playlist.main}/>
                 <List>
                     <List.Item>
                         <h1>{playlistDto.playlist.name}</h1>
