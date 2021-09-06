@@ -1,27 +1,27 @@
 import {Layout} from 'antd';
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 
 import "../App.css"
 import 'antd/dist/antd.css';
 import LoginPage from "./LoginPage";
+import {useHistory} from "react-router-dom";
 
 
 const { Content} = Layout;
 
 function HomePage(props) {
 
-    const [isAnon, setIsAnon] = useState(true)
+    let history = useHistory()
 
-    function GetFormLogin () {
-        if (isAnon)
-            return <LoginPage/>
-        return <div/>
-    }
-
+    useEffect(() => {
+        if (!props.isAuth) {
+            history.push("/login")
+        }
+    }, [props])
 
     return (<Content style={{ margin: '24px 16px 0' }}>
                 <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
-                    <GetFormLogin/>
+                    <h1>Home page</h1>
                 </div>
             </Content>)
 

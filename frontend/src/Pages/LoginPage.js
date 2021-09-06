@@ -1,34 +1,47 @@
 import React, {useState, useEffect} from 'react';
 import {useHistory} from "react-router-dom";
 import axios from "axios";
+import {Content} from "antd/es/layout/layout";
+import CreateUserForm from "../Elements/CreateUserForm";
+import LoginUserForm from "../Elements/LoginUserForm";
+import GetImage from "../Elements/GetImage";
 
-const HomeButton = () => {
-    let history = useHistory();
+const LoginButton = (props) => {
+    let text = "I want to login"
+    if (props.login)
+        text = "I want to create user"
 
     function handleClick() {
-        axios.post("http://localhost:8080/api/v1/auth/", {
-            login:"owner",
-            password:"owner"
-        }, {
-            withCredentials:true
-        }).then(res =>{
-            console.log(res.data)
-        }
-        )
+        props.setLogin(!props.login)
     }
 
     return (
         <button type="button" onClick={handleClick}>
-            Login
+            {text}
         </button>
     );
 }
 
-function LoginPage() {
+function LoginPage(props) {
 
-    return (<div>
-                <HomeButton/>
-            </div>)
+    const[login, setLogin] = useState(true)
+
+    function GetForm(props) {
+        if (props.login)
+            return <CreateUserForm/>
+        return <LoginUserForm/>
+    }
+
+    return (<Content style={{ margin: '24px 16px 0' }}>
+        <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
+            <LoginButton
+                login={login}
+                setLogin={setLogin}/>
+                <GetForm
+                    login={login}
+                />
+        </div>
+    </Content>)
 }
 
 export default LoginPage

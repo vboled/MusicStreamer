@@ -14,6 +14,7 @@ import SearchPage from "./Pages/SearchPage";
 import MyMenu from "./Elements/Menu";
 import MyHeader from "./Elements/Header";
 import Player from "./Elements/Player";
+import LoginPage from "./Pages/LoginPage";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
     const [nextSongIndex, setNextSongIndex] = useState(currentSongIndex + 1);
     const [isPlaying, setIsPlaying] = useState(false)
     const [isActive, setIsActive] = useState(false)
+    const [isAuth, setIsAuth] = useState(false)
 
     const whoAmI = () => {
     axios.get("http://localhost:8080/api/v1/whoami").then(res => {
@@ -52,7 +54,14 @@ function App() {
                <MyMenu userView={userView} />
                <Layout>
                    <MyHeader/>
-                   <Route exact path={"/"}><HomePage user={userView.user}/></Route>
+                   <Route exact path={"/login"}><LoginPage
+                       setUserView={setUserView}
+                   /></Route>
+                   <Route exact path={"/"}><HomePage
+                       user={userView.user}
+                       isAuth={isAuth}
+                       setIsAuth={setIsAuth}
+                   /></Route>
                    <Route exact path="/user/:id" render={(props) => <UserPage {...props} userView={userView}/>}></Route>
                    <Route exact path={"/playlist/"} >
                        <PlaylistsPage
