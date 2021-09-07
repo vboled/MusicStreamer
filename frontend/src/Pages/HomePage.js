@@ -11,14 +11,6 @@ const { Content} = Layout;
 
 function HomePage(props) {
 
-    let history = useHistory()
-
-    useEffect(() => {
-        if (!props.isAuth) {
-            history.push("/login")
-        }
-    }, [props])
-
     return (<Content style={{ margin: '24px 16px 0' }}>
                 <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
                     <h1>Home page</h1>
