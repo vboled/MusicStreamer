@@ -29,7 +29,9 @@ function LoginPage(props) {
     function GetForm(props) {
         if (props.login)
             return <CreateUserForm/>
-        return <LoginUserForm/>
+        return <LoginUserForm
+            setIsAuth={props.setIsAuth}
+        />
     }
 
     return (<Content style={{ margin: '24px 16px 0' }}>
@@ -39,6 +41,7 @@ function LoginPage(props) {
                 setLogin={setLogin}/>
                 <GetForm
                     login={login}
+                    setIsAuth={props.setIsAuth}
                 />
         </div>
     </Content>)

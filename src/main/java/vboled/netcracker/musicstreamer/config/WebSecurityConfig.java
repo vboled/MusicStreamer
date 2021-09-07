@@ -64,25 +64,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 //                .antMatchers("/api/v1/whoami").permitAll()
                 .antMatchers("/api/v1/create-user").permitAll()
                 .antMatchers(LOGIN_FORM_URL).permitAll()
+                .antMatchers("/create-user").permitAll()
                 .antMatchers("/**").authenticated();
-
-//                .antMatchers("/").permitAll()
-//                .antMatchers("/api/v1/whoami").permitAll()
-//                .antMatchers("/api/v1/auth/").permitAll()
-//                .antMatchers("/api/v1").authenticated();
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("*")
-                .allowedHeaders("*");
+        registry.addMapping("/**").allowedMethods("*");
     }
 
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("index");
-        registry.addViewController("/other").setViewName("other");
+        registry.addViewController("/").setViewName("react-app");
+        registry.addViewController("/create-user").setViewName("create-user");
         registry.addViewController("/login").setViewName("login");
     }
 
