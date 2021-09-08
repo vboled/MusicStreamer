@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "@ant-design/icons": "^4.6.3",
     "antd": "^4.16.11",
@@ -19,7 +20,6 @@
     "eject": "react-scripts eject",
     "watch": "webpack --watch -d --output ../src/main/resources/static/react-app.js"
   },
-  "proxy": "http://localhost:8080",
   "browserslist": {
     "production": [
       ">0.2%",

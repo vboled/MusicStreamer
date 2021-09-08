@@ -43,7 +43,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-              .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .cors().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().csrf().disable()
 
                 // store SecurityContext in Cookie / delete Cookie on logout
@@ -58,11 +59,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
                 .and().formLogin()
                 .loginPage(LOGIN_FORM_URL)
                 // after successful login forward user to originally requested URL
-                .successHandler(redirectToOriginalUrlAuthenticationSuccessHandler)
+//                .successHandler(redirectToOriginalUrlAuthenticationSuccessHandler)
 
                 .and().authorizeRequests()
-//                .antMatchers("/api/v1/whoami").permitAll()
-                .antMatchers("/api/v1/create-user").permitAll()
+                .antMatchers("/api/v1/whoami").permitAll()
+//                .antMatchers("/api/v1/create-user").permitAll()
                 .antMatchers(LOGIN_FORM_URL).permitAll()
                 .antMatchers("/create-user").permitAll()
                 .antMatchers("/**").authenticated();
@@ -70,7 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedMethods("*");
+        registry.addMapping("/**");
     }
 
     public void addViewControllers(ViewControllerRegistry registry) {
