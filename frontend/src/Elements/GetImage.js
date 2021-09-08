@@ -9,7 +9,7 @@ function GetImage(props) {
         if (name === null || name === undefined) {
             name = props.defaultName
         }
-        return window.location.origin + '/img/' + name
+        return './img/' + name
     }
 
     return <Image

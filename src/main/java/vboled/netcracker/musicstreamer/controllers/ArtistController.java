@@ -50,7 +50,7 @@ public class ArtistController {
     }
 
     @PostMapping("/")
-    @PreAuthorize("hasAuthority('admin:perm')")
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     ResponseEntity<?> createArtist(@RequestBody Artist artist) {
         try {
             artistService.create(artist);

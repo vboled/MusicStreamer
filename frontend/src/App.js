@@ -22,6 +22,7 @@ function App() {
     const [currentSongIndex, setCurrentSongIndex] = useState(0);
     const [nextSongIndex, setNextSongIndex] = useState(currentSongIndex + 1);
     const [isPlaying, setIsPlaying] = useState(false)
+    const [isActive, setIsActive] = useState(false)
 
     const whoAmI = () => {
         axios.get("http://localhost:8080/api/v1/whoami").then(res => {
