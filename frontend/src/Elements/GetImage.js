@@ -1,6 +1,5 @@
 import {Image} from "antd";
-import {useEffect, useMemo, useState} from "react";
-import React from 'react'
+import React from "react";
 
 function GetImage(props) {
 
@@ -9,7 +8,7 @@ function GetImage(props) {
         if (name === null || name === undefined) {
             name = props.defaultName
         }
-        return './img/' + name
+        return window.location.origin + '/img/' + name
     }
 
     return <Image

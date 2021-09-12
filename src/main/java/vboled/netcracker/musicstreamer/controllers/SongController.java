@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
 import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.model.user.Permission;
 import vboled.netcracker.musicstreamer.model.user.User;
@@ -22,15 +23,18 @@ import java.util.*;
 @RequestMapping("/api/v1/songs")
 public class SongController {
 
-    private final FileValidator fileValidator = new AudioValidator();
-
+    private final FileValidator fileValidator;
+    private final ApplicationConfiguration.FileConfiguration fileConfiguration;
     private final FileService fileService;
 
     private final SongService songService;
 
-    public SongController(FileService fileService, SongService songService) {
+    public SongController(FileService fileService, SongService songService,
+                          ApplicationConfiguration applicationConfiguration) {
         this.fileService = fileService;
         this.songService = songService;
+        this.fileConfiguration = applicationConfiguration.getFileConfiguration();
+        this.fileValidator = new AudioValidator(fileConfiguration);
     }
 
     void checkAdminOrOwnerPerm(User user, Long id) throws IllegalAccessError {

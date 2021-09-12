@@ -1,6 +1,6 @@
 package vboled.netcracker.musicstreamer.model.validator;
 
-import org.springframework.beans.factory.annotation.Value;
+import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -10,15 +10,16 @@ public class ImageValidator implements FileValidator {
 
     private final Set<String> imageExt = new HashSet<>(Arrays.asList(".jpeg",".jpg", ".png", ".gif"));
 
-    @Value("${image.storage.dir}")
-    private String imageDir= "img";
+    private final ApplicationConfiguration.FileConfiguration fileConfiguration;
 
-    @Value("${file.storage.path}")
-    private String uploadPath = "frontend/public";
+    public ImageValidator(ApplicationConfiguration.FileConfiguration fileConfiguration) {
+        this.fileConfiguration = fileConfiguration;
+    }
 
     @Override
     public String getPath() {
-        return uploadPath + "/" + imageDir;
+        return fileConfiguration.getUploadPath() + "/" +
+                fileConfiguration.getImageConfiguration().getDir();
     }
 
     @Override
@@ -36,5 +37,10 @@ public class ImageValidator implements FileValidator {
     @Override
     public Set<String> getExtensions() {
         return imageExt;
+    }
+
+    @Override
+    public Long getMaxSize() {
+        return fileConfiguration.getImageConfiguration().getMaxSize();
     }
 }

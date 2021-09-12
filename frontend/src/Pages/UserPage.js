@@ -1,27 +1,10 @@
 import {Layout} from 'antd';
 import React from 'react'
-
-
 import "../App.css"
 import 'antd/dist/antd.css';
-import {useHistory} from "react-router-dom";
 
 
 const {Content} = Layout;
-
-const HomeButton = () => {
-    let history = useHistory();
-
-    function handleClick() {
-        history.push("/");
-    }
-
-    return (
-        <button type="button" onClick={handleClick}>
-            Go home
-        </button>
-    );
-}
 
 function UserPage(props) {
 

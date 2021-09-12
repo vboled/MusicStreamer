@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Playlist;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.repository.PlaylistRepository;
+import vboled.netcracker.musicstreamer.repository.RegionRepository;
 import vboled.netcracker.musicstreamer.repository.UserRepository;
 import vboled.netcracker.musicstreamer.service.UserService;
 
@@ -25,15 +26,17 @@ public class UserServiceImpl implements UserService {
             "([A-Za-z\\d]([A-Za-z\\d-])*[A-Za-z\\d])" +
             "(.[A-Za-z]+)$";
 
-    private final String PHONE_PATTERN = "^(\\d{1,3})(\\d{10})$";
+    private final String PHONE_PATTERN = "^\\+(\\d{1,4})(\\d{8})$";
 
     private final UserRepository userRepository;
+    private final RegionRepository regionRepository;
     private final PlaylistRepository playlistRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PlaylistRepository playlistRepository) {
+    public UserServiceImpl(UserRepository userRepository, RegionRepository regionRepository, PlaylistRepository playlistRepository) {
         this.userRepository = userRepository;
+        this.regionRepository = regionRepository;
         this.playlistRepository = playlistRepository;
     }
 
@@ -124,7 +127,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void checkPhone(String phone) {
-        if (!phone.matches(PHONE_PATTERN))
+        if (phone == null || !phone.matches(PHONE_PATTERN))
             throw new IllegalArgumentException("Wrong phone format!!!");
         if (userRepository.existsByPhoneNumber(phone))
             throw new IllegalArgumentException("Phone Number is already taken!!!");
@@ -132,7 +135,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void checkUserName(String userName) {
-        if (!userName.matches(USER_PATTERN))
+        if (userName == null || !userName.matches(USER_PATTERN))
             throw new IllegalArgumentException("Wrong username format!!!");
         if (userRepository.existsByUserName(userName))
             throw new IllegalArgumentException("Username is already taken!!!");

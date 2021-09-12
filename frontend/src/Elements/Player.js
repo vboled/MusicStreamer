@@ -1,6 +1,5 @@
-import React, {useEffect, useRef, useState} from "react";
-import {Button, List, Space, Tooltip} from "antd";
-import {CaretRightOutlined, CloseOutlined, StepBackwardOutlined, StepForwardOutlined} from "@ant-design/icons";
+import React, {useEffect, useRef} from "react";
+import {List, Space} from "antd";
 import GetImage from "./GetImage";
 import {Link} from "react-router-dom";
 import PlayerControls from "./PlayerControls";

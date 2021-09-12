@@ -1,10 +1,7 @@
-import React, {useState, useEffect} from 'react';
-import {useHistory} from "react-router-dom";
-import axios from "axios";
+import React, {useState} from 'react';
 import {Content} from "antd/es/layout/layout";
 import CreateUserForm from "../Elements/CreateUserForm";
 import LoginUserForm from "../Elements/LoginUserForm";
-import GetImage from "../Elements/GetImage";
 
 const LoginButton = (props) => {
     let text = "I want to login"
@@ -27,22 +24,25 @@ function LoginPage(props) {
     const[login, setLogin] = useState(true)
 
     function GetForm(props) {
-        if (props.login)
-            return <CreateUserForm/>
+        if (!props.login)
+            return <CreateUserForm
+                setLogin={setLogin}/>
         return <LoginUserForm
             setIsAuth={props.setIsAuth}
+            whoAmI={props.whoAmI}
         />
     }
 
     return (<Content style={{ margin: '24px 16px 0' }}>
         <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
-            <LoginButton
-                login={login}
-                setLogin={setLogin}/>
                 <GetForm
                     login={login}
                     setIsAuth={props.setIsAuth}
+                    whoAmI={props.whoAmI}
                 />
+             <LoginButton
+                login={login}
+                setLogin={setLogin}/>
         </div>
     </Content>)
 }

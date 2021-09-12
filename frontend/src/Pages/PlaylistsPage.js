@@ -1,5 +1,4 @@
-import {useEffect, useState} from "react";
-import React from 'react'
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {Button, Divider, Image, List, Space, Tooltip} from "antd";
 import {Link} from "react-router-dom";
@@ -25,7 +24,9 @@ function PlaylistsPage(props){
     const [playlists, setPlaylists] = useState([])
 
     const getPlaylists = () => {
-        axios.get("http://localhost:8080/api/v1/user/playlists/").then(res => {
+        axios.get("http://localhost:8080/api/v1/user/playlists/", {
+            withCredentials:true
+        }).then(res => {
             console.log("get", res.data)
             setPlaylists(res.data)
         })
@@ -38,9 +39,8 @@ function PlaylistsPage(props){
     const newDefaultName = "Playlist №" + playlists.length
 
     const createPlaylist = () => {
-        axios.post("http://localhost:8080/api/v1/playlist/", {
-            name:newDefaultName
-        }).then(r => {
+        axios.post('http://localhost:8080/api/v1/playlist/', {name:newDefaultName},
+            {withCredentials: true}).then(r => {
             props.whoAmI()
             getPlaylists()
         })

@@ -1,13 +1,9 @@
-import {Layout} from 'antd';
-import React, {useEffect, useState} from 'react'
-import {Image} from "antd";
+import {Image, Layout} from 'antd';
+import React from 'react'
 import "../App.css"
 import 'antd/dist/antd.css';
-import LoginPage from "./LoginPage";
-import {useHistory} from "react-router-dom";
 
-
-const { Content} = Layout;
+const {Content} = Layout;
 
 function HomePage(props) {
 

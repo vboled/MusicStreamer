@@ -1,31 +1,73 @@
-import React from "react";
-import { Form, Input, Button, Checkbox } from 'antd';
-import {useHistory} from "react-router-dom";
+import React, {useState, useEffect} from 'react'
+import { Select } from 'antd';
+import {message, Button, Form, Input, Space} from 'antd';
+import axios from "axios";
+import SelectRegion from "./SelectRegion"
 
-function CreateUserForm() {
+const { Option } = Select;
 
-    let history = useHistory();
+function CreateUserForm(props) {
+
+    const [code, setCode] = useState("+1")
+    const [regionID, setRegionID] = useState(0)
 
     function handleClick() {
-        // axios.post("http://localhost:8080/api/v1/auth/", {
-        //     login:"owner",
-        //     password:"owner"
-        // }, {
-        //     withCredentials:true
-        // }).then(res =>{
-        //     console.log(res.data)
-        // }
-        // )
-        history.push("/")
+
     }
 
     const onFinish = (values) => {
-        console.log('Success:', values);
+        console.log(values, code)
+        axios.post("http://localhost:8080/api/v1/create/", {
+            "name":values.name,
+            "lastName":values.lastName,
+            "userName":values.username,
+            "email":values.email,
+            "password":values.password,
+            "phoneNumber":code + values.phone,
+            "regionID":regionID
+        }).then(res =>{
+                console.log(res)
+                if (res.status === 200) {
+                    props.setIsAuth(true)
+                    props.setLogin(true)
+                }
+                console.log(res.data)
+            }
+        ).catch(err=>{
+            message.error(err.response.data)
+        })
     };
 
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
+
+    const [regions, setRegions] = useState([])
+
+    const getRegions = () => {
+        axios.get("http://localhost:8080/api/v1/region/all/").then(
+            res => {
+                console.log("regions:", res.data)
+                setRegions(res.data)
+                console.log(regions)
+            }
+        )
+    }
+
+    useEffect(() => {
+        getRegions();
+    }, [])
+
+    function handleChange(value) {
+        setCode(regions[value].code)
+        setRegionID(regions[value].id)
+        console.log(`selected ${value}`);
+    }
+
+    const children = [];
+    for (let i = 0; i < regions.length; i++) {
+        children.push(<Option key={i}>{regions[i].name + " " + regions[i].code}</Option>);
+    }
 
     return (
         <Form
@@ -43,6 +85,32 @@ function CreateUserForm() {
             onFinishFailed={onFinishFailed}
             autoComplete="off"
         >
+
+            <Form.Item
+                label="Name"
+                name="name"
+                rules={[
+                    {
+                        required: true,
+                        message: 'Please input name!',
+                    },
+                ]}
+            >
+                <Input />
+            </Form.Item>
+
+            <Form.Item
+                label="LastName"
+                name="lastName"
+                rules={[
+                    {
+                        required: true,
+                        message: 'Please input lastName!',
+                    },
+                ]}
+            >
+                <Input />
+            </Form.Item>
             <Form.Item
                 label="Username"
                 name="username"
@@ -62,13 +130,55 @@ function CreateUserForm() {
                 rules={[
                     {
                         required: true,
-                        message: 'Please input your password!',
+                        message: 'Please input password!',
                     },
                 ]}
             >
                 <Input.Password />
             </Form.Item>
 
+            <Form.Item
+                label="Email"
+                name="email"
+                rules={[
+                    {
+                        required: true,
+                        message: 'Please input email!',
+                    },
+                ]}
+            >
+                <Input />
+            </Form.Item>
+
+            <Space size={'large'}>
+                <Form.Item
+                    label="Code"
+                    name="code"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please choose region!',
+                        },
+                    ]}
+                >
+                    <Select defaultValue="Choose Region" style={{ width: 200 }} onChange={handleChange}>
+                        {children}
+                    </Select>
+                </Form.Item>
+
+                <Form.Item
+                    label="Phone"
+                    name="phone"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input phone!',
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+            </Space>
             <Form.Item
                 wrapperCol={{
                     offset: 8,

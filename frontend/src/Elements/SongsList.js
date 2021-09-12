@@ -1,12 +1,5 @@
 import {Button, Divider, List, Space, Tooltip} from "antd";
-import {
-    CaretRightOutlined,
-    CloseOutlined, EditOutlined,
-    EllipsisOutlined,
-    HeartFilled,
-    HeartOutlined,
-    PauseOutlined
-} from "@ant-design/icons";
+import {CaretRightOutlined, CloseOutlined, EditOutlined, EllipsisOutlined, PauseOutlined} from "@ant-design/icons";
 import {Link} from "react-router-dom";
 import React, {useState} from "react";
 import axios from "axios";
@@ -55,6 +48,7 @@ function SongsList (props) {
 
     const deleteSong = (song) => {
         axios.delete("http://localhost:8080/api/v1/playlist/song/", {
+            withCredentials:true,
             params:{
                 addedSongId:song.id
             }

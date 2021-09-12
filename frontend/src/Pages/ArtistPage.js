@@ -1,11 +1,9 @@
-import {Button, Divider, Form, Image, Input, Layout, List, Space, Tooltip} from "antd";
-import React from 'react'
+import {Button, Divider, Form, Input, List, Space, Tooltip} from "antd";
+import React, {useEffect, useState} from 'react'
 import axios from "axios";
 import {Content} from "antd/es/layout/layout";
 import {Link, useHistory} from "react-router-dom";
-import {useEffect, useState} from "react";
 import {CloseOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
-import SongList from "../Elements/SongList";
 import "../App.css"
 import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
@@ -18,9 +16,11 @@ function ArtistPage(props) {
 
     const getArtist = () => {
         axios.get("http://localhost:8080/api/v1/artist/", {
+            withCredentials:true,
             params: {id:props.match.params.id}
         }).then(res => {
             setArtistView(res.data)
+            console.log(props.userView)
             console.log("artist", artistView.songs)
         })
     }
@@ -34,7 +34,7 @@ function ArtistPage(props) {
             "name":values.name,
             "id":props.match.params.id,
             "ownerID":props.userView.user.id
-        }).then(r=>{
+        }, {withCredentials:true}).then(r=>{
             getArtist()
         })
     };
@@ -62,7 +62,7 @@ function ArtistPage(props) {
     const deleteArtist = () => {
         axios.delete("http://localhost:8080/api/v1/artist/", {
             params: {id:props.match.params.id}
-        }).then(r => {
+        }, {withCredentials:true}).then(r => {
             console.log(r)
             history.push("/owner/")
         })
@@ -94,7 +94,7 @@ function ArtistPage(props) {
             artist:{
                 id:props.match.params.id
             }
-        }).then(
+        }, {withCredentials:true}).then(
             r=>{
                 getArtist()
             }
@@ -191,20 +191,20 @@ function ArtistPage(props) {
                         </List.Item>}
                 >
                 </List>
-                <SongsList
-                    updatePage={getArtist}
-                    isPlaying={props.isPlaying}
-                    setIsPlaying={props.setIsPlaying}
-                    setSongList={props.setSongList}
-                    setIsActive={props.setIsActive}
-                    setCurrentSongIndex={props.setCurrentSongIndex}
-                    songList={props.songList}
-                    songs={artistView.songs}
-                    isPlaylist={false}
-                    playlists={props.userView.playlistLists}
-                    currentSongIndex={props.currentSongIndex}
-                    userView={props.userView}
-                />
+                {/*<SongsList*/}
+                {/*    updatePage={getArtist}*/}
+                {/*    isPlaying={props.isPlaying}*/}
+                {/*    setIsPlaying={props.setIsPlaying}*/}
+                {/*    setSongList={props.setSongList}*/}
+                {/*    setIsActive={props.setIsActive}*/}
+                {/*    setCurrentSongIndex={props.setCurrentSongIndex}*/}
+                {/*    songList={props.songList}*/}
+                {/*    songs={artistView.songs}*/}
+                {/*    isPlaylist={false}*/}
+                {/*    // playlists={props.userView.playlistLists}*/}
+                {/*    currentSongIndex={props.currentSongIndex}*/}
+                {/*    userView={props.userView}*/}
+                {/*/>*/}
             </div>
         </Content>)
 }

@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
 import vboled.netcracker.musicstreamer.view.ArtistView;
 import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.model.user.Permission;
@@ -29,15 +30,18 @@ public class ArtistController {
     private final ArtistService artistService;
     private final SongService songService;
     private final AlbumService albumService;
+    private final ApplicationConfiguration.FileConfiguration fileConfiguration;
     private final FileServiceImpl fileService;
-    private final FileValidator fileValidator = new ImageValidator();
+    private final FileValidator fileValidator;
 
     public ArtistController(ArtistService artistService, SongService songService, AlbumService albumService,
-                            FileServiceImpl fileService) {
+                            FileServiceImpl fileService, ApplicationConfiguration applicationConfiguration) {
         this.artistService = artistService;
         this.songService = songService;
         this.albumService = albumService;
         this.fileService = fileService;
+        this.fileConfiguration = applicationConfiguration.getFileConfiguration();
+        fileValidator = new ImageValidator(fileConfiguration);
     }
 
     void checkAdminOrOwnerPerm(User user, Long id) throws IllegalAccessError {
@@ -70,7 +74,7 @@ public class ArtistController {
     }
 
     @GetMapping("/")
-    @PreAuthorize("hasAuthority('admin:perm')")
+    @PreAuthorize("hasAuthority('user:perm')")
     ResponseEntity<?> getArtist(@AuthenticationPrincipal User user, @RequestParam Long id) {
         try {
             Artist artist = artistService.getById(id);

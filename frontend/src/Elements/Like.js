@@ -8,6 +8,7 @@ function Like(props) {
     const setLike = (songView) => {
         if (songView.like === null) {
             axios.put("http://localhost:8080/api/v1/playlist/add/main/", {},{
+                withCredentials:true,
                 params:{
                     songID:songView.song.id
                 }
@@ -16,6 +17,7 @@ function Like(props) {
             })
         } else {
             axios.delete("http://localhost:8080/api/v1/playlist/song/main/", {
+                withCredentials:true,
                 params:{
                     songId:songView.song.id
                 }

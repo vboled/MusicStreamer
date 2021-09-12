@@ -1,34 +1,15 @@
-import {useEffect, useState} from "react";
-import React from 'react'
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {Content} from "antd/es/layout/layout";
-import {
-    Button,
-    DatePicker,
-    Divider,
-    Form,
-    Input,
-    List,
-    Menu,
-    Select,
-    Space,
-    Tooltip
-} from "antd";
-import {Link, useHistory} from "react-router-dom";
-import {
-    CaretRightOutlined,
-    CloseOutlined,
-    EditOutlined, EllipsisOutlined, HeartFilled, HeartOutlined,
-    PlusCircleOutlined
-} from "@ant-design/icons";
+import {Button, DatePicker, Form, Input, List, Menu, Select, Space} from "antd";
+import {useHistory} from "react-router-dom";
+import {CloseOutlined, EditOutlined, PlusCircleOutlined} from "@ant-design/icons";
 import "../App.css"
 import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
 import getCover from "../Elements/getCover";
 import {Option} from "antd/es/mentions";
 import SongsList from "../Elements/SongsList";
-
-const { SubMenu } = Menu;
 
 function AlbumPage(props) {
 
@@ -54,6 +35,7 @@ function AlbumPage(props) {
 
     const getAlbum = () => {
         axios.get("http://localhost:8080/api/v1/album/", {
+            withCredentials:true,
             params: {id:props.match.params.id}
         }).then(res => {
             setAlbumView(res.data)
@@ -71,7 +53,7 @@ function AlbumPage(props) {
             data.type = albumType[0];
         if (relAlbumDate[0] !== "none")
             data.releaseDate = relAlbumDate[0]
-        axios.put("http://localhost:8080/api/v1/album/", data)
+        axios.put("http://localhost:8080/api/v1/album/", data, {withCredentials:true})
             .then(r=>{
                 getAlbum()
         }
@@ -89,6 +71,7 @@ function AlbumPage(props) {
 
     const deleteAlbum = () => {
         axios.delete("http://localhost:8080/api/v1/album/", {
+            withCredentials:true,
             params: {id:props.match.params.id}
         }).then(r => {
             history.push("/owner/")
@@ -106,7 +89,7 @@ function AlbumPage(props) {
                 "id": props.match.params.id
             },
             "artist": albumView.album.artist
-        }).then(r=>{
+        }, {withCredentials:true}).then(r=>{
             getAlbum()
         })
     }

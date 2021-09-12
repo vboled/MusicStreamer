@@ -1,10 +1,9 @@
 import {Content} from "antd/es/layout/layout";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import SongList from "../Elements/SongList";
 import AlbumList from "../Elements/AlbumList";
 import ArtistList from "../Elements/ArtistList";
-import React from 'react'
 
 function SearchPage({match}) {
 
@@ -12,6 +11,7 @@ function SearchPage({match}) {
 
     const getSearch = () => {
         axios.get("http://localhost:8080/api/v1/search/", {
+            withCredentials:true,
             params: {search:match.params.search}
         }).then(res => {
             setSearchView(res.data)

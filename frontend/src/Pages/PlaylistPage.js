@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {Content} from "antd/es/layout/layout";
-import {Button, Divider, Form, Image, Input, Layout, List, Popover, Space, Tooltip} from "antd";
-import {Link, useHistory} from "react-router-dom";
-import {CaretRightOutlined, CloseOutlined, EditOutlined, PauseOutlined} from "@ant-design/icons";
+import {Button, Form, Input, List, Space} from "antd";
+import {useHistory} from "react-router-dom";
+import {CloseOutlined, EditOutlined} from "@ant-design/icons";
 import "../App.css"
 import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
@@ -38,7 +38,7 @@ function PlaylistPage(props) {
         const fd = new FormData()
         fd.append('file', state, state.name)
         axios.put(`http://localhost:8080/api/v1/playlist/cover/${props.match.params.id}`,
-            fd
+            fd, {withCredentials:true}
         ).then(
             res => {
                 getPlaylist()
@@ -54,7 +54,7 @@ function PlaylistPage(props) {
             "name":values.name,
             "description":values.description,
             "id":props.match.params.id
-        }).then(r=>{
+        }, {withCredentials:true}).then(r=>{
             getPlaylist()
         })
     };
@@ -65,6 +65,7 @@ function PlaylistPage(props) {
 
     const deletePlaylist = () => {
         axios.delete("http://localhost:8080/api/v1/playlist/", {
+            withCredentials:true,
             params: {playlistID:props.match.params.id}
         }).then(r => {
             props.whoAmI()
@@ -162,6 +163,7 @@ function PlaylistPage(props) {
 
     const getPlaylist = () => {
         axios.get("http://localhost:8080/api/v1/playlist/", {
+            withCredentials:true,
             params: {id:props.match.params.id}
         }).then(res => {
             console.log(res.data)

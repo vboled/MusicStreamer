@@ -6,7 +6,7 @@ import React from 'react'
 function SongList(songs) {
 
     return (<div>
-    <Divider orientation="left">Songs:</Divider>
+        <Divider orientation="left">Songs:</Divider>
         <List
             size="small"
             bordered

@@ -1,5 +1,6 @@
 package vboled.netcracker.musicstreamer.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -7,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
 import vboled.netcracker.musicstreamer.service.LikeService;
 import vboled.netcracker.musicstreamer.view.PlaylistView;
 import vboled.netcracker.musicstreamer.exceptions.SongAlreadyExistException;
@@ -36,18 +38,22 @@ public class PlaylistController {
 
     private final PlaylistService playlistService;
     private final SongService songService;
+    private final ApplicationConfiguration.FileConfiguration fileConfiguration;
     private final AddedSongService addedSongService;
     private final FileServiceImpl fileService;
-    private final FileValidator fileValidator = new ImageValidator();
+    private final FileValidator fileValidator;
     private final LikeService likeService;
 
+    @Autowired
     public PlaylistController(PlaylistService playlistService, SongService songService,
-                              AddedSongService addedSongService, FileServiceImpl fileService, LikeService likeService) {
+                              ApplicationConfiguration applicationConfiguration, AddedSongService addedSongService, FileServiceImpl fileService, LikeService likeService) {
         this.playlistService = playlistService;
         this.songService = songService;
+        this.fileConfiguration = applicationConfiguration.getFileConfiguration();
         this.addedSongService = addedSongService;
         this.fileService = fileService;
         this.likeService = likeService;
+        this.fileValidator = new ImageValidator(fileConfiguration);
     }
 
     void checkAdminOrOwnerPerm(User user, Long id) throws IllegalAccessError {

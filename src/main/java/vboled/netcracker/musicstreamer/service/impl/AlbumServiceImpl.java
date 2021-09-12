@@ -1,6 +1,7 @@
 package vboled.netcracker.musicstreamer.service.impl;
 
 import org.springframework.stereotype.Service;
+import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
 import vboled.netcracker.musicstreamer.exceptions.AlbumCreationFailed;
 import vboled.netcracker.musicstreamer.exceptions.AlbumNotFoundException;
 import vboled.netcracker.musicstreamer.model.Album;
@@ -19,14 +20,18 @@ import java.util.List;
 public class AlbumServiceImpl implements AlbumService {
 
     private final AlbumRepository albumRepository;
-    private final FileValidator fileValidator = new ImageValidator();
+    private final ApplicationConfiguration.FileConfiguration fileConfiguration;
+    private final FileValidator fileValidator;
     private final FileService fileService;
     private final SongService songService;
 
-    public AlbumServiceImpl(AlbumRepository albumRepository, FileService fileService, SongService songService) {
+    public AlbumServiceImpl(AlbumRepository albumRepository, FileService fileService, SongService songService,
+                            ApplicationConfiguration applicationConfiguration) {
         this.albumRepository = albumRepository;
         this.fileService = fileService;
         this.songService = songService;
+        this.fileConfiguration = applicationConfiguration.getFileConfiguration();
+        this.fileValidator = new ImageValidator(fileConfiguration);
     }
 
     @Override

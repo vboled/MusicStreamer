@@ -1,3 +1,11 @@
+CREATE TABLE IF NOT EXISTS regions
+(
+    id              BIGSERIAL PRIMARY KEY,
+    name            VARCHAR(50) NOT NULL UNIQUE,
+    rate            FLOAT NOT NULL,
+    code            VARCHAR(50) NOT NULL UNIQUE
+);
+
 CREATE TABLE IF NOT EXISTS users
 (
     id              BIGSERIAL PRIMARY KEY,
@@ -5,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users
     password        VARCHAR(255) NOT NULL,
     last_name       VARCHAR(50) NOT NULL,
     name            VARCHAR(100) NOT NULL,
-    regionid        BIGINT NOT NULL,
+    regionid        BIGINT REFERENCES regions (id) NOT NULL,
     email           VARCHAR(255) NOT NULL UNIQUE,
     phone_number    VARCHAR(30) NOT NULL UNIQUE,
     create_date     TIMESTAMP,

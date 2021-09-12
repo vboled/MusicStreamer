@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
 import vboled.netcracker.musicstreamer.exceptions.AlbumCreationFailed;
 import vboled.netcracker.musicstreamer.exceptions.AlbumNotFoundException;
 import vboled.netcracker.musicstreamer.model.Album;
@@ -29,15 +30,19 @@ import java.util.UUID;
 @RequestMapping("/api/v1/album")
 public class AlbumController {
 
-    private final FileValidator fileValidator = new ImageValidator();
+    private final ApplicationConfiguration.FileConfiguration fileConfiguration;
+    private final FileValidator fileValidator;
     private final AlbumService albumService;
     private final SongService songService;
     private final FileServiceImpl fileService;
 
-    public AlbumController(AlbumService albumService, SongService songService, FileServiceImpl fileService) {
+    public AlbumController(AlbumService albumService, SongService songService, FileServiceImpl fileService,
+                           ApplicationConfiguration applicationConfiguration) {
         this.albumService = albumService;
         this.songService = songService;
         this.fileService = fileService;
+        this.fileConfiguration = applicationConfiguration.getFileConfiguration();
+        this.fileValidator = new ImageValidator(fileConfiguration);
     }
 
     void checkAdminOrOwnerPerm(User user, Long id) throws IllegalAccessError {
@@ -74,7 +79,7 @@ public class AlbumController {
     }
 
     @GetMapping("/")
-    @PreAuthorize("hasAuthority('admin:perm')")
+    @PreAuthorize("hasAuthority('user:perm')")
     ResponseEntity<?> getAlbum(@AuthenticationPrincipal User user,
             @RequestParam Long id) {
         try {
@@ -102,7 +107,7 @@ public class AlbumController {
     }
 
     @DeleteMapping("/cover/")
-    @PreAuthorize("hasAuthority('user:perm')")
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     ResponseEntity<?> deleteAlbumCover(@AuthenticationPrincipal User user,
                                        @RequestParam Long id) {
         try {

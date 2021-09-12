@@ -1,10 +1,9 @@
 import {Button, Divider, Image, List, Space, Tooltip} from "antd";
 import {Content} from "antd/es/layout/layout";
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import "../App.css"
 import 'antd/dist/antd.css';
 import axios from "axios";
-import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {PlusOutlined} from "@ant-design/icons";
 import AlbumList from "../Elements/AlbumList";
@@ -25,7 +24,7 @@ function ContentPage() {
     const [contentView, setContentView] = useState({owner:{}, artists:[], albums: []})
 
     const getContent = () => {
-        axios.get("http://localhost:8080/api/v1/user/content/").then(res => {
+        axios.get("http://localhost:8080/api/v1/user/content/", {withCredentials:true}).then(res => {
             console.log(res.data)
             setContentView(res.data)
         })
@@ -42,7 +41,7 @@ function ContentPage() {
         axios.post("http://localhost:8080/api/v1/artist/", {
             ownerID:contentView.owner.id,
             name:newDefaultName
-        }).then(r => {
+        }, {withCredentials:true}).then(r => {
             getContent();
         })
 

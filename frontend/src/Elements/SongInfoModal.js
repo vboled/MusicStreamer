@@ -9,6 +9,7 @@ function SongInfoModal(props) {
 
     const addToPlaylist = (playlist) => {
         axios.put("http://localhost:8080/api/v1/playlist/add/", {},{
+            withCredentials:true,
             params:{
                 songID:props.editedSong.id,
                 playlistID:playlist.id

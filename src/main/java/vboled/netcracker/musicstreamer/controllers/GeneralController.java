@@ -38,18 +38,18 @@ public class GeneralController {
         this.user = user;
     }
 
-    @GetMapping("whoami")
+    @GetMapping("whoami/")
     public ResponseEntity<?> WhoAmI(@AuthenticationPrincipal User user) {
         if (user == null)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        try {
-            User userView = userService.getByUserName(user.getUserName());
-            return new ResponseEntity<>(new UserView(userView, userService.getAllPlaylists(user.getId())), HttpStatus.OK);
-//        }
+            return new ResponseEntity<>("Anonymous", HttpStatus.OK);
+        User userView = userService.getByUserName(user.getUserName());
+        return new ResponseEntity<>(
+                    new UserView(userView,
+                    userService.getAllPlaylists(user.getId())),
+                    HttpStatus.OK);
     }
 
     @PostMapping("create/")
-    @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> create(@RequestBody User user) {
         try {
             User res = userService.create(user);

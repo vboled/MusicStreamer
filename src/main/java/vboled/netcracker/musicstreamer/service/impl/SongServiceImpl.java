@@ -2,6 +2,7 @@ package vboled.netcracker.musicstreamer.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
 import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.model.Song;
@@ -23,18 +24,22 @@ import java.util.stream.Collectors;
 @Service
 public class SongServiceImpl implements SongService {
 
-    private final FileValidator fileValidator = new AudioValidator();
+    private final FileValidator fileValidator;
+    private final ApplicationConfiguration.FileConfiguration fileConfiguration;
     private final SongRepository songRepository;
     private final AddedSongService addedSongService;
     private final FileService fileService;
     private final LikeService likeService;
 
     @Autowired
-    public SongServiceImpl(SongRepository songRepository, AddedSongService addedSongService, FileService fileService, LikeService likeService) {
+    public SongServiceImpl(SongRepository songRepository, AddedSongService addedSongService, FileService fileService,
+                           LikeService likeService, ApplicationConfiguration applicationConfiguration) {
         this.songRepository = songRepository;
         this.addedSongService = addedSongService;
         this.fileService = fileService;
         this.likeService = likeService;
+        this.fileConfiguration = applicationConfiguration.getFileConfiguration();
+        this.fileValidator = new AudioValidator(fileConfiguration);
     }
 
     @Override

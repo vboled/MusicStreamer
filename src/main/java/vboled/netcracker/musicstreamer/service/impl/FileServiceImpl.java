@@ -30,6 +30,9 @@ public class FileServiceImpl implements FileService {
         if (file == null)
             throw new IllegalArgumentException("File is null");
 
+        if (fileValidator.getMaxSize() < file.getSize())
+            throw new IllegalArgumentException("File is too large");
+
         String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
         String newFileName;
 

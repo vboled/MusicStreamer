@@ -1,11 +1,6 @@
 import {Menu} from "antd";
 import {Link} from "react-router-dom";
-import {
-    HomeOutlined,
-    ProjectTwoTone,
-    UnorderedListOutlined,
-    UserOutlined
-} from "@ant-design/icons";
+import {HomeOutlined, ProjectTwoTone, UnorderedListOutlined, UserOutlined} from "@ant-design/icons";
 import Sider from "antd/es/layout/Sider";
 import "../App.css"
 import 'antd/dist/antd.css';

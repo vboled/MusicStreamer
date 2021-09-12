@@ -2,13 +2,13 @@ import Modal from "antd/es/modal/Modal";
 import {Button, Form, Input, Space} from "antd";
 import {CloseOutlined} from "@ant-design/icons";
 import axios from "axios";
-import {useState} from "react";
-import React from 'react'
+import React, {useState} from "react";
 
 function SongEditModal(props) {
 
     const deleteSong = () => {
         axios.delete("http://localhost:8080/api/v1/songs/", {
+            withCredentials:true,
             params:{
                 id:props.editedSong.id
             }
@@ -28,7 +28,7 @@ function SongEditModal(props) {
         const fd = new FormData()
         fd.append('file', state, state.name)
         axios.put(`http://localhost:8080/api/v1/songs/audio/update/${props.editedSong.id}`,
-            fd
+            fd, {withCredentials:true}
         ).then(
             res => {
                 console.log(res.data)
@@ -48,7 +48,7 @@ function SongEditModal(props) {
         axios.put("http://localhost:8080/api/v1/songs/song/", {
             "title":values.name,
             "id":props.editedSong.id
-        }).then(r=>{
+        }, {withCredentials:true}).then(r=>{
             props.updatePage()
             }
         )
