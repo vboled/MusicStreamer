@@ -148,7 +148,7 @@ function PlaylistPage(props) {
                         span: 16,
                     }}
                 >
-                    <Space size={170}>
+                    <Space size={160}>
                         <Button icon={<CloseOutlined />} type="primary"onClick={deletePlaylist}>
                             Delete
                         </Button>

@@ -54,7 +54,7 @@ function LoginUserForm(props) {
                     },
                 ]}
             >
-                <Input />
+                <Input style={{width:200}}/>
             </Form.Item>
 
             <Form.Item
@@ -67,7 +67,7 @@ function LoginUserForm(props) {
                     },
                 ]}
             >
-                <Input.Password />
+                <Input.Password style={{width:200}}/>
             </Form.Item>
 
             <Form.Item

@@ -81,6 +81,7 @@ function CreateUserForm(props) {
             initialValues={{
                 remember: true,
             }}
+            style={{display:"flex", flexDirection:"column"}}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
@@ -150,35 +151,34 @@ function CreateUserForm(props) {
                 <Input />
             </Form.Item>
 
-            <Space size={'large'}>
-                <Form.Item
-                    label="Code"
-                    name="code"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please choose region!',
-                        },
-                    ]}
-                >
-                    <Select defaultValue="Choose Region" style={{ width: 200 }} onChange={handleChange}>
-                        {children}
-                    </Select>
-                </Form.Item>
+            <Form.Item
+                label="Code"
+                name="code"
+                rules={[
+                    {
+                        required: true,
+                        message: 'Please choose region!',
+                    },
+                ]}
+            >
+                <Select defaultValue="Choose Region" style={{ width: 200 }} onChange={handleChange}>
+                    {children}
+                </Select>
+            </Form.Item>
 
-                <Form.Item
-                    label="Phone"
-                    name="phone"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please input phone!',
-                        },
-                    ]}
-                >
-                    <Input />
-                </Form.Item>
-            </Space>
+            <Form.Item
+                label="Phone"
+                name="phone"
+                rules={[
+                    {
+                        required: true,
+                        message: 'Please input phone!',
+                    },
+                ]}
+            >
+                <Input />
+            </Form.Item>
+
             <Form.Item
                 wrapperCol={{
                     offset: 8,

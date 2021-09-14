@@ -29,7 +29,8 @@ function App() {
     const whoAmI = () => {
         axios.get("http://localhost:8080/api/v1/whoami/",
             {withCredentials:true}).then(res => {
-            setUserView(res.data);
+            setUserView(res.data)
+            console.log(userView)
             setIsAuth(true)
         }).catch(err => {
             setIsAuth(false)
