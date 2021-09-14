@@ -37,7 +37,8 @@ function PlaylistPage(props) {
     const fileUploadHandler = () => {
         const fd = new FormData()
         fd.append('file', state, state.name)
-        axios.put(`http://localhost:8080/api/v1/playlist/cover/${props.match.params.id}`,
+        fd.append('id', props.match.params.id)
+        axios.put(`http://localhost:8080/api/v1/playlist/cover/`,
             fd, {withCredentials:true}
         ).then(
             res => {
@@ -100,6 +101,7 @@ function PlaylistPage(props) {
                 wrapperCol={{
                     span: 16,
                 }}
+                labelAlign={"left"}
                 initialValues={{
                     remember: true,
                 }}

@@ -43,7 +43,23 @@ function AlbumPage(props) {
         })
     }
 
+    const fileUploadHandler = () => {
+        const fd = new FormData()
+        fd.append('file', state, state.name)
+        fd.append('id', props.match.params.id)
+        axios.put(`http://localhost:8080/api/v1/album/cover/`,
+            fd, {withCredentials:true}
+        ).then(
+            res => {
+                getAlbum()
+            }
+        )
+    }
+
     const onFinish = (values) => {
+        if (state !== undefined)
+            fileUploadHandler()
+
         let data = {
             "name":values.name,
             "volume":values.volume,
@@ -111,6 +127,12 @@ function AlbumPage(props) {
         relAlbumDate[0] = dateString
     }
 
+    const [state, setState] = useState()
+
+    const fileSelectedHandler = (event) => {
+        setState(event.target.files[0])
+    }
+
     function selectTypeHandler(value) {
         albumType[0] = value
     }
@@ -126,6 +148,7 @@ function AlbumPage(props) {
                 wrapperCol={{
                     span: 16,
                 }}
+                labelAlign={"left"}
                 initialValues={{
                     remember: true,
                 }}
@@ -157,19 +180,9 @@ function AlbumPage(props) {
                 </Form.Item>
 
                 <Form.Item
-                    label="Release"
+                    label="Release date"
                 >
                     <DatePicker onChange={albumReleaseChange} />
-                </Form.Item>
-
-                <Form.Item
-                    label="Release"
-                >
-                    <Select defaultValue="Album" style={{ width: 120 }} onChange={selectTypeHandler}>
-                        <Option value="album">Album</Option>
-                        <Option value="ep">EP</Option>
-                        <Option value="single">Single</Option>
-                    </Select>
                 </Form.Item>
 
                 <Form.Item
@@ -181,17 +194,23 @@ function AlbumPage(props) {
                         },
                     ]}
                 >
-                    <Input placeholder={albumView.album.name}/>
+                    <Select defaultValue="Album" style={{ width: 120 }} onChange={selectTypeHandler}>
+                        <Option value="album">Album</Option>
+                        <Option value="ep">EP</Option>
+                        <Option value="single">Single</Option>
+                    </Select>
                 </Form.Item>
 
                 <Form.Item
-                    name="remember"
-                    valuePropName="checked"
-                    wrapperCol={{
-                        offset: 8,
-                        span: 16,
-                    }}
+                    label="Update Cover"
+                    name="update"
+                    rules={[
+                        {
+                            message: 'Update Cover',
+                        },
+                    ]}
                 >
+                    <Input type={"file"} onChange={fileSelectedHandler}/>
                 </Form.Item>
 
                 <Form.Item

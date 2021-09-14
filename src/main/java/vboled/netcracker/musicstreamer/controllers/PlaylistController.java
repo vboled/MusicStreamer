@@ -257,10 +257,10 @@ public class PlaylistController {
         }
     }
 
-    @PutMapping("/cover/{id}")
+    @PutMapping("/cover/")
     @PreAuthorize("hasAuthority('user:perm')")
     ResponseEntity<?> uploadPlaylistCover(@AuthenticationPrincipal User user,
-            @PathVariable Long id, @RequestParam MultipartFile file) {
+            @RequestParam Long id, @RequestParam MultipartFile file) {
         try{
             checkAdminOrUserPerm(user, id);
             String name = fileService.uploadFile(file, fileValidator, UUID.randomUUID().toString());
@@ -274,10 +274,10 @@ public class PlaylistController {
         }
     }
 
-    @PutMapping("/cover/update/{id}")
+    @PutMapping("/cover/update/")
     @PreAuthorize("hasAuthority('user:perm')")
     ResponseEntity<?> updatePlaylistCover(@AuthenticationPrincipal User user,
-                                       @PathVariable Long id, @RequestParam MultipartFile file) {
+                                       @RequestParam Long id, @RequestParam MultipartFile file) {
         ResponseEntity<?> res = deletePlaylistCover(user, id);
         if (!res.getStatusCode().equals(HttpStatus.OK))
             return res;
