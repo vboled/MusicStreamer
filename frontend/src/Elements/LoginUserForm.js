@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Form, Input} from 'antd';
+import {Button, Form, Input, Space} from 'antd';
 import axios from "axios";
 
 function LoginUserForm(props) {
@@ -23,6 +23,10 @@ function LoginUserForm(props) {
         }
     )
     };
+
+    const switchToCreate = () => {
+        props.setLogin(false)
+    }
 
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -76,9 +80,14 @@ function LoginUserForm(props) {
                     span: 16,
                 }}
             >
-                <Button type="primary" htmlType="submit" onClick={handleClick}>
-                    Submit
-                </Button>
+                <Space size={45}>
+                    <Button type="primary" htmlType="submit" onClick={handleClick}>
+                        Submit
+                    </Button>
+                    <Button type="primary" htmlType="submit" onClick={switchToCreate}>
+                        Sign up
+                    </Button>
+                </Space>
             </Form.Item>
         </Form>
     );

@@ -8,6 +8,8 @@ const { Option } = Select;
 
 function CreateUserForm(props) {
 
+    const inputStyle = {width:200}
+
     const [code, setCode] = useState("+1")
     const [regionID, setRegionID] = useState(0)
 
@@ -69,6 +71,10 @@ function CreateUserForm(props) {
         children.push(<Option key={i}>{regions[i].name + " " + regions[i].code}</Option>);
     }
 
+    const switchToLogin = () => {
+        props.setLogin(true)
+    }
+
     return (
         <Form
             name="basic"
@@ -97,7 +103,7 @@ function CreateUserForm(props) {
                     },
                 ]}
             >
-                <Input />
+                <Input style={inputStyle}/>
             </Form.Item>
 
             <Form.Item
@@ -110,7 +116,7 @@ function CreateUserForm(props) {
                     },
                 ]}
             >
-                <Input />
+                <Input style={inputStyle}/>
             </Form.Item>
             <Form.Item
                 label="Username"
@@ -122,7 +128,7 @@ function CreateUserForm(props) {
                     },
                 ]}
             >
-                <Input />
+                <Input style={inputStyle}/>
             </Form.Item>
 
             <Form.Item
@@ -135,7 +141,7 @@ function CreateUserForm(props) {
                     },
                 ]}
             >
-                <Input.Password />
+                <Input.Password style={inputStyle}/>
             </Form.Item>
 
             <Form.Item
@@ -148,7 +154,7 @@ function CreateUserForm(props) {
                     },
                 ]}
             >
-                <Input />
+                <Input style={inputStyle}/>
             </Form.Item>
 
             <Form.Item
@@ -176,7 +182,7 @@ function CreateUserForm(props) {
                     },
                 ]}
             >
-                <Input />
+                <Input style={inputStyle}/>
             </Form.Item>
 
             <Form.Item
@@ -185,9 +191,14 @@ function CreateUserForm(props) {
                     span: 16,
                 }}
             >
-                <Button type="primary" htmlType="submit" onClick={handleClick}>
-                    Submit
-                </Button>
+                <Space size={51}>
+                    <Button type="primary" htmlType="submit" onClick={handleClick}>
+                        Submit
+                    </Button>
+                    <Button type="primary" htmlType="submit" onClick={switchToLogin}>
+                        Sign in
+                    </Button>
+                </Space>
             </Form.Item>
         </Form>
     );

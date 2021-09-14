@@ -41,8 +41,8 @@ function MyMenu(props) {
                 }}
             >
                 <Link to={"/"}>
-                    <div className="logo" >
-                        <h1 style={{color:"white"}}>MusicStreamer</h1>
+                    <div>
+                        <h1 style={{color:"white", marginTop:"16px", marginLeft:"40px"}}>MusicStreamer</h1>
                     </div>
                 </Link>
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={['5']}>
