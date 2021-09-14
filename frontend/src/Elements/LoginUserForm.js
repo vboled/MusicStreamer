@@ -18,6 +18,7 @@ function LoginUserForm(props) {
             console.log(res)
             if (res.status === 200) {
                 props.setIsAuth(true)
+                props.whoAmI()
             }
         }
     )

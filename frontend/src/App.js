@@ -105,6 +105,8 @@ function App() {
                             </Route>
                             <Route exact path="/owner/" component={ContentPage}/>
                             <Route exact path="/search/:search" component={SearchPage}/>
+                            <div className="site-layout-background" style={{ padding: 24, height: "100" }}>
+                            </div>
                             <Layout>
                                 <Player
                                     songList={songList}
