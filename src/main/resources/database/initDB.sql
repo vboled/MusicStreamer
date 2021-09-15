@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS listenings
     song_id         BIGINT REFERENCES songs (id) NOT NULL,
     user_id         BIGINT REFERENCES users (id) NOT NULL,
     seconds         BIGINT NOT NULL,
-    listening_date  DATE
+    listening_date  TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS playlists

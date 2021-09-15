@@ -54,4 +54,9 @@ public class ListeningServiceImpl implements ListeningService {
     public List<Listening> getAll() {
         return listeningRepository.findAll();
     }
+
+    @Override
+    public Listening getLatest(User user) {
+        return listeningRepository.findFirstByUserOrderByListeningDateDesc(user);
+    }
 }

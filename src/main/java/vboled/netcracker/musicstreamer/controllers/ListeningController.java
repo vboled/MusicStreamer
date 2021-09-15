@@ -92,4 +92,10 @@ public class ListeningController {
         return new ResponseEntity<>(listeningService.getAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/latest/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    public ResponseEntity<?> getLatest(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(listeningService.getLatest(user), HttpStatus.OK);
+    }
+
 }

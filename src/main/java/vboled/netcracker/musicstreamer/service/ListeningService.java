@@ -18,4 +18,6 @@ public interface ListeningService {
     List<Listening> getAllByArtist(Long artistID);
 
     List<Listening> getAll();
+
+    Listening getLatest(User user);
 }

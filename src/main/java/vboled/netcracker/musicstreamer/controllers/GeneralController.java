@@ -24,16 +24,18 @@ public class GeneralController {
     private final ArtistService artistService;
     private final AlbumService albumService;
     private final PlaylistService playlistService;
+    private final ListeningService listeningService;
 
     @Autowired
     public GeneralController(UserService userService, SongService songService, GenreService genreService,
-                             ArtistService artistService, AlbumService albumService, PlaylistService playlistService) {
+                             ArtistService artistService, AlbumService albumService, PlaylistService playlistService, ListeningService listeningService) {
         this.userService = userService;
         this.songService = songService;
         this.genreService = genreService;
         this.artistService = artistService;
         this.albumService = albumService;
         this.playlistService = playlistService;
+        this.listeningService = listeningService;
     }
 
     @GetMapping("whoami/")
@@ -43,7 +45,8 @@ public class GeneralController {
         User userView = userService.getByUserName(user.getUserName());
         return new ResponseEntity<>(
                     new UserView(userView,
-                    userService.getAllPlaylists(user.getId())),
+                    userService.getAllPlaylists(user.getId()),
+                    listeningService.getLatest(user)),
                     HttpStatus.OK);
     }
 
