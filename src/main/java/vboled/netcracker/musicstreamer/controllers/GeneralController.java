@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import vboled.netcracker.musicstreamer.view.UserView;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.service.*;
+import vboled.netcracker.musicstreamer.view.UserView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,18 +24,16 @@ public class GeneralController {
     private final ArtistService artistService;
     private final AlbumService albumService;
     private final PlaylistService playlistService;
-    private final User user;
 
     @Autowired
     public GeneralController(UserService userService, SongService songService, GenreService genreService,
-                             ArtistService artistService, AlbumService albumService, PlaylistService playlistService, User user) {
+                             ArtistService artistService, AlbumService albumService, PlaylistService playlistService) {
         this.userService = userService;
         this.songService = songService;
         this.genreService = genreService;
         this.artistService = artistService;
         this.albumService = albumService;
         this.playlistService = playlistService;
-        this.user = user;
     }
 
     @GetMapping("whoami/")

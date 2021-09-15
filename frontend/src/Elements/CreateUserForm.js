@@ -26,17 +26,16 @@ function CreateUserForm(props) {
             "email":values.email,
             "password":values.password,
             "phoneNumber":code + values.phone,
-            "regionID":regionID
+            "region":{id:regionID}
         }).then(res =>{
-                console.log(res)
-                if (res.status === 200) {
-                    props.setIsAuth(true)
+                if (res.status === 201) {
+                    message.info("User Created!!!")
                     props.setLogin(true)
                 }
-                console.log(res.data)
             }
         ).catch(err=>{
-            message.error(err.response.data)
+            if (err.response !== undefined)
+                message.error(err.response.data)
         })
     };
 

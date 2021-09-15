@@ -200,8 +200,8 @@ public class UserServiceImpl implements UserService {
         if (update.getPassword() != null) {
             userToUpdate.setPassword(passwordEncoder.encode(update.getPassword()));
         }
-        if (update.getRegionID() != -1) {
-            userToUpdate.setRegionID(update.getRegionID());
+        if (update.getRegion() != null) {
+            userToUpdate.setRegion(update.getRegion());
         }
         if (update.getEmail() != null) {
             checkEmail(update.getEmail());

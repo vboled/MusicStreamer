@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users
     password        VARCHAR(255) NOT NULL,
     last_name       VARCHAR(50) NOT NULL,
     name            VARCHAR(100) NOT NULL,
-    regionid        BIGINT REFERENCES regions (id) NOT NULL,
+    region_id       BIGINT REFERENCES regions (id) NOT NULL,
     email           VARCHAR(255) NOT NULL UNIQUE,
     phone_number    VARCHAR(30) NOT NULL UNIQUE,
     create_date     TIMESTAMP,
@@ -68,6 +68,15 @@ CREATE TABLE IF NOT EXISTS songs
     release_date        TIMESTAMP,
     create_date         TIMESTAMP NOT NULL,
     edit_date           TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS listenings
+(
+    id              BIGSERIAL PRIMARY KEY,
+    song_id         BIGINT REFERENCES songs (id) NOT NULL,
+    user_id         BIGINT REFERENCES users (id) NOT NULL,
+    seconds         BIGINT NOT NULL,
+    listening_date  DATE
 );
 
 CREATE TABLE IF NOT EXISTS playlists

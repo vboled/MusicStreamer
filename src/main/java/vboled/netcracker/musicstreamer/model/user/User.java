@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import vboled.netcracker.musicstreamer.model.Region;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -37,8 +38,9 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "regionid")
-    private Long regionID;
+    @ManyToOne()
+    @JoinColumn(name="region_id")
+    private Region region;
 
     @Column(name = "email")
     private String email;
