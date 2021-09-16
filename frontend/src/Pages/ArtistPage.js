@@ -1,4 +1,4 @@
-import {Button, Divider, Form, Input, List, Space, Tooltip} from "antd";
+import {Button, Divider, Form, Input, Layout, List, Space, Tooltip} from "antd";
 import React, {useEffect, useState} from 'react'
 import axios from "axios";
 import {Content} from "antd/es/layout/layout";
@@ -9,10 +9,12 @@ import 'antd/dist/antd.css';
 import Modal from "antd/es/modal/Modal";
 import getCover from "../Elements/getCover";
 import SongsList from "../Elements/SongsList";
+import Statistics from "../Elements/Statistics";
 
 function ArtistPage(props) {
 
     const [artistView, setArtistView] = useState({artist:{}, songs: [{song:{artist:{}, album:{}}, like:{}}], albums: []})
+    const [stat, setStat] = useState([{listenings:[{}], region:{}}])
 
     const getArtist = () => {
         axios.get("http://localhost:8080/api/v1/artist/", {
@@ -20,8 +22,22 @@ function ArtistPage(props) {
             params: {id:props.match.params.id}
         }).then(res => {
             setArtistView(res.data)
+            if (res.data.artist.ownerID === props.userView.user.id)
+                getStatistic(res.data.artist.id)
             console.log(props.userView)
             console.log("artist", artistView.songs)
+        })
+    }
+
+    const getStatistic = (id) => {
+        axios.get("http://localhost:8080/api/v1/listening/by-artist/regions/", {
+            withCredentials:true,
+            params:{
+                artistID:id
+            }
+        }).then(r => {
+            console.log(r.data)
+            setStat(r.data)
         })
     }
 
@@ -75,7 +91,7 @@ function ArtistPage(props) {
             return <Button icon={<EditOutlined/>} type="primary" onClick={showModal}>
                 Edit Artist
             </Button>
-        return ;
+        return  <div/>
     }
 
     const getAlbumCreateButton = () => {
@@ -85,7 +101,7 @@ function ArtistPage(props) {
                     Add Album
                 </Button>
             </Tooltip>
-        return
+        return  <div/>
     }
 
     const createAlbum = () => {
@@ -158,6 +174,14 @@ function ArtistPage(props) {
         </Modal>
     }
 
+    function GetStatistics() {
+        if (artistView.artist.ownerID === props.userView.user.id)
+            return <Statistics
+                stat={stat}
+            />
+        return <div/>;
+    }
+
     return (<Content style={{ margin: '24px 16px 0' }}>
             <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
                 <Space size={200}>
@@ -191,20 +215,22 @@ function ArtistPage(props) {
                         </List.Item>}
                 >
                 </List>
-                {/*<SongsList*/}
-                {/*    updatePage={getArtist}*/}
-                {/*    isPlaying={props.isPlaying}*/}
-                {/*    setIsPlaying={props.setIsPlaying}*/}
-                {/*    setSongList={props.setSongList}*/}
-                {/*    setIsActive={props.setIsActive}*/}
-                {/*    setCurrentSongIndex={props.setCurrentSongIndex}*/}
-                {/*    songList={props.songList}*/}
-                {/*    songs={artistView.songs}*/}
-                {/*    isPlaylist={false}*/}
-                {/*    // playlists={props.userView.playlistLists}*/}
-                {/*    currentSongIndex={props.currentSongIndex}*/}
-                {/*    userView={props.userView}*/}
-                {/*/>*/}
+                <SongsList
+                    updatePage={getArtist}
+                    isPlaying={props.isPlaying}
+                    setIsPlaying={props.setIsPlaying}
+                    setSongList={props.setSongList}
+                    setIsActive={props.setIsActive}
+                    setCurrentSongIndex={props.setCurrentSongIndex}
+                    songList={props.songList}
+                    songs={artistView.songs}
+                    isPlaylist={false}
+                    setSeconds={props.setSeconds}
+                    playlists={props.userView.playlistLists}
+                    currentSongIndex={props.currentSongIndex}
+                    userView={props.userView}
+                />
+                <GetStatistics/>
             </div>
         </Content>)
 }

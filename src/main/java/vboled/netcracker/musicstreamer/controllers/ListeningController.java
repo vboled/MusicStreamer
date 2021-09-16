@@ -86,6 +86,22 @@ public class ListeningController {
         }
     }
 
+    @GetMapping("/by-artist/regions/")
+    @PreAuthorize("hasAnyAuthority('owner:perm, admin:perm')")
+    public ResponseEntity<?> getListeningByArtistByRegions(@AuthenticationPrincipal User user,
+                                                  @RequestParam Long artistID) {
+        try{
+            checkAdminOrOwnerPerm(user, artistID);
+            return new ResponseEntity<>(listeningService.getAllByArtistByRegions(artistID), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("User or Artist not found", HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/all/")
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> getAll() {

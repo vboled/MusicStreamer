@@ -57,10 +57,13 @@ function SongsList (props) {
         )
     }
 
-    const playSong = (index) => {
-        if (props.isPlaying) {
+    const playSong = (index, isNewListening, isSameSong) => {
+        if (props.isPlaying && isSameSong) {
             props.setIsPlaying(false)
         } else {
+            if (isNewListening) {
+                props.setSeconds(-1)
+            }
             props.setIsActive(true)
             props.setIsPlaying(true)
             props.setSongList(props.songs)
@@ -109,11 +112,14 @@ function SongsList (props) {
                 renderItem={(item, index) => {
                     let playIcon = <CaretRightOutlined />
                     let disabled = false
-                    console.log(props);
+                    let isNewListening = true
+                    let isSameSong = false
                     if (item.song.uuid === null) {
                         disabled = true
                     }
                     else if (item.song.id === props.songList[props.currentSongIndex].song.id) {
+                        isSameSong = true
+                        isNewListening = false
                         if (!props.isPlaying) {
                             playIcon = <CaretRightOutlined />
                         } else {
@@ -125,7 +131,7 @@ function SongsList (props) {
                             {index + 1}
                             <Tooltip title="Play">
                                 <Button disabled={disabled} type="primary" shape="circle" icon={playIcon}
-                                        onClick={() => playSong(index)}/>
+                                        onClick={() => playSong(index, isNewListening, isSameSong)}/>
                             </Tooltip>
                             {item.song.title}
                             <Link to={`/artist/${item.song.artist.id}`}>

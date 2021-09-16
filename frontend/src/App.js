@@ -6,7 +6,7 @@ import PlaylistsPage from "./Pages/PlaylistsPage";
 import UserPage from "./Pages/UserPage";
 import HomePage from "./Pages/HomePage";
 import PlaylistPage from "./Pages/PlaylistPage";
-import {Layout, Button} from "antd";
+import {Layout, Button, Space, List} from "antd";
 import ArtistPage from "./Pages/ArtistPage";
 import AlbumPage from "./Pages/AlbumPage";
 import ContentPage from "./Pages/ContentPage";
@@ -15,6 +15,9 @@ import MyMenu from "./Elements/Menu";
 import MyHeader from "./Elements/Header";
 import Player from "./Elements/Player";
 import LoginPage from "./Pages/LoginPage"
+import {Content} from "antd/es/layout/layout";
+import getCover from "./Elements/getCover";
+import SongsList from "./Elements/SongsList";
 
 function App() {
 
@@ -23,6 +26,8 @@ function App() {
     const [currentSongIndex, setCurrentSongIndex] = useState(0);
     const [nextSongIndex, setNextSongIndex] = useState(currentSongIndex + 1);
     const [isPlaying, setIsPlaying] = useState(false)
+    const [seconds, setSeconds] = useState(-1)
+    const [listeningID, setListeningID] = useState(-1)
     const [isActive, setIsActive] = useState(false)
     const [isAuth, setIsAuth] = useState(false)
 
@@ -78,6 +83,8 @@ function App() {
                                isPlaying={isPlaying}
                                setIsPlaying={setIsPlaying}
                                setIsActive={setIsActive}
+                               seconds={seconds}
+                               setSeconds={setSeconds}
                                whoAmI={whoAmI}
                             />}
                             ></Route>
@@ -88,6 +95,8 @@ function App() {
                                setCurrentSongIndex={setCurrentSongIndex}
                                currentSongIndex={currentSongIndex}
                                isPlaying={isPlaying}
+                               seconds={seconds}
+                               setSeconds={setSeconds}
                                setIsPlaying={setIsPlaying}
                                setIsActive={setIsActive}
                                whoAmI={whoAmI}
@@ -99,6 +108,8 @@ function App() {
                                  setCurrentSongIndex={setCurrentSongIndex}
                                  currentSongIndex={currentSongIndex}
                                  isPlaying={isPlaying}
+                                 seconds={seconds}
+                                 setSeconds={setSeconds}
                                  setIsPlaying={setIsPlaying}
                                  setIsActive={setIsActive}
                                  whoAmI={whoAmI}
@@ -106,17 +117,24 @@ function App() {
                             </Route>
                             <Route exact path="/owner/" component={ContentPage}/>
                             <Route exact path="/search/:search" component={SearchPage}/>
-                            <div className="site-layout-background" style={{ padding: 24, height: "100" }}>
-                            </div>
+                            <Content style={{ margin: '0px 16px 0' }}>
+                                <div className="site-layout-background" style={{ padding: 24, minHeight: "170px" }}>
+                                </div>
+                            </Content>
                             <Layout>
                                 <Player
+                                    userView={userView}
                                     songList={songList}
                                     currentSongIndex={currentSongIndex}
                                     setCurrentSongIndex={setCurrentSongIndex}
                                     nextSongIndex={nextSongIndex}
                                     isPlaying={isPlaying}
+                                    listeningID={listeningID}
+                                    setListeningID={setListeningID}
                                     setIsPlaying={setIsPlaying}
                                     isActive={isActive}
+                                    seconds={seconds}
+                                    setSeconds={setSeconds}
                                 />
                             </Layout>
                         </Layout>

@@ -217,6 +217,7 @@ function PlaylistPage(props) {
                 songList={props.songList}
                 songs={playlistDto.songs}
                 isPlaylist={true}
+                setSeconds={props.setSeconds}
                 playlists={props.userView.playlistLists}
                 currentSongIndex={props.currentSongIndex}
                 userView={props.userView}

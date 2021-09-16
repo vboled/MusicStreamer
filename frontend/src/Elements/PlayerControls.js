@@ -27,6 +27,7 @@ function PlayerControls(props) {
                     <Button type="primary" size="small" shape="circle" icon={<StepBackwardOutlined />}
                             onClick={() => {
                                 props.SkipSong(false)
+                                props.setSeconds(-1)
                             }}/>
                 </Tooltip>
                 <Tooltip title="Play">
@@ -39,6 +40,7 @@ function PlayerControls(props) {
                     <Button type="primary" size="small" shape="circle" icon={<StepForwardOutlined />}
                             onClick={() => {
                                 props.SkipSong()
+                                props.setSeconds(-1)
                             }}/>
                 </Tooltip>
             </Space>
