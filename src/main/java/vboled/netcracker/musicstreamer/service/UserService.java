@@ -36,6 +36,8 @@ public interface UserService {
 
     boolean isValidPhoneNumber(String phone);
 
+    User getByUPE(String UPE); // UPE = UserName or PhoneNumber or Email
+
     User getByUserName(String userName);
 
     User getByEmail(String email);

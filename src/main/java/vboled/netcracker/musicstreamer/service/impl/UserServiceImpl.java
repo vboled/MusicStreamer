@@ -157,6 +157,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getByUPE(String UPE) {
+        if (UPE == null)
+            throw new NoSuchElementException("NULL");
+        if (UPE.matches(USER_PATTERN))
+            return getByUserName(UPE);
+        if (UPE.matches(EMAIL_PATTERN))
+            return getByEmail(UPE);
+        if (UPE.matches(PHONE_PATTERN))
+            return getByPhoneNumber(UPE);
+        throw new NoSuchElementException("Can't detect type");
+    }
+
+    @Override
     public User getByUserName(String userName) {
         return userRepository.findByUserName(userName).get();
     }

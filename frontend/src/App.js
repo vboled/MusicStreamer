@@ -14,6 +14,8 @@ import SearchPage from "./Pages/SearchPage";
 import MyMenu from "./Elements/Menu";
 import MyHeader from "./Elements/Header";
 import Player from "./Elements/Player";
+import LoginPage from "./Pages/LoginPage";
+import {Content} from "antd/es/layout/layout";
 
 function App() {
 
