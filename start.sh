@@ -1,1 +1,3 @@
-mvn spring-boot:run
+sudo -u postgres psql << EOF
+CREATE DATABASE musicstreamerdb;
+EOF
