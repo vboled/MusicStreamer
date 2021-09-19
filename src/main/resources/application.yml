@@ -1,0 +1,54 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/musicstreamerdb
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+  sql:
+    init:
+      mode: never
+      schema-locations: classpath*:database/initDB.sql
+      data-locations: classpath*:database/populateDB.sql
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+music-streamer:
+  security:
+    jwt:
+      secret: "Bb-?$zv8whu9su5WYr-wBp-HFwqP-Yd7WU-G-@w-5bw4$&38v@&fV^6SqP34CgHsAbK^bE-&EM6Qju@TbXWPTXdqM7_p!nY#ACgxjsbv2a3FUf%MCeNF?2T9C=Tw+6@&"
+      type: "JWT"
+      issuer: "keypopsh"
+      audience: "users"
+      header: "Authorization"
+      path: "/"
+      expireTimeSeconds: 3600
+  file:
+    uploadPath: "frontend/public"
+    image:
+      dir: "img"
+      maxSize: 5242880
+    audio:
+      dir: "audio"
+      maxSize: 52428800
+
+image:
+  storage:
+    dir: "images"
+
+audio:
+  storage:
+    dir: "audio"
+
+file:
+  storage:
+    path: "files"
+
+max:
+  byte:
+    image:
+      size: "5242880"

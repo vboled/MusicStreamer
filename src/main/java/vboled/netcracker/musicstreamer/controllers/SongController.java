@@ -6,13 +6,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
 import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.model.user.Permission;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.model.validator.AudioValidator;
 import vboled.netcracker.musicstreamer.model.validator.FileValidator;
 import vboled.netcracker.musicstreamer.service.FileService;
-import vboled.netcracker.musicstreamer.service.impl.FileControllerServiceImpl;
 import vboled.netcracker.musicstreamer.service.SongService;
 
 import javax.security.auth.DestroyFailedException;
@@ -23,15 +23,18 @@ import java.util.*;
 @RequestMapping("/api/v1/songs")
 public class SongController {
 
-    private final FileValidator fileValidator = new AudioValidator();
-
+    private final FileValidator fileValidator;
+    private final ApplicationConfiguration.FileConfiguration fileConfiguration;
     private final FileService fileService;
 
     private final SongService songService;
 
-    public SongController(FileService fileService, SongService songService) {
+    public SongController(FileService fileService, SongService songService,
+                          ApplicationConfiguration applicationConfiguration) {
         this.fileService = fileService;
         this.songService = songService;
+        this.fileConfiguration = applicationConfiguration.getFileConfiguration();
+        this.fileValidator = new AudioValidator(fileConfiguration);
     }
 
     void checkAdminOrOwnerPerm(User user, Long id) throws IllegalAccessError {
@@ -67,24 +70,6 @@ public class SongController {
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("Song not found", HttpStatus.NOT_FOUND);
         }
-    }
-
-    @GetMapping("/artist/")
-    @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> getAllSongsByArtist(@RequestParam Long id) {
-        List<Song> res = songService.getByArtistId(id);
-        if (res.isEmpty())
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(res, HttpStatus.OK);
-    }
-
-    @GetMapping("/album/")
-    @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> getAllSongsByAlbum(@RequestParam Long id) {
-        List<Song> res = songService.getByAlbumId(id);
-        if (res.isEmpty())
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @GetMapping("/")
@@ -137,8 +122,11 @@ public class SongController {
                                        @RequestParam Long id) {
         try {
             checkAdminOrOwnerPerm(user, id);
-            fileService.delete(songService.getById(id).getUuid(), fileValidator);
-            songService.deleteAudio(id);
+            Song song = songService.getById(id);
+            if (song.getUuid() == null)
+                return new ResponseEntity<>(HttpStatus.OK);
+            fileService.delete(song.getUuid(), fileValidator);
+            songService.deleteAudio(song);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalAccessError e) {
             return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
@@ -153,9 +141,10 @@ public class SongController {
                                     @RequestParam Long id) {
         try{
             checkAdminOrOwnerPerm(user, id);
-            songService.delete(id);
-            if (songService.getById(id).isAvailable())
-                return deleteAudio(user, id);
+            Song song = songService.getById(id);
+            if (song.getUuid() == null)
+                return new ResponseEntity<>(HttpStatus.OK);
+            songService.delete(song);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -164,10 +153,10 @@ public class SongController {
         }
     }
 
-    @PutMapping("/audio/update/")
+    @PutMapping("/audio/update/{id}")
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     ResponseEntity<?> updateSongFile(@AuthenticationPrincipal User user,
-                                       @RequestParam Long id, @RequestParam MultipartFile file) {
+                                       @PathVariable Long id, @RequestParam MultipartFile file) {
         ResponseEntity<?> res = delete(user, id);
         if (!res.getStatusCode().equals(HttpStatus.OK))
             return res;
@@ -179,12 +168,12 @@ public class SongController {
     public ResponseEntity<?> update(@AuthenticationPrincipal User user,
                                     @RequestBody Song song) {
         try{
-            Song res = null;
+            Song res;
             Set<Permission> perm = user.getRole().getPermissions();
             if (perm.contains(Permission.ADMIN_PERMISSION)) {
                 res = songService.fullUpdateSong(song);
             } else if (perm.contains(Permission.OWNER_PERMISSION) &&
-                       user.getId().equals(songService.read(song.getUuid()).getOwnerID())) {
+                       user.getId().equals(songService.getById(song.getId()).getOwnerID())) {
                 res = songService.partialUpdateSong(song);
             }
             else

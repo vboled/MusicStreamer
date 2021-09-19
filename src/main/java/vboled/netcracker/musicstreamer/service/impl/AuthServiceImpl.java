@@ -1,31 +1,25 @@
 package vboled.netcracker.musicstreamer.service.impl;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
-import vboled.netcracker.musicstreamer.config.SignedUserCookie;
+import org.springframework.stereotype.Service;
+import vboled.netcracker.musicstreamer.dto.AuthDTO;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.service.AuthService;
 import vboled.netcracker.musicstreamer.service.UserService;
+import vboled.netcracker.musicstreamer.util.CookieGenerator;
 
-@Component
+@Service
 public class AuthServiceImpl implements AuthService {
-
     private final PasswordEncoder passwordEncoder;
+    private final CookieGenerator cookieGenerator;
     private final UserService userService;
-    private final String cookieHmacKey;
 
-
-    public AuthServiceImpl(PasswordEncoder passwordEncoder, UserService userService,
-                           @Value("${auth.cookie.hmac-key}") String cookieHmacKey) {
+    @Autowired
+    public AuthServiceImpl(PasswordEncoder passwordEncoder, CookieGenerator cookieGenerator, UserService userService) {
         this.passwordEncoder = passwordEncoder;
+        this.cookieGenerator = cookieGenerator;
         this.userService = userService;
-        this.cookieHmacKey = cookieHmacKey;
-    }
-
-    @Override
-    public String createCookie(User user) {
-        return new SignedUserCookie(userService, user, cookieHmacKey).getValue();
     }
 
     @Override
@@ -35,5 +29,10 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException();
         }
         return user;
+    }
+
+    @Override
+    public AuthDTO createJwtToken(User user) {
+        return new AuthDTO().setAccessToken(cookieGenerator.create(user));
     }
 }

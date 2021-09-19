@@ -1,11 +1,17 @@
 package vboled.netcracker.musicstreamer.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
+import vboled.netcracker.musicstreamer.service.LikeService;
+import vboled.netcracker.musicstreamer.view.PlaylistView;
+import vboled.netcracker.musicstreamer.exceptions.SongAlreadyExistException;
 import vboled.netcracker.musicstreamer.model.AddedSong;
 import vboled.netcracker.musicstreamer.model.Playlist;
 import vboled.netcracker.musicstreamer.model.Song;
@@ -32,15 +38,22 @@ public class PlaylistController {
 
     private final PlaylistService playlistService;
     private final SongService songService;
+    private final ApplicationConfiguration.FileConfiguration fileConfiguration;
     private final AddedSongService addedSongService;
     private final FileServiceImpl fileService;
-    private final FileValidator fileValidator = new ImageValidator();
+    private final FileValidator fileValidator;
+    private final LikeService likeService;
 
-    public PlaylistController(PlaylistService playlistService, SongService songService, AddedSongService addedSongService, FileServiceImpl fileService) {
+    @Autowired
+    public PlaylistController(PlaylistService playlistService, SongService songService,
+                              ApplicationConfiguration applicationConfiguration, AddedSongService addedSongService, FileServiceImpl fileService, LikeService likeService) {
         this.playlistService = playlistService;
         this.songService = songService;
+        this.fileConfiguration = applicationConfiguration.getFileConfiguration();
         this.addedSongService = addedSongService;
         this.fileService = fileService;
+        this.likeService = likeService;
+        this.fileValidator = new ImageValidator(fileConfiguration);
     }
 
     void checkAdminOrOwnerPerm(User user, Long id) throws IllegalAccessError {
@@ -65,15 +78,21 @@ public class PlaylistController {
     @PreAuthorize("hasAuthority('user:perm')")
     ResponseEntity<?> createPlaylist(@AuthenticationPrincipal User user,
                                      @RequestBody Playlist playlist) {
-        if (!user.getRole().getPermissions().contains(Permission.ADMIN_PERMISSION))
-            playlist.setOwnerID(user.getId());
+        if (playlist.getOwnerID() == null) {
+            if (!user.getRole().getPermissions().contains(Permission.ADMIN_PERMISSION)) {
+                playlist.setOwnerID(user.getId());
+            }
+            else {
+                return new ResponseEntity<>("OwnerId not found", HttpStatus.BAD_REQUEST);
+            }
+
+        }
         return new ResponseEntity<>(playlistService.create(playlist), HttpStatus.OK);
     }
 
     @GetMapping("/songs/all")
     @PreAuthorize("hasAuthority('admin:perm')")
-    ResponseEntity<?> getAllSongsByPlaylist(@AuthenticationPrincipal User user,
-                                      @RequestParam Long playlistID) {
+    ResponseEntity<?> getAllSongsByPlaylist(@RequestParam Long playlistID) {
         try {
             final List<AddedSong> songs = addedSongService.getAllByPlaylist(playlistService.getById(playlistID));
             if (songs == null || songs.isEmpty())
@@ -106,6 +125,30 @@ public class PlaylistController {
             return new ResponseEntity<>("Playlist or Song not found", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessError e) {
             return new ResponseEntity<>("You don't have permission", HttpStatus.NOT_FOUND);
+        } catch (SongAlreadyExistException e) {
+            return new ResponseEntity<>("Song exist in playlist", HttpStatus.NOT_MODIFIED);
+        }
+    }
+
+    @PutMapping("/add/main/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    ResponseEntity<?> addSongToMain(@AuthenticationPrincipal User user,
+            @RequestParam Long songID) {
+        try {
+            Song song = songService.getById(songID);
+            Playlist main = playlistService.getMainPlaylistByUserId(user.getId());
+            checkAdminOrUserPerm(user, main.getId());
+            ResponseEntity<?> res = addSong(user, songID, main.getId());
+            if (!res.getStatusCode().equals(HttpStatus.OK))
+                return res;
+            likeService.create(song, user);
+            return res;
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Playlist or Song not found", HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission", HttpStatus.NOT_FOUND);
+        } catch (SongAlreadyExistException e) {
+            return new ResponseEntity<>("Song exist in playlist", HttpStatus.NOT_MODIFIED);
         }
     }
 
@@ -118,11 +161,15 @@ public class PlaylistController {
             Playlist playlist = playlistService.getById(playlistID);
             if (playlist.isMain())
                 return new ResponseEntity<>("It's default playlist", HttpStatus.NOT_MODIFIED);
-            playlistService.delete(playlistID);
+            ResponseEntity<?> deleteRes = deletePlaylistCover(user, playlistID);
+            if (!deleteRes.getStatusCode().equals(HttpStatus.OK))
+                return deleteRes;
+            playlistService.delete(playlist);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>("No such added song", HttpStatus.NOT_FOUND);
-        } catch (IllegalAccessError e) {
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("No such playlist", HttpStatus.NOT_FOUND);
+        }
+        catch (IllegalAccessError e) {
             return new ResponseEntity<>("You don't have permission", HttpStatus.NOT_FOUND);
         }
     }
@@ -134,9 +181,26 @@ public class PlaylistController {
         try {
             AddedSong added = addedSongService.getById(addedSongId);
             checkAdminOrOwnerPerm(user, added.getPlaylist().getId());
+            if (added.getPlaylist().isMain())
+                likeService.delete(added.getSong(), user);
             addedSongService.deleteSong(added);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>("No such added song", HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/song/main/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    ResponseEntity<?> deleteSongFromMain(@AuthenticationPrincipal User user,
+            @RequestParam Long songId) {
+        try {
+            Song song = songService.getById(songId);
+            Playlist main = playlistService.getMainPlaylistByUserId(user.getId());
+            return deleteSong(user, addedSongService.getBySongAndPlaylist(song, main).getId());
+        } catch (EntityNotFoundException | NoSuchElementException e) {
             return new ResponseEntity<>("No such added song", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessError e) {
             return new ResponseEntity<>("You don't have permission", HttpStatus.NOT_FOUND);
@@ -148,7 +212,8 @@ public class PlaylistController {
     ResponseEntity<?> getPlaylist(@AuthenticationPrincipal User user, @RequestParam Long id) {
         try {
             checkAdminOrUserPerm(user, id);
-            return new ResponseEntity<>(playlistService.getById(id), HttpStatus.OK);
+            return new ResponseEntity<>(new PlaylistView(playlistService.getById(id),
+                    addedSongService.getAllByPlaylist(playlistService.getById(id))), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("Playlist not found", HttpStatus.NOT_FOUND);
         } catch (IllegalAccessError e) {
@@ -178,7 +243,12 @@ public class PlaylistController {
                                           @RequestParam Long id) {
         try {
             checkAdminOrUserPerm(user, id);
-            fileService.delete(playlistService.getById(id).getUuid(), fileValidator);
+            Playlist pl = playlistService.getById(id);
+            String uuid = pl.getUuid();
+            if (uuid == null)
+                return new ResponseEntity<>(HttpStatus.OK);
+            fileService.delete(uuid, fileValidator);
+            playlistService.partialUpdatePlaylist(pl);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalAccessError e) {
             return new ResponseEntity<>("You don't have permission!", HttpStatus.NOT_FOUND);
@@ -190,7 +260,7 @@ public class PlaylistController {
     @PutMapping("/cover/")
     @PreAuthorize("hasAuthority('user:perm')")
     ResponseEntity<?> uploadPlaylistCover(@AuthenticationPrincipal User user,
-                                          @RequestParam Long id, @RequestParam MultipartFile file) {
+            @RequestParam Long id, @RequestParam MultipartFile file) {
         try{
             checkAdminOrUserPerm(user, id);
             String name = fileService.uploadFile(file, fileValidator, UUID.randomUUID().toString());
@@ -212,5 +282,19 @@ public class PlaylistController {
         if (!res.getStatusCode().equals(HttpStatus.OK))
             return res;
         return uploadPlaylistCover(user, id, file);
+    }
+
+    @PutMapping("/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    ResponseEntity<?> updatePlaylist(@AuthenticationPrincipal User user,
+            @RequestBody Playlist playlist) {
+        try{
+            Playlist res = playlistService.fullUpdatePlaylist(playlist);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

@@ -40,18 +40,11 @@ public class Song {
     @Column(name = "duration")
     private Long duration;
 
-    @ManyToOne()
-    @JoinColumn(name = "genre_id")
-    private Genre genre;
-
     @Column(name = "words")
     private String words;
 
     @Column(name = "author")
     private String author;
-
-    @Column(name = "volume")
-    private Long volume;
 
     @Column(name = "release_date")
     private Date releaseDate;
@@ -59,12 +52,15 @@ public class Song {
     @Column(name = "create_date")
     private LocalDateTime createDate;
 
-    // need to be generated automatically
     @Column(name = "edit_date")
-    private Date editDate;
+    private LocalDateTime editDate;
 
     @PrePersist
     public void prePersist() {
         createDate = LocalDateTime.now();
+        editDate = createDate;
     }
+
+    @PreUpdate
+    public void preUpdate() { editDate = LocalDateTime.now(); }
 }

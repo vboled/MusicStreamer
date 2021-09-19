@@ -33,7 +33,7 @@ public class AdminController {
     }
 
     @GetMapping("/all/")
-//    @PreAuthorize("hasAuthority('admin:perm')")
+    @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> read() {
         final List<User> users = userService.readAll();
         if (users == null || users.isEmpty())
@@ -45,7 +45,7 @@ public class AdminController {
     @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> readByUserName(@RequestBody String userName) {
         try {
-            return new ResponseEntity<>(userService.read(userName), HttpStatus.OK);
+            return new ResponseEntity<>(userService.getByUserName(userName), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }

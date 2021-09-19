@@ -1,25 +1,45 @@
 package vboled.netcracker.musicstreamer.service.impl;
 
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
+import vboled.netcracker.musicstreamer.model.Album;
+import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.model.user.User;
+import vboled.netcracker.musicstreamer.model.validator.AudioValidator;
+import vboled.netcracker.musicstreamer.model.validator.FileValidator;
 import vboled.netcracker.musicstreamer.repository.SongRepository;
+import vboled.netcracker.musicstreamer.service.AddedSongService;
+import vboled.netcracker.musicstreamer.service.FileService;
+import vboled.netcracker.musicstreamer.service.LikeService;
 import vboled.netcracker.musicstreamer.service.SongService;
+import vboled.netcracker.musicstreamer.view.SongView;
 
+import javax.security.auth.DestroyFailedException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class SongServiceImpl implements SongService {
 
+    private final FileValidator fileValidator;
+    private final ApplicationConfiguration.FileConfiguration fileConfiguration;
     private final SongRepository songRepository;
+    private final AddedSongService addedSongService;
+    private final FileService fileService;
+    private final LikeService likeService;
 
     @Autowired
-    public SongServiceImpl(SongRepository songRepository) {
+    public SongServiceImpl(SongRepository songRepository, AddedSongService addedSongService, FileService fileService,
+                           LikeService likeService, ApplicationConfiguration applicationConfiguration) {
         this.songRepository = songRepository;
+        this.addedSongService = addedSongService;
+        this.fileService = fileService;
+        this.likeService = likeService;
+        this.fileConfiguration = applicationConfiguration.getFileConfiguration();
+        this.fileValidator = new AudioValidator(fileConfiguration);
     }
 
     @Override
@@ -32,10 +52,16 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public void delete(Long id) throws NoSuchElementException {
-        if (!songRepository.existsById(id))
-            throw new NoSuchElementException();
-        songRepository.deleteById(id);
+    public void delete(Song song) {
+        addedSongService.deleteBySong(song);
+        if (song.getUuid() != null) {
+            try {
+                fileService.delete(song.getUuid(), fileValidator);
+            } catch (DestroyFailedException e) {
+                e.printStackTrace();
+            }
+        }
+        songRepository.deleteById(song.getId());
     }
 
     @Override
@@ -46,15 +72,12 @@ public class SongServiceImpl implements SongService {
     private Song updateCommonFields(Song update) {
 //        if (!songRepository.existsByUuid(update.getUuid()))
 //            throw new NoSuchElementException("No song with such id");
-        Song songToUpdate = songRepository.findByUuid(update.getUuid()).get();
+        Song songToUpdate = songRepository.findById(update.getId()).get();
         if (update.getWords() != null) {
             songToUpdate.setWords(update.getWords());
         }
         if (update.getAuthor() != null) {
             songToUpdate.setAuthor(update.getAuthor());
-        }
-        if (update.getVolume() != null) {
-            songToUpdate.setVolume(update.getVolume());
         }
         if (update.getReleaseDate() != null) {
             songToUpdate.setReleaseDate(update.getReleaseDate());
@@ -128,18 +151,39 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public List<Song> getByArtistId(Long artistId) {
-        return songRepository.findAllByArtistId(artistId);
+    public List<Song> getByArtist(Artist artist) {
+        return songRepository.findAllByArtist(artist);
     }
 
     @Override
-    public List<Song> getByAlbumId(Long albumId) {
-        return songRepository.findAllByAlbumId(albumId);
+    public List<Song> getByAlbum(Album album) {
+        return songRepository.findAllByAlbum(album);
+    }
+
+    List<SongView> getSongView(List<Song> songs, User user) {
+        return songs.stream().map(a -> new SongView(a, likeService.getLike(a, user))).collect(Collectors.toList());
     }
 
     @Override
-    public void deleteAudio(Long id) {
-        Song song = getById(id);
+    public List<SongView> getByArtist(Artist artist, User user) {
+        return getSongView(songRepository.findAllByArtist(artist), user);
+    }
+
+    @Override
+    public List<SongView> getByAlbum(Album album, User user) {
+        return getSongView(songRepository.findAllByAlbum(album), user);
+    }
+
+    @Override
+    public void deleteByAlbum(Album album) {
+        List<Song> songs = getByAlbum(album);
+        for (Song song:songs) {
+            delete(song);
+        }
+    }
+
+    @Override
+    public void deleteAudio(Song song) {
         song.setUuid(null);
         song.setAvailable(false);
         songRepository.save(song);

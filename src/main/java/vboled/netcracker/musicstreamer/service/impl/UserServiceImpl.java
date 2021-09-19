@@ -5,7 +5,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import vboled.netcracker.musicstreamer.model.Playlist;
 import vboled.netcracker.musicstreamer.model.user.User;
+import vboled.netcracker.musicstreamer.repository.PlaylistRepository;
+import vboled.netcracker.musicstreamer.repository.RegionRepository;
 import vboled.netcracker.musicstreamer.repository.UserRepository;
 import vboled.netcracker.musicstreamer.service.UserService;
 
@@ -23,15 +26,18 @@ public class UserServiceImpl implements UserService {
             "([A-Za-z\\d]([A-Za-z\\d-])*[A-Za-z\\d])" +
             "(.[A-Za-z]+)$";
 
-    private final String PHONE_PATTERN = "^(\\d{1,3})(\\d{10})$";
+    private final String PHONE_PATTERN = "^\\+(\\d{1,4})(\\d{8})$";
 
     private final UserRepository userRepository;
-
+    private final RegionRepository regionRepository;
+    private final PlaylistRepository playlistRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, RegionRepository regionRepository, PlaylistRepository playlistRepository) {
         this.userRepository = userRepository;
+        this.regionRepository = regionRepository;
+        this.playlistRepository = playlistRepository;
     }
 
     @Override
@@ -46,11 +52,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> readAll() {
         return userRepository.findAll();
-    }
-
-    @Override
-    public User read(String userName) {
-        return userRepository.findByUserName(userName).get();
     }
 
     @Override
@@ -126,7 +127,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void checkPhone(String phone) {
-        if (!phone.matches(PHONE_PATTERN))
+        if (phone == null || !phone.matches(PHONE_PATTERN))
             throw new IllegalArgumentException("Wrong phone format!!!");
         if (userRepository.existsByPhoneNumber(phone))
             throw new IllegalArgumentException("Phone Number is already taken!!!");
@@ -134,7 +135,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void checkUserName(String userName) {
-        if (!userName.matches(USER_PATTERN))
+        if (userName == null || !userName.matches(USER_PATTERN))
             throw new IllegalArgumentException("Wrong username format!!!");
         if (userRepository.existsByUserName(userName))
             throw new IllegalArgumentException("Username is already taken!!!");
@@ -199,8 +200,8 @@ public class UserServiceImpl implements UserService {
         if (update.getPassword() != null) {
             userToUpdate.setPassword(passwordEncoder.encode(update.getPassword()));
         }
-        if (update.getRegionID() != -1) {
-            userToUpdate.setRegionID(update.getRegionID());
+        if (update.getRegion() != null) {
+            userToUpdate.setRegion(update.getRegion());
         }
         if (update.getEmail() != null) {
             checkEmail(update.getEmail());
@@ -234,5 +235,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public String encode(String toHash) {
         return passwordEncoder.encode(toHash);
+    }
+
+    @Override
+    public List<Playlist> getAllPlaylists(Long id) {
+        return playlistRepository.findAllPlaylistsByOwner(id);
     }
 }

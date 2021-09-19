@@ -1,6 +1,5 @@
 package vboled.netcracker.musicstreamer.service;
 
-import vboled.netcracker.musicstreamer.model.Album;
 import vboled.netcracker.musicstreamer.model.Playlist;
 
 import java.util.List;
@@ -18,9 +17,11 @@ public interface PlaylistService {
 
     Playlist fullUpdatePlaylist(Playlist update) throws NoSuchElementException;
 
-    void delete(Long id) throws NoSuchElementException;
+    void delete(Playlist playlist);
 
     Playlist createMainPlaylist(Long ownerId);
 
     Playlist setCover(Long id, String uuid);
+
+    Playlist getMainPlaylistByUserId(Long id);
 }

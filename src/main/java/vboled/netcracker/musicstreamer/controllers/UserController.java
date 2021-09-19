@@ -10,27 +10,45 @@ import org.springframework.web.bind.annotation.*;
 import vboled.netcracker.musicstreamer.model.user.Permission;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.model.user.UserView;
+import vboled.netcracker.musicstreamer.service.AlbumService;
+import vboled.netcracker.musicstreamer.service.ArtistService;
 import vboled.netcracker.musicstreamer.service.UserService;
+import vboled.netcracker.musicstreamer.view.ContentView;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
 
     private final UserService userService;
+    private final AlbumService albumService;
+    private final ArtistService artistService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AlbumService albumService, ArtistService artistService) {
         this.userService = userService;
+        this.albumService = albumService;
+        this.artistService = artistService;
+    }
+
+    @GetMapping("/playlists/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    public ResponseEntity<?> getAllPlaylists(@AuthenticationPrincipal User user) {
+        try {
+            return new ResponseEntity<>(userService.getAllPlaylists(user.getId()), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/info/")
     @PreAuthorize("hasAuthority('user:perm')")
     public ResponseEntity<?> read(@AuthenticationPrincipal User user) {
         try {
-            return new ResponseEntity<>(new UserView(userService.read(user.getId())), HttpStatus.OK);
+            return new ResponseEntity<>(userService.read(user.getId()), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
@@ -113,6 +131,25 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/content/")
+    @PreAuthorize("hasAnyAuthority('owner:perm', 'admin:perm')")
+    public ResponseEntity<?> getContentByUser(@AuthenticationPrincipal User user) {
+        try {
+            User res = userService.getByUserName(user.getUserName());
+            Set<Permission> perm = user.getRole().getPermissions();
+            if (!(perm.contains(Permission.ADMIN_PERMISSION) ||
+                    (perm.contains(Permission.OWNER_PERMISSION)))) {
+                throw new IllegalAccessError();
+            }
+            return new ResponseEntity<>(new ContentView(res, albumService.getAlbumsByOwnerId(res.getId()),
+                    artistService.getArtistsByOwnerId(res.getId())), HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalAccessError e) {
+            return new ResponseEntity<>("You don't have permission", HttpStatus.NOT_FOUND);
         }
     }
 

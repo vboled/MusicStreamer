@@ -2,6 +2,7 @@ package vboled.netcracker.musicstreamer.service.impl;
 
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Playlist;
+import vboled.netcracker.musicstreamer.repository.AddedSongRepository;
 import vboled.netcracker.musicstreamer.repository.PlaylistRepository;
 import vboled.netcracker.musicstreamer.service.PlaylistService;
 
@@ -12,9 +13,11 @@ import java.util.NoSuchElementException;
 public class PlaylistServiceImpl implements PlaylistService {
 
     private final PlaylistRepository playlistRepository;
+    private final AddedSongRepository addedSongRepository;
 
-    public PlaylistServiceImpl(PlaylistRepository playlistRepository) {
+    public PlaylistServiceImpl(PlaylistRepository playlistRepository, AddedSongRepository addedSongRepository) {
         this.playlistRepository = playlistRepository;
+        this.addedSongRepository = addedSongRepository;
     }
 
     @Override
@@ -62,10 +65,9 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public void delete(Long id) {
-        if (!playlistRepository.existsById(id))
-            throw new NoSuchElementException();
-        playlistRepository.deleteById(id);
+    public void delete(Playlist playlist) {
+        addedSongRepository.deleteByPlaylist(playlist);
+        playlistRepository.deleteById(playlist.getId());
     }
 
     @Override
@@ -85,6 +87,11 @@ public class PlaylistServiceImpl implements PlaylistService {
         playlist.setUuid(uuid);
         playlistRepository.save(playlist);
         return playlist;
+    }
+
+    @Override
+    public Playlist getMainPlaylistByUserId(Long id) {
+        return playlistRepository.getMainPlaylist(id);
     }
 
 }
