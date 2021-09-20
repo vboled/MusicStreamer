@@ -3,6 +3,7 @@ package vboled.netcracker.musicstreamer.service.impl;
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Listening;
 import vboled.netcracker.musicstreamer.model.Region;
+import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.repository.ListeningRepository;
 import vboled.netcracker.musicstreamer.service.ListeningService;
@@ -78,5 +79,10 @@ public class ListeningServiceImpl implements ListeningService {
             res.add(new ListeningView(getAllByRegion(r), r));
         }
         return res;
+    }
+
+    @Override
+    public void deleteBySong(Song song) {
+        listeningRepository.deleteBySong(song);
     }
 }

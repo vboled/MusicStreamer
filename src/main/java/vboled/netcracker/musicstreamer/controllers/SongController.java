@@ -141,9 +141,10 @@ public class SongController {
                                     @RequestParam Long id) {
         try{
             checkAdminOrOwnerPerm(user, id);
+            ResponseEntity<?> res = deleteAudio(user, id);
+            if (res.getStatusCode() != HttpStatus.OK)
+                return res;
             Song song = songService.getById(id);
-            if (song.getUuid() == null)
-                return new ResponseEntity<>(HttpStatus.OK);
             songService.delete(song);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -157,7 +158,7 @@ public class SongController {
     @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     ResponseEntity<?> updateSongFile(@AuthenticationPrincipal User user,
                                        @PathVariable Long id, @RequestParam MultipartFile file) {
-        ResponseEntity<?> res = delete(user, id);
+        ResponseEntity<?> res = deleteAudio(user, id);
         if (!res.getStatusCode().equals(HttpStatus.OK))
             return res;
         return upload(user, id, file);

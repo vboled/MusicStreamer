@@ -87,7 +87,7 @@ public class ArtistController {
     }
 
     @PutMapping("/cover/")
-    @PreAuthorize("hasAuthority('user:perm')")
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     ResponseEntity<?> uploadArtistCover(@AuthenticationPrincipal User user,
             @RequestParam Long id, @RequestParam MultipartFile file) {
         try{
@@ -105,7 +105,7 @@ public class ArtistController {
 
 
     @PutMapping("/")
-    @PreAuthorize("hasAuthority('admin:perm')")
+    @PreAuthorize("hasAnyAuthority('admin:perm', 'owner:perm')")
     ResponseEntity<?> updateArtist(@AuthenticationPrincipal User user,
                                   @RequestBody Artist artist) {
         try{

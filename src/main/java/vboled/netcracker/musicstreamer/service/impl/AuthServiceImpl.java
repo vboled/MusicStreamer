@@ -9,6 +9,8 @@ import vboled.netcracker.musicstreamer.service.AuthService;
 import vboled.netcracker.musicstreamer.service.UserService;
 import vboled.netcracker.musicstreamer.util.CookieGenerator;
 
+import java.util.NoSuchElementException;
+
 @Service
 public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
@@ -24,9 +26,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User validateCredentials(String login, String password) {
-        User user = userService.getByUserName(login);
+        User user;
+        try {
+            user = userService.getByUPE(login);
+        } catch (NoSuchElementException e) {
+            throw new RuntimeException("Wrong login!");
+        }
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException();
+            throw new RuntimeException("Wrong password!");
         }
         return user;
     }

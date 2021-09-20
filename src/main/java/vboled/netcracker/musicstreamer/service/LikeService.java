@@ -20,4 +20,6 @@ public interface LikeService {
     List<Like> getAll();
 
     Like getById(Long likeID);
+
+    void deleteBySong(Song song);
 }

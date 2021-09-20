@@ -1,5 +1,11 @@
 package vboled.netcracker.musicstreamer.service.impl;
 
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
@@ -10,15 +16,15 @@ import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.model.validator.AudioValidator;
 import vboled.netcracker.musicstreamer.model.validator.FileValidator;
 import vboled.netcracker.musicstreamer.repository.SongRepository;
-import vboled.netcracker.musicstreamer.service.AddedSongService;
-import vboled.netcracker.musicstreamer.service.FileService;
-import vboled.netcracker.musicstreamer.service.LikeService;
-import vboled.netcracker.musicstreamer.service.SongService;
+import vboled.netcracker.musicstreamer.service.*;
 import vboled.netcracker.musicstreamer.view.SongView;
 
 import javax.security.auth.DestroyFailedException;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,15 +36,17 @@ public class SongServiceImpl implements SongService {
     private final AddedSongService addedSongService;
     private final FileService fileService;
     private final LikeService likeService;
+    private final ListeningService listeningService;
 
     @Autowired
     public SongServiceImpl(SongRepository songRepository, AddedSongService addedSongService, FileService fileService,
-                           LikeService likeService, ApplicationConfiguration applicationConfiguration) {
+                           LikeService likeService, ApplicationConfiguration applicationConfiguration, ListeningService listeningService) {
         this.songRepository = songRepository;
         this.addedSongService = addedSongService;
         this.fileService = fileService;
         this.likeService = likeService;
         this.fileConfiguration = applicationConfiguration.getFileConfiguration();
+        this.listeningService = listeningService;
         this.fileValidator = new AudioValidator(fileConfiguration);
     }
 
@@ -54,6 +62,8 @@ public class SongServiceImpl implements SongService {
     @Override
     public void delete(Song song) {
         addedSongService.deleteBySong(song);
+        listeningService.deleteBySong(song);
+        likeService.deleteBySong(song);
         if (song.getUuid() != null) {
             try {
                 fileService.delete(song.getUuid(), fileValidator);
@@ -64,14 +74,19 @@ public class SongServiceImpl implements SongService {
         songRepository.deleteById(song.getId());
     }
 
+    public Long getTrackLength(String uuid) throws TagException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
+        File file = new File(fileValidator.getPath() + "/" + uuid);
+        java.util.logging.Logger.getLogger("org.jaudiotagger").setLevel(Level.OFF);
+        AudioFile audioFile = AudioFileIO.read(file);
+        return Long.valueOf(audioFile.getAudioHeader().getTrackLength());
+    }
+
     @Override
     public List<Song> readAll() {
         return songRepository.findAll();
     }
 
     private Song updateCommonFields(Song update) {
-//        if (!songRepository.existsByUuid(update.getUuid()))
-//            throw new NoSuchElementException("No song with such id");
         Song songToUpdate = songRepository.findById(update.getId()).get();
         if (update.getWords() != null) {
             songToUpdate.setWords(update.getWords());
@@ -113,9 +128,6 @@ public class SongServiceImpl implements SongService {
             // Add validation
             toUpdate.setOwnerID(update.getOwnerID());
         }
-        if (update.getDuration() != null) {
-            toUpdate.setDuration(update.getDuration());
-        }
         if (update.getCreateDate() != null) {
             toUpdate.setCreateDate(update.getCreateDate());
         }
@@ -146,6 +158,11 @@ public class SongServiceImpl implements SongService {
         Song song = getById(id);
         song.setUuid(uuid);
         song.setAvailable(true);
+        try {
+            song.setDuration(getTrackLength(uuid));
+        } catch (Exception e) {
+
+        }
         songRepository.save(song);
         return song;
     }

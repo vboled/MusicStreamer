@@ -50,4 +50,9 @@ public class LikeServiceImpl implements LikeService {
     public Like getById(Long likeID) {
         return likeRepository.getById(likeID);
     }
+
+    @Override
+    public void deleteBySong(Song song) {
+        likeRepository.deleteBySong(song);
+    }
 }

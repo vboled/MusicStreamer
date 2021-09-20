@@ -125,6 +125,9 @@ function Player(props) {
                         isPlaying={props.isPlaying}
                         setIsPlaying={props.setIsPlaying}
                         uuid={props.songList[props.currentSongIndex].song.uuid}/>
+                    <h1 style={{color:"#ffffff"}}>{Math.trunc((props.seconds + 1) / 60)} {": "}
+                        { ('00'+Math.trunc((props.seconds + 1) % 60)).slice(-2)} {"/ "} {Math.trunc(props.songList[props.currentSongIndex].song.duration / 60)} {": "}
+                    { ('00'+Math.trunc(props.songList[props.currentSongIndex].song.duration % 60)).slice(-2)}</h1>
                 </Space>
             </div>
         )

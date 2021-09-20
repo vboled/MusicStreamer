@@ -261,7 +261,6 @@ function AlbumPage(props) {
                 </List>
             </Space>
             {getEditModal()}
-            <h1>{props.seconds + 1}</h1>
             <SongsList
                 updatePage={getAlbum}
                 isPlaying={props.isPlaying}

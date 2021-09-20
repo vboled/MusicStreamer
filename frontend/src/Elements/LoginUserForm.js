@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Form, Input, Space} from 'antd';
+import {Button, Form, Input, message, Space} from 'antd';
 import axios from "axios";
 
 function LoginUserForm(props) {
@@ -21,7 +21,9 @@ function LoginUserForm(props) {
                 props.whoAmI()
             }
         }
-    )
+    ).catch(err => {
+        message.error(err.response.data)
+    })
     };
 
     const switchToCreate = () => {
@@ -49,7 +51,7 @@ function LoginUserForm(props) {
             autoComplete="off"
         >
             <Form.Item
-                label="Username"
+                label="Login"
                 name="username"
                 rules={[
                     {

@@ -14,7 +14,7 @@ import Statistics from "../Elements/Statistics";
 function ArtistPage(props) {
 
     const [artistView, setArtistView] = useState({artist:{}, songs: [{song:{artist:{}, album:{}}, like:{}}], albums: []})
-    const [stat, setStat] = useState([{listenings:[{}], region:{}}])
+    const [stat, setStat] = useState([{listenings:[], region:{}}])
 
     const getArtist = () => {
         axios.get("http://localhost:8080/api/v1/artist/", {

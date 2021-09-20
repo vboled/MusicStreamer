@@ -38,8 +38,8 @@ public class AuthController {
             cookie.setHttpOnly(true);
             response.addCookie(cookie);
             return new ResponseEntity<>("Ok!", HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>("Not Ok!", HttpStatus.FORBIDDEN);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
     }
 }

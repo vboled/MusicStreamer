@@ -36,7 +36,6 @@ public class Song {
     @Column(name = "title")
     private String title;
 
-    // need to be generated automatically
     @Column(name = "duration")
     private Long duration;
 

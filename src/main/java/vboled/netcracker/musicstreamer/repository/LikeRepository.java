@@ -13,4 +13,7 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
 
     @Transactional
     void deleteBySongAndAccount(Song song, User user);
+
+    @Transactional
+    void deleteBySong(Song song);
 }

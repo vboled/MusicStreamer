@@ -7,6 +7,7 @@ import vboled.netcracker.musicstreamer.model.Region;
 import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.model.user.User;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface ListeningRepository extends JpaRepository<Listening, Long> {
@@ -28,4 +29,7 @@ public interface ListeningRepository extends JpaRepository<Listening, Long> {
             nativeQuery = true
     )
     List<Listening> findAllByArtistID(Long artistID);
+
+    @Transactional
+    void deleteBySong(Song song);
 }

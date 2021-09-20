@@ -2,6 +2,7 @@ package vboled.netcracker.musicstreamer.service;
 
 import vboled.netcracker.musicstreamer.model.Listening;
 import vboled.netcracker.musicstreamer.model.Region;
+import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.view.ListeningView;
 
@@ -27,4 +28,6 @@ public interface ListeningService {
     Listening getLatest(User user);
 
     List<ListeningView> getAllByArtistByRegions(Long artistID);
+
+    void deleteBySong(Song song);
 }

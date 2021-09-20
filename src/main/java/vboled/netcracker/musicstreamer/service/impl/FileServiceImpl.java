@@ -1,10 +1,13 @@
 package vboled.netcracker.musicstreamer.service.impl;
 
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import vboled.netcracker.musicstreamer.model.validator.AudioValidator;
 import vboled.netcracker.musicstreamer.model.validator.FileValidator;
 import vboled.netcracker.musicstreamer.service.FileService;
 
@@ -46,6 +49,7 @@ public class FileServiceImpl implements FileService {
         newFileName = uuid + ext;
 
         file.transferTo(new File(uploadDir.getAbsolutePath() + "/" + newFileName));
+
         return newFileName;
     }
 
