@@ -1,6 +1,3 @@
-DROP SCHEMA public CASCADE;
-CREATE SCHEMA public;
-
 CREATE TABLE IF NOT EXISTS regions
 (
     id              BIGSERIAL PRIMARY KEY,

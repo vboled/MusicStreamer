@@ -7,11 +7,11 @@ spring:
   jpa:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath*:database/initDB.sql
-      data-locations: classpath*:database/populateDB.sql
+  flyway:
+    user: postgres
+    password: postgres
+    schemas: public
+    url: jdbc:postgresql://localhost:5432/musicstreamerdb
   servlet:
     multipart:
       max-file-size: 50MB
