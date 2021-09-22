@@ -232,6 +232,23 @@ function AlbumPage(props) {
         </Modal>
     }
 
+    function getLength () {
+        let length = 0;
+        albumView.songs.forEach(song => {
+            length += song.song.duration
+        })
+        if (length < 3600)
+            return Math.trunc(length / 60) + "min. " + Math.trunc(length % 60) + "sec."
+        return Math.trunc(length / 3600) + "h. " + Math.trunc(length / 60) + "min."
+    }
+
+    function getYear() {
+        let date = albumView.album.releaseDate
+        if (date === null || date === undefined)
+            return undefined
+        return date.split('-')[0]
+    }
+
     return (<Content style={{ margin: '24px 16px 0' }}>
         <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
             <Space size={200}>
@@ -247,13 +264,10 @@ function AlbumPage(props) {
                         <h1>{albumView.songs.length} tracks</h1>
                     </List.Item>
                     <List.Item>
-                        <h1>Length</h1>
+                        <h1>{getLength()}</h1>
                     </List.Item>
-                    {/*<List.Item>*/}
-                    {/*    <p>{albumView.album.releaseDate.split("-")[0]}</p>*/}
-                    {/*</List.Item>*/}
                     <List.Item>
-                        <p>"Artists"</p>
+                        <p>{getYear()}</p>
                     </List.Item>
                     <List.Item>
                         {getAlbumEditButton()}

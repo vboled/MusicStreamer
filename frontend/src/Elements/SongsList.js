@@ -1,4 +1,4 @@
-import {Button, Divider, List, Space, Tooltip} from "antd";
+import {Button, Divider, Image, List, Space, Tooltip} from "antd";
 import {CaretRightOutlined, CloseOutlined, EditOutlined, EllipsisOutlined, PauseOutlined} from "@ant-design/icons";
 import {Link} from "react-router-dom";
 import React, {useState} from "react";
@@ -6,6 +6,7 @@ import axios from "axios";
 import SongInfoModal from "./SongInfoModal";
 import Like from "./Like";
 import SongEditModal from "./SongEditModal";
+import GetImage from "./GetImage";
 
 function SongsList (props) {
 
@@ -130,16 +131,26 @@ function SongsList (props) {
                         <Space>
                             {index + 1}
                             <Tooltip title="Play">
-                                <Button disabled={disabled} type="primary" shape="circle" icon={playIcon}
-                                        onClick={() => playSong(index, isNewListening, isSameSong)}/>
+                                <Button disabled={disabled} type="primary" shape={"circle"} icon={playIcon}
+                                        onClick={() => playSong(index, isNewListening, isSameSong)}>
+                                </Button>
                             </Tooltip>
-                            {item.song.title}
-                            <Link to={`/artist/${item.song.artist.id}`}>
-                                {item.song.artist.name}
-                            </Link>
+                            <GetImage
+                                uuid={item.song.album.uuid}
+                                w={80}
+                                defaultName={"playlistDefault.png"}
+                            />
+                            <Space direction={"vertical"} size={1}>
+                                {item.song.title}
+                                <Link to={`/artist/${item.song.artist.id}`}>
+                                    {item.song.artist.name}
+                                </Link>
+                            </Space>
                             <Link to={`/album/${item.song.album.id}`}>
                                 {item.song.album.name}
                             </Link>
+                            <p>{Math.trunc(item.song.duration / 60)} {": "}
+                                { ('00'+Math.trunc(item.song.duration % 60)).slice(-2)}</p>
                             <Like
                                 item={item}
                                 updatePage={props.updatePage}/>

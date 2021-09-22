@@ -9,7 +9,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
   sql:
     init:
-      mode: never
+      mode: always
       schema-locations: classpath*:database/initDB.sql
       data-locations: classpath*:database/populateDB.sql
   servlet:

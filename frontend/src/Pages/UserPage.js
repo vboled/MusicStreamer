@@ -1,13 +1,20 @@
-import {Divider, Layout, List, Space} from 'antd';
+import {Button, Divider, Layout, List, Space} from 'antd';
 import React from 'react'
 import "../App.css"
 import 'antd/dist/antd.css';
 import Avatar from "antd/es/avatar/avatar";
+import axios from "axios";
 
 
 const {Content} = Layout;
 
 function UserPage(props) {
+
+    const logout = () => {
+        axios.get("http://localhost:8080/api/v1/auth/logout/",
+            {withCredentials:true});
+        props.setIsAuth(false)
+    }
 
     return (<Content style={{ margin: '24px 16px 0' }}>
                     <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
@@ -44,6 +51,9 @@ function UserPage(props) {
                                 </Space>
                             </List.Item>
                             </List>
+                        <Button type="primary" htmlType="submit" onClick={logout}>
+                            Logout
+                        </Button>
                     </div>
             </Content>)
 

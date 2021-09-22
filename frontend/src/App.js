@@ -67,7 +67,10 @@ function App() {
                         <Layout>
                             <MyHeader/>
                             <Route exact path={"/"}><HomePage user={userView.user}/></Route>
-                            <Route exact path="/user/:id" render={(props) => <UserPage {...props} userView={userView}/>}></Route>
+                            <Route exact path="/user/:id" render={(props) => <UserPage {...props}
+                                setIsAuth={setIsAuth}
+                                userView={userView}
+                            />}></Route>
                             <Route exact path={"/playlist/"} >
                                 <PlaylistsPage
                                     whoAmI={whoAmI}/>

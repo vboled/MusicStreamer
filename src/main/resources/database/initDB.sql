@@ -1,3 +1,14 @@
+-- drop table if exists regions cascade;
+-- drop table if exists users cascade;
+-- drop table if exists genres cascade;
+-- drop table if exists artists cascade;
+-- drop table if exists albums cascade;
+-- drop table if exists songs cascade;
+-- drop table if exists listenings cascade;
+-- drop table if exists playlists cascade;
+-- drop table if exists added_songs cascade;
+-- drop table if exists likes cascade;
+
 CREATE TABLE IF NOT EXISTS regions
 (
     id              BIGSERIAL PRIMARY KEY,

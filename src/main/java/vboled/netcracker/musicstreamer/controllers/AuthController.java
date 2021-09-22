@@ -3,6 +3,7 @@ package vboled.netcracker.musicstreamer.controllers;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
 import vboled.netcracker.musicstreamer.dto.AuthDTO;
@@ -41,5 +42,17 @@ public class AuthController {
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
+    }
+
+    @GetMapping("/logout/")
+    public ResponseEntity<?> getExpiredCookie(HttpServletResponse response) {
+        String cookieName = securityConfiguration.getJwtConfiguration().getHeader();
+        Cookie cookie = new Cookie(cookieName, "none");
+        cookie.setPath(securityConfiguration.getJwtConfiguration().getPath());
+        cookie.setMaxAge(0);
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+        return new ResponseEntity<>("Ok!", HttpStatus.OK);
+
     }
 }
