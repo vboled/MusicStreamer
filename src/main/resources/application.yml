@@ -1,17 +1,17 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/musicstreamerdb
+    url: jdbc:postgresql://localhost:5432/vv
     username: postgres
-    password: postgres
+    password: qqq
     driver-class-name: org.postgresql.Driver
   jpa:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
   flyway:
     user: postgres
-    password: postgres
+    password: qqq
     schemas: public
-    url: jdbc:postgresql://localhost:5432/musicstreamerdb
+    url: jdbc:postgresql://localhost:5432/vv
   servlet:
     multipart:
       max-file-size: 50MB

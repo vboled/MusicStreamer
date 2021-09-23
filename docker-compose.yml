@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  postgres:
+    build:
+      context: postgres
+      dockerfile: Dockerfile.development
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=vv
+      - POSTGRES_PASSWORD=qqq
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+
+
+  app:
+    build:
+      context: src
+      dockerfile: Dockerfile.development
+    environment:
+      - PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/vv
+    image: 'musicstreamer'
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+  js:
+    build:
+      context: frontend
+      dockerfile: Dockerfile.development
+    image: 'musicstreamer-react-app'
+    ports:
+      - 3000:3000
+
+volumes:
+  db-data:
