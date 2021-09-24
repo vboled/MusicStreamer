@@ -251,7 +251,7 @@ function AlbumPage(props) {
 
     return (<Content style={{ margin: '24px 16px 0' }}>
         <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
-            <Space size={200}>
+            <Space size={100}>
                 {getCover(albumView.album.uuid, 400, 'playlistDefault.png')}
                 <List>
                     <List.Item>
