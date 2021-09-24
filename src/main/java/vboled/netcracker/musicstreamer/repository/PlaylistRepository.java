@@ -5,13 +5,23 @@ import org.springframework.data.jpa.repository.Query;
 import vboled.netcracker.musicstreamer.model.Playlist;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
 
-//    @Transactional
-//    @Query(
-//        value = "DELETE FROM added_songs WHERE playlist_id = ?1 " +
-//                "DELETE FROM playlists WHERE id = ?1",
-//        nativeQuery = true)
+    @Transactional
     void deleteById(Long id);
+
+    @Query(
+            value = "SELECT * FROM playlists p WHERE p.owner_id = ?1",
+            nativeQuery = true
+    )
+    List<Playlist> findAllPlaylistsByOwner(Long id);
+
+
+    @Query(
+            value = "SELECT * FROM playlists p WHERE p.owner_id = ?1 AND is_main",
+            nativeQuery = true
+    )
+    Playlist getMainPlaylist(Long id);
 }

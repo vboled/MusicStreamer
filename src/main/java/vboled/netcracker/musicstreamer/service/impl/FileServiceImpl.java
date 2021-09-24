@@ -1,10 +1,13 @@
 package vboled.netcracker.musicstreamer.service.impl;
 
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import vboled.netcracker.musicstreamer.model.validator.AudioValidator;
 import vboled.netcracker.musicstreamer.model.validator.FileValidator;
 import vboled.netcracker.musicstreamer.service.FileService;
 
@@ -29,6 +32,9 @@ public class FileServiceImpl implements FileService {
     public String uploadFile(MultipartFile file, FileValidator fileValidator, String uuid) throws IllegalArgumentException, IOException {
         if (file == null)
             throw new IllegalArgumentException("File is null");
+
+        if (fileValidator.getMaxSize() < file.getSize())
+            throw new IllegalArgumentException("File is too large");
 
         String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
         String newFileName;

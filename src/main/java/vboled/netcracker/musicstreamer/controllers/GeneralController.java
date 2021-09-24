@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.service.*;
+import vboled.netcracker.musicstreamer.view.UserView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,27 +24,33 @@ public class GeneralController {
     private final ArtistService artistService;
     private final AlbumService albumService;
     private final PlaylistService playlistService;
+    private final ListeningService listeningService;
 
     @Autowired
     public GeneralController(UserService userService, SongService songService, GenreService genreService,
-                             ArtistService artistService, AlbumService albumService, PlaylistService playlistService) {
+                             ArtistService artistService, AlbumService albumService, PlaylistService playlistService, ListeningService listeningService) {
         this.userService = userService;
         this.songService = songService;
         this.genreService = genreService;
         this.artistService = artistService;
         this.albumService = albumService;
         this.playlistService = playlistService;
+        this.listeningService = listeningService;
     }
 
-    @GetMapping("whoami")
-    public String WhoAmI(@AuthenticationPrincipal User user) {
+    @GetMapping("whoami/")
+    public ResponseEntity<?> WhoAmI(@AuthenticationPrincipal User user) {
         if (user == null)
-            return "anonymous";
-        return user.getUsername();
+            return new ResponseEntity<>("Anonymous", HttpStatus.OK);
+        User userView = userService.getByUserName(user.getUserName());
+        return new ResponseEntity<>(
+                    new UserView(userView,
+                    userService.getAllPlaylists(user.getId()),
+                    listeningService.getLatest(user)),
+                    HttpStatus.OK);
     }
 
     @PostMapping("create/")
-    @PreAuthorize("hasAuthority('admin:perm')")
     public ResponseEntity<?> create(@RequestBody User user) {
         try {
             User res = userService.create(user);

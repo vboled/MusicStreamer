@@ -22,11 +22,11 @@ public class Playlist {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "uuid")
-    private String uuid;
-
     @Column(name = "description")
     private String description;
+
+    @Column(name = "uuid")
+    private String uuid;
 
     @Column(name = "is_main")
     private boolean isMain;

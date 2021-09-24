@@ -10,4 +10,5 @@ public interface FileValidator {
 
     Set<String> getExtensions();
 
+    Long getMaxSize();
 }

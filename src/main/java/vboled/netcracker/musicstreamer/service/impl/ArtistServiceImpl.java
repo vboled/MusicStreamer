@@ -2,9 +2,12 @@ package vboled.netcracker.musicstreamer.service.impl;
 
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Artist;
+import vboled.netcracker.musicstreamer.repository.AlbumRepository;
 import vboled.netcracker.musicstreamer.repository.ArtistRepository;
+import vboled.netcracker.musicstreamer.service.AlbumService;
 import vboled.netcracker.musicstreamer.service.ArtistService;
 
+import javax.security.auth.DestroyFailedException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -12,9 +15,11 @@ import java.util.NoSuchElementException;
 public class ArtistServiceImpl implements ArtistService {
 
     private final ArtistRepository artistRepository;
+    private final AlbumService albumService;
 
-    public ArtistServiceImpl(ArtistRepository artistRepository) {
+    public ArtistServiceImpl(ArtistRepository artistRepository, AlbumService albumService) {
         this.artistRepository = artistRepository;
+        this.albumService = albumService;
     }
 
     @Override
@@ -69,14 +74,31 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
-    public void delete(Long id) {
-        if (!artistRepository.existsById(id))
-            throw new NoSuchElementException();
-        artistRepository.deleteById(id);
+    public void delete(Artist artist) {
+        try {
+            albumService.deleteByArtist(artist);
+        } catch (DestroyFailedException e) {
+            e.printStackTrace();
+        }
+        artistRepository.deleteById(artist.getId());
     }
 
     @Override
     public List<Artist> search(String search) {
         return artistRepository.findAllByNameLike(search);
+    }
+
+    @Override
+    public Artist setCover(Long id, String name) {
+        Artist artist = getById(id);
+        artist.setUuid(name);
+        artistRepository.save(artist);
+        System.out.println(artist);
+        return artist;
+    }
+
+    @Override
+    public List<Artist> getArtistsByOwnerId(Long id) {
+        return artistRepository.findAllByOwnerID(id);
     }
 }

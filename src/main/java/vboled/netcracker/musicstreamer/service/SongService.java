@@ -1,7 +1,10 @@
 package vboled.netcracker.musicstreamer.service;
 
 import vboled.netcracker.musicstreamer.model.Album;
+import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.model.Song;
+import vboled.netcracker.musicstreamer.model.user.User;
+import vboled.netcracker.musicstreamer.view.SongView;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -10,7 +13,7 @@ public interface SongService {
 
     void create(Song song);
 
-    void delete(Long id) throws NoSuchElementException;
+    void delete(Song song);
 
     List<Song> readAll();
 
@@ -26,9 +29,15 @@ public interface SongService {
 
     Song setSongFile(Long id, String uuid);
 
-    List<Song> getByArtistId(Long artistId);
+    List<Song> getByArtist(Artist artist);
 
-    List<Song> getByAlbumId(Long albumId);
+    List<SongView> getByArtist(Artist artist, User user);
 
-    void deleteAudio(Long id);
+    void deleteAudio(Song song);
+
+    List<Song> getByAlbum(Album album);
+
+    List<SongView> getByAlbum(Album album, User user);
+
+    void deleteByAlbum(Album album);
 }

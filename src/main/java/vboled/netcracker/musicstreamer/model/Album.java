@@ -26,7 +26,7 @@ public class Album {
     private LocalDateTime createDate;
 
     @Column(name = "edit_date")
-    private Date editDate;
+    private LocalDateTime editDate;
 
     @Column(name = "release_date")
     private Date releaseDate;
@@ -34,6 +34,10 @@ public class Album {
     @ManyToOne()
     @JoinColumn(name = "genre_id")
     private Genre genre;
+
+    @ManyToOne()
+    @JoinColumn(name="artist_id")
+    private Artist artist;
 
     @Column(name = "name")
     private String name;
@@ -46,7 +50,11 @@ public class Album {
 
     @PrePersist
     public void prePersist() {
+        type = "album";
         createDate = LocalDateTime.now();
+        editDate = createDate;
     }
 
+    @PreUpdate
+    public void preUpdate() { editDate = LocalDateTime.now(); }
 }

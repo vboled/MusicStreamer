@@ -29,10 +29,14 @@ public class Artist {
     private LocalDateTime createDate;
 
     @Column(name = "edit_date")
-    private Date editDate;
+    private LocalDateTime editDate;
 
     @PrePersist
     public void prePersist() {
         createDate = LocalDateTime.now();
+        editDate = createDate;
     }
+
+    @PreUpdate
+    public void preUpdate() { editDate = LocalDateTime.now(); }
 }
