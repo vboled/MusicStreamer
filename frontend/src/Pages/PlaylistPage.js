@@ -57,6 +57,7 @@ function PlaylistPage(props) {
             "id":props.match.params.id
         }, {withCredentials:true}).then(r=>{
             getPlaylist()
+            props.whoAmI()
         })
     };
 
