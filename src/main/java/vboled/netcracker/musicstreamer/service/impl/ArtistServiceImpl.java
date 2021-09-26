@@ -85,7 +85,7 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     public List<Artist> search(String search) {
-        return artistRepository.findAllByNameLike(search);
+        return artistRepository.searchByName(search);
     }
 
     @Override

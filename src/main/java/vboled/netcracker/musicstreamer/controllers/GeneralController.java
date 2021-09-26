@@ -63,9 +63,10 @@ public class GeneralController {
 
     @GetMapping("search/")
     @PreAuthorize("hasAuthority('user:perm')")
-    public ResponseEntity<?> search(@RequestParam String search) {
+    public ResponseEntity<?> search(@AuthenticationPrincipal User user,
+                                    @RequestParam String search) {
         Map<String, List<?>> res = new HashMap<>();
-        res.put("songs", songService.search(search));
+        res.put("songs", songService.search(search, user));
         res.put("artists", artistService.search(search));
         res.put("genres", genreService.search(search));
         res.put("albums", albumService.search(search));

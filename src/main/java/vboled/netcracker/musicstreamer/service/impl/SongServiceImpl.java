@@ -144,8 +144,8 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public List<Song> search(String search) {
-        return songRepository.findAllByTitleIsLike(search);
+    public List<SongView> search(String search, User user) {
+        return getSongView(songRepository.searchByTitle(search), user);
     }
 
     @Override

@@ -55,7 +55,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public List<Album> search(String search) {
-        return albumRepository.findAllByNameLike(search);
+        return albumRepository.searchByName(search);
     }
 
     private Album updateCommonFields(Album update) throws AlbumNotFoundException {

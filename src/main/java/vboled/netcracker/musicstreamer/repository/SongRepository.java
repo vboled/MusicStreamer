@@ -16,7 +16,11 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 
     Optional<Song> findByUuid(String uuid);
 
-    List<Song> findAllByTitleIsLike(String search);
+    @Query(
+            value = "SELECT * FROM songs WHERE title ILIKE '%' || ?1 || '%'",
+            nativeQuery = true
+    )
+    List<Song> searchByTitle(String search);
 
     List<Song> findAllByArtist(Artist artist);
 

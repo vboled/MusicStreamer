@@ -111,6 +111,7 @@ function SongsList (props) {
                 rowKey
                 dataSource={props.songs}
                 renderItem={(item, index) => {
+                    console.log(props.songs)
                     let playIcon = <CaretRightOutlined />
                     let disabled = false
                     let isNewListening = true

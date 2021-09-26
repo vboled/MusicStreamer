@@ -116,8 +116,20 @@ function App() {
                                  whoAmI={whoAmI}
                             />}>
                             </Route>
+                            <Route exact path="/search/:search" render={(props) => <SearchPage {...props}
+                                 userView={userView}
+                                 setSongList={setSongList}
+                                 songList={songList}
+                                 setCurrentSongIndex={setCurrentSongIndex}
+                                 currentSongIndex={currentSongIndex}
+                                 isPlaying={isPlaying}
+                                 seconds={seconds}
+                                 setSeconds={setSeconds}
+                                 setIsPlaying={setIsPlaying}
+                                 setIsActive={setIsActive}
+                                 whoAmI={whoAmI}
+                            />}/>
                             <Route exact path="/owner/" component={ContentPage}/>
-                            <Route exact path="/search/:search" component={SearchPage}/>
                             <Content style={{ margin: '0px 16px 0' }}>
                                 <div className="site-layout-background" style={{ padding: 24, minHeight: "170px" }}>
                                 </div>

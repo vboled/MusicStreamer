@@ -23,7 +23,7 @@ public interface SongService {
 
     Song fullUpdateSong(Song update);
 
-    List<Song> search(String search);
+    List<SongView> search(String search, User user);
 
     Song getById(Long id);
 
