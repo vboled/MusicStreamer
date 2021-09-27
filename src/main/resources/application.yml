@@ -31,24 +31,9 @@ music-streamer:
     uploadPath: "frontend/public"
     image:
       dir: "img"
+      ext: "jpeg jpg png gif"
       maxSize: 5242880
     audio:
       dir: "audio"
+      ext: "mp3 ogg wav"
       maxSize: 52428800
-
-image:
-  storage:
-    dir: "images"
-
-audio:
-  storage:
-    dir: "audio"
-
-file:
-  storage:
-    path: "files"
-
-max:
-  byte:
-    image:
-      size: "5242880"

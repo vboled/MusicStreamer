@@ -180,7 +180,7 @@ public class PlaylistController {
                                  @RequestParam Long addedSongId) {
         try {
             AddedSong added = addedSongService.getById(addedSongId);
-            checkAdminOrOwnerPerm(user, added.getPlaylist().getId());
+            checkAdminOrUserPerm(user, added.getPlaylist().getId());
             if (added.getPlaylist().isMain())
                 likeService.delete(added.getSong(), user);
             addedSongService.deleteSong(added);

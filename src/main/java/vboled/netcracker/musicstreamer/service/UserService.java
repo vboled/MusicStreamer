@@ -2,6 +2,7 @@ package vboled.netcracker.musicstreamer.service;
 
 import vboled.netcracker.musicstreamer.model.Playlist;
 import vboled.netcracker.musicstreamer.model.user.User;
+import vboled.netcracker.musicstreamer.view.SongView;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -53,4 +54,6 @@ public interface UserService {
     String encode(String toHash);
 
     List<Playlist> getAllPlaylists(Long id);
+
+    List<SongView> getRecommendations(User user);
 }

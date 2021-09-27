@@ -15,6 +15,7 @@ import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.model.validator.FileValidator;
 import vboled.netcracker.musicstreamer.model.validator.ImageValidator;
 import vboled.netcracker.musicstreamer.service.AlbumService;
+import vboled.netcracker.musicstreamer.service.GenreService;
 import vboled.netcracker.musicstreamer.service.SongService;
 import vboled.netcracker.musicstreamer.service.impl.FileServiceImpl;
 import vboled.netcracker.musicstreamer.view.AlbumView;
@@ -35,13 +36,15 @@ public class AlbumController {
     private final AlbumService albumService;
     private final SongService songService;
     private final FileServiceImpl fileService;
+    private final GenreService genreService;
 
     public AlbumController(AlbumService albumService, SongService songService, FileServiceImpl fileService,
-                           ApplicationConfiguration applicationConfiguration) {
+                           ApplicationConfiguration applicationConfiguration, GenreService genreService) {
         this.albumService = albumService;
         this.songService = songService;
         this.fileService = fileService;
         this.fileConfiguration = applicationConfiguration.getFileConfiguration();
+        this.genreService = genreService;
         this.fileValidator = new ImageValidator(fileConfiguration);
     }
 
@@ -84,7 +87,7 @@ public class AlbumController {
             @RequestParam Long id) {
         try {
             Album album = albumService.getById(id);
-            return new ResponseEntity<>(new AlbumView(album, songService.getByAlbum(album, user)), HttpStatus.OK);
+            return new ResponseEntity<>(new AlbumView(album, songService.getByAlbum(album, user), genreService.readAll()), HttpStatus.OK);
         } catch (AlbumNotFoundException e) {
             return new ResponseEntity<>("Album not found", HttpStatus.NOT_FOUND);
         }

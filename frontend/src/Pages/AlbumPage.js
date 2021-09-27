@@ -32,14 +32,19 @@ function AlbumPage(props) {
     };
 
     const [albumView, setAlbumView] = useState({album:{}, songs: [{song:{artist:{}, album:{}}, like:{}}]})
-
+    const [children, setChildren] = useState([])
     const getAlbum = () => {
         axios.get("http://localhost:8080/api/v1/album/", {
             withCredentials:true,
             params: {id:props.match.params.id}
         }).then(res => {
             setAlbumView(res.data)
-            console.log("songs", albumView.songs)
+            console.log("album", res.data)
+            const h = [];
+            for (let i = 0; i < res.data.genres.length; i++) {
+                h.push(<Option key={i}>{res.data.genres[i].name}</Option>);
+            }
+            setChildren(h)
         })
     }
 
@@ -67,6 +72,8 @@ function AlbumPage(props) {
         }
         if (albumType[0] !== "none")
             data.type = albumType[0];
+        if (values.genre != undefined)
+            data.genre = {id:parseInt(values.genre, 10) + 1}
         if (relAlbumDate[0] !== "none")
             data.releaseDate = relAlbumDate[0]
         axios.put("http://localhost:8080/api/v1/album/", data, {withCredentials:true})
@@ -128,13 +135,18 @@ function AlbumPage(props) {
     }
 
     const [state, setState] = useState()
-
+    const [genreID, setGenreID] = useState(null)
     const fileSelectedHandler = (event) => {
         setState(event.target.files[0])
     }
 
     function selectTypeHandler(value) {
         albumType[0] = value
+    }
+
+    function handleChange(value) {
+        setGenreID(albumView.genres[value].id)
+        console.log(`selected ${albumView.genres[value].id}`);
     }
 
     function getEditModal() {
@@ -198,6 +210,15 @@ function AlbumPage(props) {
                         <Option value="album">Album</Option>
                         <Option value="ep">EP</Option>
                         <Option value="single">Single</Option>
+                    </Select>
+                </Form.Item>
+
+                <Form.Item
+                    label="Genre"
+                    name="genre"
+                >
+                    <Select defaultValue="Choose genre" onChange={handleChange}>
+                        {children}
                     </Select>
                 </Form.Item>
 

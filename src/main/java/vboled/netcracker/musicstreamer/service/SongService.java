@@ -40,4 +40,8 @@ public interface SongService {
     List<SongView> getByAlbum(Album album, User user);
 
     void deleteByAlbum(Album album);
+
+    List<SongView> getSongView(List<Song> songs, User user);
+
+    List<SongView> getRecommendations(User user);
 }

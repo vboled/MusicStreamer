@@ -22,8 +22,7 @@ import vboled.netcracker.musicstreamer.view.SongView;
 import javax.security.auth.DestroyFailedException;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -177,8 +176,16 @@ public class SongServiceImpl implements SongService {
         return songRepository.findAllByAlbum(album);
     }
 
-    List<SongView> getSongView(List<Song> songs, User user) {
+    public List<SongView> getSongView(List<Song> songs, User user) {
         return songs.stream().map(a -> new SongView(a, likeService.getLike(a, user))).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SongView> getRecommendations(User user) {
+        Set<Song> recommendations = new HashSet<>();
+        recommendations.addAll(songRepository.getRegionTop(user.getRegion().getId()));
+        recommendations.addAll(songRepository.getRecByLikedArtists(user.getId()));
+        return getSongView(new ArrayList<>(recommendations), user);
     }
 
     @Override

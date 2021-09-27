@@ -11,6 +11,8 @@ const {Content} = Layout;
 function UserPage(props) {
 
     const logout = () => {
+        props.setIsActive(false)
+        props.setIsPlaying(false)
         axios.get("http://localhost:8080/api/v1/auth/logout/",
             {withCredentials:true});
         props.setIsAuth(false)
@@ -22,17 +24,17 @@ function UserPage(props) {
                             Hello, {props.userView.user.name}
                         </h1>
                         </Divider>
+                        <Space
+                            direction={'vertical'}
+                        >
                             <List
                                 size="large"
-                                header={<div><h1 style={{fontSize:"30px"}}>
-                                    Info:
-                                </h1></div>}
                                 bordered
                             >
                             <List.Item>
                                 <Space>
                                     <h1 style={{fontSize:"30px"}}>
-                                        Lastname:
+                                        Name:
                                     </h1>
                                     <p style={{fontSize:"25px", marginTop:"15px"}}>
                                         {props.userView.user.name}
@@ -46,14 +48,50 @@ function UserPage(props) {
                                         Lastname:
                                     </h1>
                                     <p style={{fontSize:"25px", marginTop:"15px"}}>
-                                        {props.userView.user.name}
+                                        {props.userView.user.lastName}
+                                    </p>
+                                </Space>
+                            </List.Item>
+                            <List.Item>
+                                <Space>
+                                    <h1 style={{fontSize:"30px"}}>
+                                        Email:
+                                    </h1>
+                                    <p style={{fontSize:"25px", marginTop:"15px"}}>
+                                        {props.userView.user.email}
+                                    </p>
+                                </Space>
+                            </List.Item>
+                            <List.Item>
+                                <Space>
+                                    <h1 style={{fontSize:"30px"}}>
+                                        Phone number:
+                                    </h1>
+                                    <p style={{fontSize:"25px", marginTop:"15px"}}>
+                                        {props.userView.user.phoneNumber}
+                                    </p>
+                                </Space>
+                            </List.Item>
+                            <List.Item>
+                                <Space>
+                                    <h1 style={{fontSize:"30px"}}>
+                                        Username:
+                                    </h1>
+                                    <p style={{fontSize:"25px", marginTop:"15px"}}>
+                                        {props.userView.user.userName}
                                     </p>
                                 </Space>
                             </List.Item>
                             </List>
-                        <Button type="primary" htmlType="submit" onClick={logout}>
-                            Logout
-                        </Button>
+                        <Space>
+                            <Button type="primary" htmlType="submit" onClick={logout}>
+                                Logout
+                            </Button>
+                            <Button type="primary" htmlType="submit">
+                                Change user
+                            </Button>
+                        </Space>
+                        </Space>
                     </div>
             </Content>)
 

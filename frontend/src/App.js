@@ -66,10 +66,23 @@ function App() {
                         <MyMenu userView={userView} />
                         <Layout>
                             <MyHeader/>
-                            <Route exact path={"/"}><HomePage user={userView.user}/></Route>
+                            <Route exact path={"/"}><HomePage user={userView.user}
+                              userView={userView}
+                              setSongList={setSongList}
+                              songList={songList}
+                              setCurrentSongIndex={setCurrentSongIndex}
+                              currentSongIndex={currentSongIndex}
+                              isPlaying={isPlaying}
+                              setIsPlaying={setIsPlaying}
+                              setIsActive={setIsActive}
+                              seconds={seconds}
+                              setSeconds={setSeconds}
+                              whoAmI={whoAmI}/></Route>
                             <Route exact path="/user/:id" render={(props) => <UserPage {...props}
                                 setIsAuth={setIsAuth}
+                                setIsActive={setIsActive}
                                 userView={userView}
+                                setIsPlaying={setIsPlaying}
                             />}></Route>
                             <Route exact path={"/playlist/"} >
                                 <PlaylistsPage

@@ -47,6 +47,16 @@ function PlaylistPage(props) {
         )
     }
 
+    function getLength () {
+        let length = 0;
+        playlistDto.songs.forEach(song => {
+            length += song.song.duration
+        })
+        if (length < 3600)
+            return Math.trunc(length / 60) + "min. " + Math.trunc(length % 60) + "sec."
+        return Math.trunc(length / 3600) + "h. " + Math.trunc(length / 60) + "min."
+    }
+
     const onFinish = (values) => {
         if (state !== undefined)
             fileUploadHandler()
@@ -199,7 +209,7 @@ function PlaylistPage(props) {
                         <h1>{playlistDto.songs.length} tracks</h1>
                     </List.Item>
                     <List.Item>
-                        <h1>Length</h1>
+                        <h1>{getLength()}</h1>
                     </List.Item>
                     <List.Item>
                         <p>{playlistDto.playlist.description}</p>

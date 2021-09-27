@@ -9,6 +9,7 @@ import vboled.netcracker.musicstreamer.model.Artist;
 import vboled.netcracker.musicstreamer.model.Song;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,4 +29,23 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 
     @Transactional
     void deleteByAlbum(Album album);
+
+    @Query(
+            value = "select * from songs s where s.id in (select l.song_id from likes l, users u where l.user_id = u.id AND u.region_id = ?1\n" +
+                    "            group by l.song_id\n" +
+                    "            ORDER BY count(*) DESC\n" +
+                    "    LIMIT 15)",
+            nativeQuery = true
+    )
+    List<Song> getRegionTop(Long regionID);
+
+    @Query(
+            value = "select s.* from artists a, songs s\n" +
+                    "    where a.id = s.artist_id\n" +
+                    "    and s.id in (select l.song_id from likes l, users u where l.user_id = u.id AND u.id = ?1)\n" +
+                    "    ORDER BY random()\n" +
+                    "    LIMIT 15",
+            nativeQuery = true
+    )
+    List<Song> getRecByLikedArtists(Long userID);
 }

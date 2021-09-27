@@ -8,8 +8,6 @@ import java.util.Set;
 
 public class ImageValidator implements FileValidator {
 
-    private final Set<String> imageExt = new HashSet<>(Arrays.asList(".jpeg",".jpg", ".png", ".gif"));
-
     private final ApplicationConfiguration.FileConfiguration fileConfiguration;
 
     public ImageValidator(ApplicationConfiguration.FileConfiguration fileConfiguration) {
@@ -36,7 +34,7 @@ public class ImageValidator implements FileValidator {
 
     @Override
     public Set<String> getExtensions() {
-        return imageExt;
+        return fileConfiguration.getImageConfiguration().getExt();
     }
 
     @Override

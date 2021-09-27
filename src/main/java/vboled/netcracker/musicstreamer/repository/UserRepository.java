@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import vboled.netcracker.musicstreamer.model.Playlist;
 import vboled.netcracker.musicstreamer.model.Song;
 import vboled.netcracker.musicstreamer.model.user.User;
+import vboled.netcracker.musicstreamer.view.SongView;
 
 import java.util.List;
 import java.util.Optional;

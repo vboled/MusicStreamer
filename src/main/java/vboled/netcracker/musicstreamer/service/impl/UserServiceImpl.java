@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.model.Playlist;
 import vboled.netcracker.musicstreamer.model.user.User;
 import vboled.netcracker.musicstreamer.repository.PlaylistRepository;
-import vboled.netcracker.musicstreamer.repository.RegionRepository;
 import vboled.netcracker.musicstreamer.repository.UserRepository;
+import vboled.netcracker.musicstreamer.service.SongService;
 import vboled.netcracker.musicstreamer.service.UserService;
+import vboled.netcracker.musicstreamer.view.SongView;
 
 import java.util.List;
 import java.util.Locale;
@@ -29,15 +30,15 @@ public class UserServiceImpl implements UserService {
     private final String PHONE_PATTERN = "^\\+(\\d{1,4})(\\d{8})$";
 
     private final UserRepository userRepository;
-    private final RegionRepository regionRepository;
     private final PlaylistRepository playlistRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+    private final SongService songService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RegionRepository regionRepository, PlaylistRepository playlistRepository) {
+    public UserServiceImpl(UserRepository userRepository, PlaylistRepository playlistRepository, SongService songService) {
         this.userRepository = userRepository;
-        this.regionRepository = regionRepository;
         this.playlistRepository = playlistRepository;
+        this.songService = songService;
     }
 
     @Override
@@ -253,5 +254,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Playlist> getAllPlaylists(Long id) {
         return playlistRepository.findAllPlaylistsByOwner(id);
+    }
+
+    @Override
+    public List<SongView> getRecommendations(User user) {
+        List<SongView> recommendations = songService.getRecommendations(user);
+        return recommendations;
     }
 }

@@ -6,6 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @ConfigurationProperties(prefix = "music-streamer")
 @ConstructorBinding
@@ -54,6 +57,7 @@ public class ApplicationConfiguration {
         public static final class AudioConfiguration {
             private final String dir;
             private final Long maxSize;
+            private final Set<String> ext;
 
             public String getDir() {
                 return dir;
@@ -63,15 +67,20 @@ public class ApplicationConfiguration {
                 return maxSize;
             }
 
-            public AudioConfiguration(String dir, Long maxSize) {
+            public Set<String> getExt() {return ext;}
+
+            public AudioConfiguration(String dir, Long maxSize, String ext) {
                 this.dir = dir;
                 this.maxSize = maxSize;
+                this.ext = new HashSet<>();
+                Arrays.stream(ext.split(" ")).forEach(word -> this.ext.add("." + word.trim()));
             }
         }
 
         public static final class ImageConfiguration {
             private final String dir;
             private final Long maxSize;
+            private final Set<String> ext;
 
             public String getDir() {
                 return dir;
@@ -81,9 +90,13 @@ public class ApplicationConfiguration {
                 return maxSize;
             }
 
-            public ImageConfiguration(String dir, Long maxSize) {
+            public Set<String> getExt() {return ext;}
+
+            public ImageConfiguration(String dir, Long maxSize, String ext) {
                 this.dir = dir;
                 this.maxSize = maxSize;
+                this.ext = new HashSet<>();
+                Arrays.stream(ext.split(" ")).forEach(word -> this.ext.add("." + word.trim()));
             }
         }
     }

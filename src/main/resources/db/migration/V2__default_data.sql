@@ -23,4 +23,6 @@ VALUES (default, 'Rock'),
        (default, 'Classical');
 
 INSERT INTO playlists
-VALUES (default, 3, NULL, 'default', 'desc', TRUE);
+VALUES (default, 3, NULL, 'default', 'desc', TRUE),
+       (default, 1, NULL, 'default', 'desc', TRUE),
+       (default, 2, NULL, 'default', 'desc', TRUE);

@@ -9,7 +9,6 @@ import java.util.Set;
 
 public class AudioValidator implements FileValidator {
 
-    private final Set<String> audioExt = new HashSet<>(Arrays.asList(".mp3",".ogg", ".wav"));
     private final ApplicationConfiguration.FileConfiguration fileConfiguration;
 
     public AudioValidator(ApplicationConfiguration.FileConfiguration fileConfiguration) {
@@ -36,7 +35,7 @@ public class AudioValidator implements FileValidator {
 
     @Override
     public Set<String> getExtensions() {
-        return audioExt;
+        return fileConfiguration.getAudioConfiguration().getExt();
     }
 
     @Override

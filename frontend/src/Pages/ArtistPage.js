@@ -24,8 +24,6 @@ function ArtistPage(props) {
             setArtistView(res.data)
             if (res.data.artist.ownerID === props.userView.user.id)
                 getStatistic(res.data.artist.id)
-            console.log(props.userView)
-            console.log("artist", artistView.songs)
         })
     }
 
@@ -36,7 +34,6 @@ function ArtistPage(props) {
                 artistID:id
             }
         }).then(r => {
-            console.log(r.data)
             setStat(r.data)
         })
     }
@@ -45,7 +42,22 @@ function ArtistPage(props) {
         getArtist();
     }, []);
 
+    const fileUploadHandler = () => {
+        const fd = new FormData()
+        fd.append('file', state, state.name)
+        fd.append('id', props.match.params.id)
+        axios.put(`http://localhost:8080/api/v1/artist/cover/`,
+            fd, {withCredentials:true}
+        ).then(
+            res => {
+                getArtist()
+            }
+        )
+    }
+
     const onFinish = (values) => {
+        if (state !== undefined)
+            fileUploadHandler()
         axios.put("http://localhost:8080/api/v1/artist/", {
             "name":values.name,
             "id":props.match.params.id,
@@ -77,8 +89,9 @@ function ArtistPage(props) {
 
     const deleteArtist = () => {
         axios.delete("http://localhost:8080/api/v1/artist/", {
+            withCredentials:true,
             params: {id:props.match.params.id}
-        }, {withCredentials:true}).then(r => {
+        }).then(r => {
             console.log(r)
             history.push("/owner/")
         })
@@ -117,6 +130,12 @@ function ArtistPage(props) {
         )
     }
 
+    const [state, setState] = useState()
+
+    const fileSelectedHandler = (event) => {
+        setState(event.target.files[0])
+    }
+
     function getModal() {
         return <Modal title="Edit playlist" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
             <Form
@@ -146,13 +165,15 @@ function ArtistPage(props) {
                 </Form.Item>
 
                 <Form.Item
-                    name="remember"
-                    valuePropName="checked"
-                    wrapperCol={{
-                        offset: 8,
-                        span: 16,
-                    }}
+                    label="Update Cover"
+                    name="update"
+                    rules={[
+                        {
+                            message: 'Update Cover',
+                        },
+                    ]}
                 >
+                    <Input type={"file"} onChange={fileSelectedHandler}/>
                 </Form.Item>
 
                 <Form.Item
