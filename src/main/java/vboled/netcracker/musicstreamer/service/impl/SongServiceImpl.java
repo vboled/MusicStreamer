@@ -183,8 +183,9 @@ public class SongServiceImpl implements SongService {
     @Override
     public List<SongView> getRecommendations(User user) {
         Set<Song> recommendations = new HashSet<>();
-        recommendations.addAll(songRepository.getRegionTop(user.getRegion().getId()));
-        recommendations.addAll(songRepository.getRecByLikedArtists(user.getId()));
+//        recommendations.addAll(songRepository.getRegionTop(user.getId(), user.getRegion().getId()));
+//        recommendations.addAll(songRepository.getRecByLikedArtists(user.getId()));
+        recommendations.addAll(songRepository.getRecByLikedGenres(user.getId()));
         return getSongView(new ArrayList<>(recommendations), user);
     }
 

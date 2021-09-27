@@ -31,7 +31,7 @@ function AlbumPage(props) {
         console.log('Failed:', errorInfo);
     };
 
-    const [albumView, setAlbumView] = useState({album:{}, songs: [{song:{artist:{}, album:{}}, like:{}}]})
+    const [albumView, setAlbumView] = useState({album:{}, songs: [{song:{artist:{}, album:{genre:{}}}, like:{}}]})
     const [children, setChildren] = useState([])
     const getAlbum = () => {
         axios.get("http://localhost:8080/api/v1/album/", {
@@ -270,13 +270,21 @@ function AlbumPage(props) {
         return date.split('-')[0]
     }
 
+    function getGenre() {
+        if (albumView.album.genre != null)
+            return  <h1 style={{fontSize:"20px"}}>{albumView.album.genre.name}</h1>
+        return null
+    }
     return (<Content style={{ margin: '24px 16px 0' }}>
         <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
             <Space size={100}>
                 {getCover(albumView.album.uuid, 400, 'playlistDefault.png')}
                 <List>
                     <List.Item>
-                        <p>{albumView.album.type}</p>
+                        <Space size={15}>
+                            <h1 style={{fontSize:"20px"}}>{albumView.album.type}</h1>
+                            {getGenre()}
+                        </Space>
                     </List.Item>
                     <List.Item>
                         <h1 style={{fontSize:"40px"}}>{albumView.album.name}</h1>
