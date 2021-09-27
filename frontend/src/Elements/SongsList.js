@@ -140,15 +140,17 @@ function SongsList (props) {
                                 w={80}
                                 defaultName={"playlistDefault.png"}
                             />
-                            <Space direction={"vertical"} size={1}>
-                                {item.song.title}
-                                <Link to={`/artist/${item.song.artist.id}`}>
-                                    {item.song.artist.name}
-                                </Link>
+                            <Space direction={"vertical"} size={0} split={<Divider style={{marginBlock:"0px"}} type="horizontal" />}>
+                                <h1 style={{fontSize:"16px", marginBlock:"0px", textAlign:"center"}}>{item.song.title}</h1>
+                                <Space>
+                                    <Link to={`/artist/${item.song.artist.id}`}>
+                                        <p style={{fontSize:"14px"}}>{item.song.artist.name}</p>
+                                    </Link>
+                                    <Link to={`/album/${item.song.album.id}`}>
+                                        <p style={{fontSize:"15px"}}>{item.song.album.name}</p>
+                                    </Link>
+                                </Space>
                             </Space>
-                            <Link to={`/album/${item.song.album.id}`}>
-                                {item.song.album.name}
-                            </Link>
                             <p>{Math.trunc(item.song.duration / 60)} {": "}
                                 { ('00'+Math.trunc(item.song.duration % 60)).slice(-2)}</p>
                             <Like
