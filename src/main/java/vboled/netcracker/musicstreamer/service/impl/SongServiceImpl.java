@@ -7,6 +7,8 @@ import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.TagException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import vboled.netcracker.musicstreamer.config.ApplicationConfiguration;
 import vboled.netcracker.musicstreamer.model.Album;
@@ -181,12 +183,25 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public List<SongView> getRecommendations(User user) {
+    @Cacheable(value = "recs", key = "#user.name")
+    public List<Song> getRecommendationsCache(User user) {
+        System.out.println("Cache");
         Set<Song> recommendations = new HashSet<>();
         recommendations.addAll(songRepository.getRegionTop(user.getId(), user.getRegion().getId()));
         recommendations.addAll(songRepository.getRecByLikedArtists(user.getId()));
         recommendations.addAll(songRepository.getRecByLikedGenres(user.getId()));
-        return getSongView(new ArrayList<>(recommendations), user);
+        return new ArrayList<>(recommendations);
+    }
+
+    @Override
+    @CachePut(value = "recs", key = "#user.name")
+    public List<Song> refreshAndGetRecommendations(User user) {
+        System.out.println("ReCache");
+        Set<Song> recommendations = new HashSet<>();
+        recommendations.addAll(songRepository.getRegionTop(user.getId(), user.getRegion().getId()));
+        recommendations.addAll(songRepository.getRecByLikedArtists(user.getId()));
+        recommendations.addAll(songRepository.getRecByLikedGenres(user.getId()));
+        return new ArrayList<>(recommendations);
     }
 
     @Override

@@ -258,7 +258,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<SongView> getRecommendations(User user) {
-        List<SongView> recommendations = songService.getRecommendations(user);
-        return recommendations;
+        return songService.getSongView(songService.getRecommendationsCache(user), user);
+    }
+
+    @Override
+    public List<SongView> getRefreshedRecommendations(User user) {
+        return songService.getSongView(songService.refreshAndGetRecommendations(user), user);
     }
 }

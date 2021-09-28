@@ -159,4 +159,10 @@ public class UserController {
         return new ResponseEntity<>(userService.getRecommendations(user), HttpStatus.OK);
     }
 
+    @GetMapping("/recommendations-fresh/")
+    @PreAuthorize("hasAuthority('user:perm')")
+    public ResponseEntity<?> getFreshRecommendations(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(userService.getRefreshedRecommendations(user), HttpStatus.OK);
+    }
+
 }

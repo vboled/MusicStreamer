@@ -43,5 +43,8 @@ public interface SongService {
 
     List<SongView> getSongView(List<Song> songs, User user);
 
-    List<SongView> getRecommendations(User user);
+    List<Song> getRecommendationsCache(User user);
+
+    List<Song> refreshAndGetRecommendations(User user);
+
 }

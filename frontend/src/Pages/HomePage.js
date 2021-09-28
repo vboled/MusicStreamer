@@ -9,11 +9,9 @@ const {Content} = Layout;
 
 function HomePage(props) {
 
-    const [recView, setRecView] = useState([{song:{artist:{}, album:{}}, like:{}}])
-
     const getRecommendations = () => {
         axios.get("http://localhost:8080/api/v1/user/recommendations/", {withCredentials:true}).then(res => {
-            setRecView(res.data)
+            props.setRecView(res.data)
         })
     }
 
@@ -32,7 +30,7 @@ function HomePage(props) {
                         setIsActive={props.setIsActive}
                         setCurrentSongIndex={props.setCurrentSongIndex}
                         songList={props.songList}
-                        songs={recView}
+                        songs={props.recView}
                         isPlaylist={false}
                         setSeconds={props.setSeconds}
                         playlists={props.userView.playlistLists}

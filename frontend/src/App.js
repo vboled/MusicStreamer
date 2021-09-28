@@ -28,16 +28,24 @@ function App() {
     const [listeningID, setListeningID] = useState(-1)
     const [isActive, setIsActive] = useState(false)
     const [isAuth, setIsAuth] = useState(false)
+    const [recView, setRecView] = useState([{song:{artist:{}, album:{}}, like:{}}])
 
     const whoAmI = () => {
         axios.get("http://localhost:8080/api/v1/whoami/",
             {withCredentials:true}).then(res => {
             setUserView(res.data)
             console.log(userView)
+            getRecommendations()
             setIsAuth(true)
         }).catch(err => {
             setIsAuth(false)
         });
+    }
+
+    const getRecommendations = () => {
+        axios.get("http://localhost:8080/api/v1/user/recommendations-fresh/", {withCredentials:true}).then(res => {
+            setRecView(res.data)
+        })
     }
 
     useEffect(() => {
@@ -77,6 +85,8 @@ function App() {
                               setIsActive={setIsActive}
                               seconds={seconds}
                               setSeconds={setSeconds}
+                              recView={recView}
+                              setRecView={setRecView}
                               whoAmI={whoAmI}/></Route>
                             <Route exact path="/user/:id" render={(props) => <UserPage {...props}
                                 setIsAuth={setIsAuth}

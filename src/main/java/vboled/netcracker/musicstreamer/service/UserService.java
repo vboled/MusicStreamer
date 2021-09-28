@@ -56,4 +56,6 @@ public interface UserService {
     List<Playlist> getAllPlaylists(Long id);
 
     List<SongView> getRecommendations(User user);
+
+    List<SongView> getRefreshedRecommendations(User user);
 }
