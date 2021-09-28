@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/vv
+    url: jdbc:postgresql://localhost:5433/vv
     username: postgres
     password: qqq
     driver-class-name: org.postgresql.Driver
@@ -11,7 +11,7 @@ spring:
     user: postgres
     password: qqq
     schemas: public
-    url: jdbc:postgresql://postgres:5432/vv
+    url: jdbc:postgresql://localhost:5433/vv
   servlet:
     multipart:
       max-file-size: 50MB
