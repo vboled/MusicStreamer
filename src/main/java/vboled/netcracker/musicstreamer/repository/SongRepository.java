@@ -31,10 +31,17 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     void deleteByAlbum(Album album);
 
     @Query(
-            value = "select * from songs s where s.id in (select l.song_id from likes l, users u where u.id != ?1 AND l.user_id = u.id AND u.region_id = ?2\n" +
-                    "            group by l.song_id\n" +
-                    "            ORDER BY count(*) DESC\n" +
-                    "    LIMIT 15)",
+            value = "select * from songs s where s.id in\n" +
+                    "            (select\n" +
+                    "                    l.song_id\n" +
+                    "            from\n" +
+                    "                 likes l, users u\n" +
+                    "            where\n" +
+                    "                  u.region_id = 1 and l.song_id not in\n" +
+                    "                  (select l.song_id from likes l where l.user_id = 6)\n" +
+                    "group by l.song_id\n" +
+                    "ORDER BY count(*) DESC\n" +
+                    "LIMIT 15)\n",
             nativeQuery = true
     )
     List<Song> getRegionTop(Long userID, Long regionID);
