@@ -185,7 +185,6 @@ public class SongServiceImpl implements SongService {
     @Override
     @Cacheable(value = "recs", key = "#user.name")
     public List<Song> getRecommendationsCache(User user) {
-        System.out.println("Cache");
         Set<Song> recommendations = new HashSet<>();
         recommendations.addAll(songRepository.getRegionTop(user.getId(), user.getRegion().getId()));
         recommendations.addAll(songRepository.getRecByLikedArtists(user.getId()));
@@ -196,7 +195,6 @@ public class SongServiceImpl implements SongService {
     @Override
     @CachePut(value = "recs", key = "#user.name")
     public List<Song> refreshAndGetRecommendations(User user) {
-        System.out.println("ReCache");
         Set<Song> recommendations = new HashSet<>();
         recommendations.addAll(songRepository.getRegionTop(user.getId(), user.getRegion().getId()));
         recommendations.addAll(songRepository.getRecByLikedArtists(user.getId()));
