@@ -26,6 +26,8 @@ function SearchPage(props) {
     return (<Content style={{ margin: '24px 16px 0' }}>
             <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
                 <SongsList
+                    forcePlay={props.forcePlay}
+                    setForcePlay={props.setForcePlay}
                     updatePage={getSearch}
                     isPlaying={props.isPlaying}
                     setIsPlaying={props.setIsPlaying}

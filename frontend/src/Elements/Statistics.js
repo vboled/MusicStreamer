@@ -27,7 +27,6 @@ function Statistics(props) {
     useEffect(() => {
         let sum = 0
         let playSum = 0
-        console.log(props.stat)
         props.stat.forEach(
             regionlist => {
                 sum += regionlist.listenings.length * regionlist.region.rate

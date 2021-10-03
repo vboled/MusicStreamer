@@ -306,6 +306,8 @@ function AlbumPage(props) {
             {getEditModal()}
             <SongsList
                 updatePage={getAlbum}
+                forcePlay={props.forcePlay}
+                setForcePlay={props.setForcePlay}
                 isPlaying={props.isPlaying}
                 setIsPlaying={props.setIsPlaying}
                 setSongList={props.setSongList}

@@ -223,6 +223,8 @@ function PlaylistPage(props) {
                 isPlaying={props.isPlaying}
                 setIsPlaying={props.setIsPlaying}
                 setSongList={props.setSongList}
+                forcePlay={props.forcePlay}
+                setForcePlay={props.setForcePlay}
                 setIsActive={props.setIsActive}
                 setCurrentSongIndex={props.setCurrentSongIndex}
                 songList={props.songList}

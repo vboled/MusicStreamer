@@ -23,6 +23,8 @@ function HomePage(props) {
                 <div className="site-layout-background" style={{ padding: 24, minHeight: "100vh" }}>
                     <h1>Recommendations:</h1>
                     <SongsList
+                        forcePlay={props.forcePlay}
+                        setForcePlay={props.setForcePlay}
                         updatePage={getRecommendations}
                         isPlaying={props.isPlaying}
                         setIsPlaying={props.setIsPlaying}

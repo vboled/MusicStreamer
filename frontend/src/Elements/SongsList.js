@@ -61,14 +61,17 @@ function SongsList (props) {
     const playSong = (index, isNewListening, isSameSong) => {
         if (props.isPlaying && isSameSong) {
             props.setIsPlaying(false)
+            props.setForcePlay(!props.forcePlay)
         } else {
-            if (isNewListening) {
-                props.setSeconds(-1)
-            }
+            console.log("HERE")
             props.setIsActive(true)
+            props.setForcePlay(!props.forcePlay)
             props.setIsPlaying(true)
             props.setSongList(props.songs)
             props.setCurrentSongIndex(index)
+            if (isNewListening) {
+                props.setSeconds(-1)
+            }
         }
     }
 

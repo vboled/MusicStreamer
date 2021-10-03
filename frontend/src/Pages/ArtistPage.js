@@ -10,6 +10,7 @@ import Modal from "antd/es/modal/Modal";
 import getCover from "../Elements/getCover";
 import SongsList from "../Elements/SongsList";
 import Statistics from "../Elements/Statistics";
+import HomePage from "./HomePage";
 
 function ArtistPage(props) {
 
@@ -241,6 +242,8 @@ function ArtistPage(props) {
                     isPlaying={props.isPlaying}
                     setIsPlaying={props.setIsPlaying}
                     setSongList={props.setSongList}
+                    forcePlay={props.forcePlay}
+                    setForcePlay={props.setForcePlay}
                     setIsActive={props.setIsActive}
                     setCurrentSongIndex={props.setCurrentSongIndex}
                     songList={props.songList}

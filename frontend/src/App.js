@@ -19,6 +19,7 @@ import {Content} from "antd/es/layout/layout";
 
 function App() {
 
+    const [forcePlay, setForcePlay] = useState(false)
     const [userView, setUserView] = useState({user:{}, playlistLists:[]})
     const [songList, setSongList] = useState([{song:{album:{}, artist:{}}, playlist:{}}])
     const [currentSongIndex, setCurrentSongIndex] = useState(0);
@@ -86,6 +87,8 @@ function App() {
                               seconds={seconds}
                               setSeconds={setSeconds}
                               recView={recView}
+                              forcePlay={forcePlay}
+                              setForcePlay={setForcePlay}
                               setRecView={setRecView}
                               whoAmI={whoAmI}/></Route>
                             <Route exact path="/user/:id" render={(props) => <UserPage {...props}
@@ -102,6 +105,8 @@ function App() {
                                userView={userView}
                                setSongList={setSongList}
                                songList={songList}
+                               forcePlay={forcePlay}
+                               setForcePlay={setForcePlay}
                                setCurrentSongIndex={setCurrentSongIndex}
                                currentSongIndex={currentSongIndex}
                                isPlaying={isPlaying}
@@ -120,6 +125,8 @@ function App() {
                                currentSongIndex={currentSongIndex}
                                isPlaying={isPlaying}
                                seconds={seconds}
+                               forcePlay={forcePlay}
+                               setForcePlay={setForcePlay}
                                setSeconds={setSeconds}
                                setIsPlaying={setIsPlaying}
                                setIsActive={setIsActive}
@@ -133,6 +140,8 @@ function App() {
                                  currentSongIndex={currentSongIndex}
                                  isPlaying={isPlaying}
                                  seconds={seconds}
+                                 forcePlay={forcePlay}
+                                 setForcePlay={setForcePlay}
                                  setSeconds={setSeconds}
                                  setIsPlaying={setIsPlaying}
                                  setIsActive={setIsActive}
@@ -147,6 +156,8 @@ function App() {
                                  currentSongIndex={currentSongIndex}
                                  isPlaying={isPlaying}
                                  seconds={seconds}
+                                 forcePlay={forcePlay}
+                                 setForcePlay={setForcePlay}
                                  setSeconds={setSeconds}
                                  setIsPlaying={setIsPlaying}
                                  setIsActive={setIsActive}
@@ -165,6 +176,8 @@ function App() {
                                     setCurrentSongIndex={setCurrentSongIndex}
                                     nextSongIndex={nextSongIndex}
                                     isPlaying={isPlaying}
+                                    forcePlay={forcePlay}
+                                    setForcePlay={setForcePlay}
                                     listeningID={listeningID}
                                     setListeningID={setListeningID}
                                     setIsPlaying={setIsPlaying}

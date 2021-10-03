@@ -28,6 +28,7 @@ function PlayerControls(props) {
                             onClick={() => {
                                 props.SkipSong(false)
                                 props.setSeconds(-1)
+                                props.setForcePlay(!props.forcePlay)
                             }}/>
                 </Tooltip>
                 <Tooltip title="Play">
@@ -41,6 +42,7 @@ function PlayerControls(props) {
                             onClick={() => {
                                 props.SkipSong()
                                 props.setSeconds(-1)
+                                props.setForcePlay(!props.forcePlay)
                             }}/>
                 </Tooltip>
             </Space>
